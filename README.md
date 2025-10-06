@@ -12,14 +12,9 @@
 - [🎯 Tổng quan](#-tổng-quan)
 - [✨ Tính năng](#-tính-năng)
 - [🏗️ Kiến trúc hệ thống](#️-kiến-trúc-hệ-thống)
-- [🛠️ Công nghệ sử dụng](#️-công-nghệ-sử-dụng)
-- [📊 Database Schema](#-database-schema)
-- [🚀 Cài đặt và Chạy](#-cài-đặt-và-chạy)
 - [📝 API Documentation](#-api-documentation)
 - [🎮 Hướng dẫn sử dụng](#-hướng-dẫn-sử-dụng)
-- [📱 Screenshots](#-screenshots)
 - [📅 Timeline Dự án](#-timeline-dự-án-15-tuần)
-- [🤝 Đóng góp](#-đóng-góp)
 - [📄 License](#-license)
 
 ## 🎯 Tổng quan
