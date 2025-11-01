@@ -4,16 +4,18 @@ import { Toaster } from 'react-hot-toast'
 import { useAuthStore } from './store'
 import { Layout, ProtectedRoute } from './components/layout'
 import {
+  HomePage,
   LoginPage,
   RegisterPage,
   DashboardPage,
   SubjectsPage,
   ResultsPage,
   SettingsPage,
+  TestAPIPage,
 } from './pages'
 
 function App() {
-  const { loadUser } = useAuthStore()
+  const { loadUser, isAuthenticated } = useAuthStore()
 
   useEffect(() => {
     loadUser()
@@ -23,8 +25,10 @@ function App() {
     <>
       <Routes>
         {/* Public Routes */}
+        <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/test-api" element={<TestAPIPage />} />
 
         {/* Protected Routes with Layout */}
         <Route
@@ -33,7 +37,6 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <Routes>
-                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
                   <Route path="/dashboard" element={<DashboardPage />} />
                   <Route path="/subjects" element={<SubjectsPage />} />
                   <Route path="/results" element={<ResultsPage />} />
