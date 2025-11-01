@@ -73,10 +73,12 @@ export const questionAPI = {
 // Exam API
 export const examAPI = {
   start: (data) => api.post('/exams/start', data),
+  startExam: (data) => api.post('/exams/start', data), // Alias for consistency
   submitAnswer: (examId, questionIndex, data) => 
     api.put(`/exams/${examId}/answer/${questionIndex}`, data),
   submitExam: (examId) => api.post(`/exams/${examId}/submit`),
   getExam: (examId) => api.get(`/exams/${examId}`),
+  getAll: () => api.get('/exams'),
   getUserExams: (params) => api.get('/exams', { params }),
   getResults: (params) => api.get('/exams/results', { params }),
 }

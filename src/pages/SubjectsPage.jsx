@@ -98,7 +98,7 @@ export default function SubjectsPage() {
                     variant="primary"
                     size="sm"
                     className="flex-1"
-                    onClick={() => navigate(`/quiz/start?subject=${subject._id}`)}
+                    onClick={() => navigate(`/exam?subject=${subject._id}&questions=5&difficulty=mixed`)}
                   >
                     <PlayCircle className="w-4 h-4" />
                     Luyện tập

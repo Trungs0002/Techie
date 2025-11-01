@@ -167,16 +167,25 @@ export default function DashboardPage() {
                   {subjects.slice(0, 5).map((subject) => (
                     <div
                       key={subject._id}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-                      onClick={() => navigate(`/subjects/${subject._id}`)}
+                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                     >
-                      <div className="flex-1">
+                      <div 
+                        className="flex-1 cursor-pointer"
+                        onClick={() => navigate(`/subjects/${subject._id}`)}
+                      >
                         <h3 className="font-medium text-gray-900">{subject.name}</h3>
                         <p className="text-sm text-gray-600 mt-1">
                           {subject.code} • {subject.questionCount || 0} câu hỏi
                         </p>
                       </div>
-                      <Button variant="primary" size="sm">
+                      <Button 
+                        variant="primary" 
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          navigate(`/exam?subject=${subject._id}&questions=5&difficulty=mixed`)
+                        }}
+                      >
                         Luyện tập
                       </Button>
                     </div>
@@ -204,7 +213,7 @@ export default function DashboardPage() {
                   {recentExams.map((exam) => (
                     <div
                       key={exam._id}
-                      className="p-3 bg-gray-50 rounded-lg"
+                      className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
@@ -212,28 +221,55 @@ export default function DashboardPage() {
                             {exam.subjectId?.name || 'Môn học'}
                           </p>
                           <p className="text-xs text-gray-500 mt-1">
-                            {new Date(exam.startTime).toLocaleDateString('vi-VN')}
+                            {new Date(exam.startTime).toLocaleDateString('vi-VN', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
                           </p>
                         </div>
-                        <Badge 
-                          variant={exam.status === 'completed' ? 'success' : 'warning'}
-                          size="sm"
-                        >
-                          {exam.status === 'completed' ? (
-                            <>
-                              <CheckCircle className="w-3 h-3" />
-                              {exam.score}/{exam.questions.length}
-                            </>
-                          ) : (
-                            'Đang làm'
+                        <div className="flex items-center gap-2">
+                          <Badge 
+                            variant={exam.status === 'completed' ? 'success' : 'warning'}
+                            size="sm"
+                          >
+                            {exam.status === 'completed' ? (
+                              <>
+                                <CheckCircle className="w-3 h-3" />
+                                {exam.score || 0}/{exam.questions?.length || 0}
+                              </>
+                            ) : (
+                              'Đang làm'
+                            )}
+                          </Badge>
+                          {exam.status === 'in_progress' && (
+                            <Button
+                              variant="primary"
+                              size="sm"
+                              onClick={() => navigate(`/exam/${exam._id}`)}
+                            >
+                              Làm tiếp
+                              <ArrowRight className="w-3 h-3 ml-1" />
+                            </Button>
                           )}
-                        </Badge>
+                          {exam.status === 'completed' && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => navigate(`/results/${exam._id}`)}
+                            >
+                              Xem kết quả
+                            </Button>
+                          )}
+                        </div>
                       </div>
-                      {exam.status === 'completed' && (
+                      {exam.status === 'completed' && exam.percentage !== undefined && (
                         <ProgressBar
-                          value={exam.score}
-                          max={exam.questions.length}
-                          variant={exam.score / exam.questions.length >= 0.8 ? 'success' : 'warning'}
+                          value={exam.percentage}
+                          max={100}
+                          variant={exam.percentage >= 80 ? 'success' : exam.percentage >= 50 ? 'warning' : 'danger'}
                           size="sm"
                         />
                       )}

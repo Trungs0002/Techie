@@ -12,6 +12,7 @@ import {
   ResultsPage,
   SettingsPage,
   TestAPIPage,
+  ExamPage,
 } from './pages'
 
 function App() {
@@ -39,7 +40,10 @@ function App() {
                 <Routes>
                   <Route path="/dashboard" element={<DashboardPage />} />
                   <Route path="/subjects" element={<SubjectsPage />} />
+                  <Route path="/exam" element={<ExamPage />} />
+                  <Route path="/exam/:examId" element={<ExamPage />} />
                   <Route path="/results" element={<ResultsPage />} />
+                  <Route path="/results/:examId" element={<ResultsPage />} />
                   <Route path="/settings" element={<SettingsPage />} />
                   <Route path="*" element={<Navigate to="/dashboard" replace />} />
                 </Routes>

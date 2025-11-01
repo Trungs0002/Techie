@@ -179,14 +179,28 @@ const submitExam = async (req, res) => {
     let incorrectAnswers = 0;
     const breakdown = { easy: { correct: 0, total: 0 }, medium: { correct: 0, total: 0 }, hard: { correct: 0, total: 0 } };
 
-    exam.questions.forEach(q => {
+    exam.questions.forEach((q, index) => {
       const question = q.questionId;
-      const correctOptions = question.options.filter(opt => opt.isCorrect).map(opt => opt.text);
+      
+      // Get correct option indexes (0, 1, 2, 3...)
+      const correctIndexes = question.options
+        .map((opt, idx) => opt.isCorrect ? idx : -1)
+        .filter(idx => idx !== -1);
+      
       const userAnswers = q.userAnswer || [];
       
-      // Check if answer is correct
-      const isCorrect = correctOptions.length === userAnswers.length &&
-        correctOptions.every(opt => userAnswers.includes(opt));
+      // Debug log
+      console.log(`Question ${index + 1}:`, {
+        correctIndexes,
+        userAnswers,
+        userAnswerType: typeof userAnswers[0]
+      });
+      
+      // Check if answer is correct by comparing indexes
+      const isCorrect = correctIndexes.length === userAnswers.length &&
+        correctIndexes.every(idx => userAnswers.includes(idx));
+      
+      console.log(`  isCorrect: ${isCorrect}`);
       
       q.isCorrect = isCorrect;
       
@@ -203,6 +217,8 @@ const submitExam = async (req, res) => {
     exam.status = 'completed';
     exam.endTime = new Date();
     exam.timeSpent = Math.floor((exam.endTime - exam.startTime) / 1000); // in seconds
+    exam.score = correctAnswers;
+    exam.percentage = (correctAnswers / exam.questions.length) * 100;
     
     await exam.save();
 

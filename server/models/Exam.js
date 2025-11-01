@@ -59,7 +59,7 @@ const examSchema = new mongoose.Schema({
       required: true
     },
     userAnswer: [{
-      type: String
+      type: mongoose.Schema.Types.Mixed // Support both String and Number
     }],
     isCorrect: {
       type: Boolean,
