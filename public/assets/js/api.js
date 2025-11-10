@@ -20,9 +20,17 @@ const API = {
       },
     };
     
+    const url = `${CONFIG.API_BASE_URL}${endpoint}`;
+    console.log('API Request:', options.method || 'GET', url);
+    if (options.body) {
+      console.log('Request body:', JSON.parse(options.body));
+    }
+    
     try {
-      const response = await fetch(`${CONFIG.API_BASE_URL}${endpoint}`, config);
+      const response = await fetch(url, config);
+      console.log('API Response status:', response.status);
       const data = await response.json();
+      console.log('API Response data:', data);
       
       if (!response.ok) {
         throw new Error(data.message || 'Something went wrong');

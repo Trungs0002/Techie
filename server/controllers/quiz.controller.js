@@ -68,7 +68,7 @@ const startQuiz = async (req, res) => {
           _id: exam._id,
           title: exam.title,
           description: exam.description,
-          duration: exam.duration,
+          settings: exam.settings, // Include full settings object
           totalQuestions: questions.length,
           totalPoints: questions.reduce((sum, q) => sum + (q.points || 1), 0),
           subject: exam.subjectId
@@ -82,6 +82,52 @@ const startQuiz = async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message || 'Error starting quiz'
+    });
+  }
+};
+
+// @desc    Check single answer immediately
+// @route   POST /api/quiz/check-answer
+// @access  Private
+const checkAnswer = async (req, res) => {
+  try {
+    const { questionId, selectedAnswer } = req.body;
+    
+    if (!questionId || selectedAnswer === undefined) {
+      return res.status(400).json({
+        success: false,
+        message: 'Question ID and selected answer are required'
+      });
+    }
+
+    // Get question with full details including correct answer
+    const question = await Question.findById(questionId);
+    
+    if (!question) {
+      return res.status(404).json({
+        success: false,
+        message: 'Question not found'
+      });
+    }
+
+    // Check if answer is correct
+    const correctOption = question.options.find(opt => opt.isCorrect === true);
+    const isCorrect = correctOption && correctOption.text === selectedAnswer;
+
+    res.json({
+      success: true,
+      data: {
+        isCorrect,
+        correctAnswer: correctOption ? correctOption.text : null,
+        // Return full options with isCorrect flags for feedback
+        options: question.options
+      }
+    });
+  } catch (error) {
+    console.error('Check answer error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error checking answer'
     });
   }
 };
@@ -164,17 +210,18 @@ const submitQuiz = async (req, res) => {
     });
 
     const percentage = questions.length > 0 ? (correctAnswers / questions.length) * 100 : 0;
+    const roundedPercentage = Math.round(percentage * 100) / 100;
 
     // Save result to database with detailed results
     const examResult = await ExamResult.create({
       userId: req.user._id,
       examId: exam._id,
       subjectId: exam.subjectId,
-      score: correctAnswers, // Use correct answer count as score
+      score: roundedPercentage, // Use percentage as score
       totalQuestions: questions.length,
       correctAnswers,
       incorrectAnswers,
-      percentage: Math.round(percentage * 100) / 100,
+      percentage: roundedPercentage,
       timeSpent: timeSpent || 0,
       breakdown,
       detailedResults // Save detailed results for review
@@ -185,12 +232,12 @@ const submitQuiz = async (req, res) => {
       data: {
         result: {
           _id: examResult._id,
-          score: correctAnswers,
+          score: roundedPercentage,
           totalQuestions: questions.length,
           correctAnswers,
           incorrectAnswers,
           totalQuestions: questions.length,
-          percentage: Math.round(percentage * 100) / 100,
+          percentage: roundedPercentage,
           timeSpent: timeSpent || 0,
           breakdown,
           passed: percentage >= 50 // Pass threshold
@@ -265,6 +312,7 @@ const getResult = async (req, res) => {
         result: {
           ...result.toObject(),
           exam: exam ? {
+            _id: exam._id,
             title: exam.title,
             description: exam.description,
             type: exam.type,
@@ -312,9 +360,9 @@ const getHistory = async (req, res) => {
     // Get statistics
     const stats = await ExamResult.getAverageScore(req.user._id, subjectId);
     
-    // Get highest score
+    // Get highest score (score is now percentage)
     const highestResult = await ExamResult.findOne(query)
-      .sort({ percentage: -1 })
+      .sort({ score: -1 })
       .limit(1);
 
     res.json({
@@ -323,8 +371,8 @@ const getHistory = async (req, res) => {
         results,
         stats: {
           totalExams: stats.totalExams,
-          averageScore: Math.round(stats.avgScore * 100) / 100,
-          highestScore: highestResult ? highestResult.percentage : 0
+          averageScore: Math.round(stats.avgScore),
+          highestScore: highestResult ? Math.round(highestResult.score) : 0
         },
         pagination: {
           page: parseInt(page),
@@ -345,6 +393,7 @@ const getHistory = async (req, res) => {
 
 module.exports = {
   startQuiz,
+  checkAnswer,
   submitQuiz,
   getResult,
   getHistory

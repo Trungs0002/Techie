@@ -33,6 +33,30 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: '/assets/images/avatars/default.png'
   },
+  phone: {
+    type: String,
+    trim: true,
+    maxlength: [20, 'Phone number cannot exceed 20 characters']
+  },
+  birthday: {
+    type: String,
+    trim: true
+  },
+  gender: {
+    type: String,
+    enum: ['', 'male', 'female', 'other'],
+    default: ''
+  },
+  address: {
+    type: String,
+    trim: true,
+    maxlength: [200, 'Address cannot exceed 200 characters']
+  },
+  bio: {
+    type: String,
+    trim: true,
+    maxlength: [500, 'Bio cannot exceed 500 characters']
+  },
   dateCreated: {
     type: Date,
     default: Date.now

@@ -134,5 +134,30 @@ const Utils = {
       console.error('Failed to copy:', error);
       this.showToast('Failed to copy', 'error');
     }
+  },
+
+  // Update header user display (avatar and name)
+  updateHeaderUser() {
+    const user = Auth.getCurrentUser();
+    if (!user) return;
+
+    const displayName = user.fullName || user.username || 'User';
+    const displayInitial = displayName[0].toUpperCase();
+
+    // Update name
+    const userNameElement = document.getElementById('userName');
+    if (userNameElement) {
+      userNameElement.textContent = displayName;
+    }
+
+    // Update avatar
+    const userInitialElement = document.getElementById('userInitial');
+    if (userInitialElement && user.avatar && user.avatar !== '/assets/images/avatars/default.png') {
+      // Replace with image
+      const parentDiv = userInitialElement.parentElement;
+      parentDiv.innerHTML = `<img src="${user.avatar}" alt="Avatar" class="w-8 h-8 rounded-full object-cover" onerror="this.outerHTML='<span class=\\'w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold\\'>${displayInitial}</span>'">`;
+    } else if (userInitialElement) {
+      userInitialElement.textContent = displayInitial;
+    }
   }
 };

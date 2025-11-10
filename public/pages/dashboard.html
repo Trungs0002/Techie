@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - QuizMaster</title>
+  <title>Dashboard - Techie</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/tracnghiemluyenthi/public/assets/css/main.css">
+  <link rel="stylesheet" href="/tracnghiemluyenthi/public/assets/css/components.css">
   
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -26,20 +26,20 @@
         <!-- Logo -->
         <div class="flex items-center space-x-2">
           <i class="fas fa-graduation-cap text-2xl text-blue-600"></i>
-          <span class="text-xl font-bold text-gray-800">QuizMaster</span>
+          <span class="text-xl font-bold text-gray-800">Techie</span>
         </div>
 
         <!-- Desktop Navigation -->
         <div class="hidden md:flex items-center space-x-6">
-          <a href="/pages/dashboard.html" class="text-blue-600 font-semibold flex items-center gap-2">
+          <a href="/tracnghiemluyenthi/public/pages/dashboard.html" class="text-blue-600 font-semibold flex items-center gap-2">
             <i class="fas fa-home"></i>
             Dashboard
           </a>
-          <a href="/pages/subjects.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
+          <a href="/tracnghiemluyenthi/public/pages/subjects.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
             <i class="fas fa-book"></i>
             Môn học
           </a>
-          <a href="/pages/history.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
+          <a href="/tracnghiemluyenthi/public/pages/history.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
             <i class="fas fa-history"></i>
             Lịch sử
           </a>
@@ -65,11 +65,11 @@
 
             <!-- Dropdown Menu -->
             <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-              <a href="/pages/profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
+              <a href="/tracnghiemluyenthi/public/pages/profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
                 <i class="fas fa-user mr-2"></i>
                 Hồ sơ
               </a>
-              <a href="/pages/settings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
+              <a href="/tracnghiemluyenthi/public/pages/settings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
                 <i class="fas fa-cog mr-2"></i>
                 Cài đặt
               </a>
@@ -90,15 +90,15 @@
 
       <!-- Mobile Navigation -->
       <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 py-4">
-        <a href="/pages/dashboard.html" class="block py-2 text-blue-600 font-semibold">
+        <a href="/tracnghiemluyenthi/public/pages/dashboard.html" class="block py-2 text-blue-600 font-semibold">
           <i class="fas fa-home mr-2"></i>
           Dashboard
         </a>
-        <a href="/pages/subjects.html" class="block py-2 text-gray-600 hover:text-blue-600">
+        <a href="/tracnghiemluyenthi/public/pages/subjects.html" class="block py-2 text-gray-600 hover:text-blue-600">
           <i class="fas fa-book mr-2"></i>
           Môn học
         </a>
-        <a href="/pages/history.html" class="block py-2 text-gray-600 hover:text-blue-600">
+        <a href="/tracnghiemluyenthi/public/pages/history.html" class="block py-2 text-gray-600 hover:text-blue-600">
           <i class="fas fa-history mr-2"></i>
           Lịch sử
         </a>
@@ -126,7 +126,7 @@
           </div>
           <span class="badge badge-primary">+12%</span>
         </div>
-        <p class="text-gray-600 text-sm mb-1">Tổng bài thi</p>
+        <p class="text-gray-600 text-sm mb-1">Tổng bài làm</p>
         <p class="text-2xl font-bold text-gray-900" id="totalExams">0</p>
       </div>
 
@@ -188,7 +188,7 @@
         <div class="card bg-white">
           <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-semibold text-gray-900">Hoạt động gần đây</h2>
-            <a href="/pages/history.html" class="text-sm text-blue-600 hover:text-blue-700">
+            <a href="/tracnghiemluyenthi/public/pages/history.html" class="text-sm text-blue-600 hover:text-blue-700">
               Xem tất cả <i class="fas fa-arrow-right ml-1"></i>
             </a>
           </div>
@@ -209,11 +209,11 @@
         <div class="card bg-gradient-to-br from-blue-600 to-indigo-600 text-white">
           <h2 class="text-lg font-semibold mb-4">Bắt đầu học ngay</h2>
           <div class="grid md:grid-cols-2 gap-3">
-            <a href="/pages/subjects.html" class="btn bg-white text-blue-600 hover:bg-gray-100">
+            <a href="/tracnghiemluyenthi/public/pages/subjects.html" class="btn bg-white text-blue-600 hover:bg-gray-100">
               <i class="fas fa-book"></i>
               Chọn môn học
             </a>
-            <a href="/pages/exams.html" class="btn bg-white bg-opacity-20 hover:bg-opacity-30 text-white border border-white">
+            <a href="/tracnghiemluyenthi/public/pages/exams.html" class="btn bg-white bg-opacity-20 hover:bg-opacity-30 text-white border border-white">
               <i class="fas fa-play"></i>
               Làm bài ngay
             </a>
@@ -282,10 +282,10 @@
   </main>
 
   <!-- Scripts -->
-  <script src="/assets/js/config.js"></script>
-  <script src="/assets/js/utils.js"></script>
-  <script src="/assets/js/api.js"></script>
-  <script src="/assets/js/auth.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/config.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/utils.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/api.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/auth.js"></script>
   
   <script>
     // Require authentication
@@ -298,9 +298,9 @@
     
     // Update user info in navbar
     if (currentUser) {
-      document.getElementById('userName').textContent = currentUser.name || 'User';
-      document.getElementById('welcomeName').textContent = currentUser.name || 'User';
-      document.getElementById('userInitial').textContent = (currentUser.name || 'U')[0].toUpperCase();
+      Utils.updateHeaderUser();
+      const displayName = currentUser.fullName || currentUser.username || 'User';
+      document.getElementById('welcomeName').textContent = displayName;
     }
 
     // Toggle user menu
@@ -350,12 +350,23 @@
         const totalExams = results.length;
         const avgScore = stats.averageScore || 0;
         const totalTimeSpent = results.reduce((sum, r) => sum + (r.timeSpent || 0), 0);
-        const timeSpentHours = Math.floor(totalTimeSpent / 3600); // Convert seconds to hours
+        
+        // Format time spent (hours and minutes)
+        const hours = Math.floor(totalTimeSpent / 3600);
+        const minutes = Math.floor((totalTimeSpent % 3600) / 60);
+        let timeDisplay = '';
+        if (hours > 0) {
+          timeDisplay = minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+        } else if (minutes > 0) {
+          timeDisplay = `${minutes}m`;
+        } else {
+          timeDisplay = '0m';
+        }
         
         // Update stats cards
         document.getElementById('totalExams').textContent = totalExams;
         document.getElementById('avgScore').textContent = Math.round(avgScore);
-        document.getElementById('timeSpent').textContent = `${timeSpentHours}h`;
+        document.getElementById('timeSpent').textContent = timeDisplay;
         document.getElementById('userRank').textContent = '#-'; // Disable rank feature for now
         document.getElementById('studyStreak').textContent = '-'; // Disable streak for now
 
@@ -432,7 +443,7 @@
         }
         
         container.innerHTML = subjects.slice(0, 5).map((subject, index) => `
-          <div class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer" onclick="window.location.href='/pages/exams.html?subject=${subject._id}'">
+          <div class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer" onclick="window.location.href='/tracnghiemluyenthi/public/pages/exams.html?subject=${subject._id}'">
             <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded flex items-center justify-center text-white font-semibold text-sm">
               ${subject.code?.substring(0, 2) || subject.name[0]}
             </div>

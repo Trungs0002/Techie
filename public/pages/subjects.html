@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Môn học - QuizMaster</title>
+  <title>Môn học - Techie</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/tracnghiemluyenthi/public/assets/css/main.css">
+  <link rel="stylesheet" href="/tracnghiemluyenthi/public/assets/css/components.css">
   
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -22,19 +22,19 @@
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center space-x-2">
           <i class="fas fa-graduation-cap text-2xl text-blue-600"></i>
-          <span class="text-xl font-bold text-gray-800">QuizMaster</span>
+          <span class="text-xl font-bold text-gray-800">Techie</span>
         </div>
 
         <div class="hidden md:flex items-center space-x-6">
-          <a href="/pages/dashboard.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
+          <a href="/tracnghiemluyenthi/public/pages/dashboard.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
             <i class="fas fa-home"></i>
             Dashboard
           </a>
-          <a href="/pages/subjects.html" class="text-blue-600 font-semibold flex items-center gap-2">
+          <a href="/tracnghiemluyenthi/public/pages/subjects.html" class="text-blue-600 font-semibold flex items-center gap-2">
             <i class="fas fa-book"></i>
             Môn học
           </a>
-          <a href="/pages/history.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
+          <a href="/tracnghiemluyenthi/public/pages/history.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
             <i class="fas fa-history"></i>
             Lịch sử
           </a>
@@ -56,11 +56,11 @@
             </button>
 
             <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-              <a href="/pages/profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
+              <a href="/tracnghiemluyenthi/public/pages/profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
                 <i class="fas fa-user mr-2"></i>
                 Hồ sơ
               </a>
-              <a href="/pages/settings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
+              <a href="/tracnghiemluyenthi/public/pages/settings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
                 <i class="fas fa-cog mr-2"></i>
                 Cài đặt
               </a>
@@ -79,15 +79,15 @@
       </div>
 
       <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 py-4">
-        <a href="/pages/dashboard.html" class="block py-2 text-gray-600 hover:text-blue-600">
+        <a href="/tracnghiemluyenthi/public/pages/dashboard.html" class="block py-2 text-gray-600 hover:text-blue-600">
           <i class="fas fa-home mr-2"></i>
           Dashboard
         </a>
-        <a href="/pages/subjects.html" class="block py-2 text-blue-600 font-semibold">
+        <a href="/tracnghiemluyenthi/public/pages/subjects.html" class="block py-2 text-blue-600 font-semibold">
           <i class="fas fa-book mr-2"></i>
           Môn học
         </a>
-        <a href="/pages/history.html" class="block py-2 text-gray-600 hover:text-blue-600">
+        <a href="/tracnghiemluyenthi/public/pages/history.html" class="block py-2 text-gray-600 hover:text-blue-600">
           <i class="fas fa-history mr-2"></i>
           Lịch sử
         </a>
@@ -103,7 +103,7 @@
         <i class="fas fa-book text-blue-600"></i>
         Chọn môn học
       </h1>
-      <p class="text-gray-600">Khám phá và luyện tập với hơn 20+ môn học đa dạng</p>
+      <p class="text-gray-600">Khám phá và luyện tập với hơn 10+ môn học về CNTT</p>
     </div>
 
     <!-- Search & Filter -->
@@ -120,41 +120,23 @@
           >
         </div>
 
-        <!-- Filter by Level -->
-        <select id="levelFilter" class="form-input md:w-48">
-          <option value="">Tất cả cấp độ</option>
-          <option value="beginner">Cơ bản</option>
-          <option value="intermediate">Trung bình</option>
-          <option value="advanced">Nâng cao</option>
-        </select>
-
         <!-- Sort -->
         <select id="sortBy" class="form-input md:w-48">
           <option value="popular">Phổ biến nhất</option>
           <option value="name">Tên A-Z</option>
-          <option value="exams">Số đề thi</option>
+          <option value="exams">Số câu hỏi </option>
         </select>
       </div>
     </div>
 
     <!-- Stats -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
       <div class="card bg-gradient-to-br from-blue-500 to-blue-600 text-white">
         <div class="flex items-center gap-3">
           <i class="fas fa-book text-2xl"></i>
           <div>
             <p class="text-sm opacity-90">Tổng môn học</p>
             <p class="text-2xl font-bold" id="totalSubjects">0</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="card bg-gradient-to-br from-green-500 to-green-600 text-white">
-        <div class="flex items-center gap-3">
-          <i class="fas fa-file-alt text-2xl"></i>
-          <div>
-            <p class="text-sm opacity-90">Tổng đề thi</p>
-            <p class="text-2xl font-bold" id="totalExams">0</p>
           </div>
         </div>
       </div>
@@ -206,10 +188,10 @@
   </main>
 
   <!-- Scripts -->
-  <script src="/assets/js/config.js"></script>
-  <script src="/assets/js/utils.js"></script>
-  <script src="/assets/js/api.js"></script>
-  <script src="/assets/js/auth.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/config.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/utils.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/api.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/auth.js"></script>
   
   <script>
     // Require authentication
@@ -217,11 +199,10 @@
       // Will redirect to login
     }
 
-    // Get current user
+    // Get current user and update header
     const currentUser = Auth.getCurrentUser();
     if (currentUser) {
-      document.getElementById('userName').textContent = currentUser.name || 'User';
-      document.getElementById('userInitial').textContent = (currentUser.name || 'U')[0].toUpperCase();
+      Utils.updateHeaderUser();
     }
 
     // Toggle user menu
@@ -259,9 +240,15 @@
     async function loadSubjects() {
       try {
         const response = await API.get('/subjects');
+        console.log('=== SUBJECTS API RESPONSE ===');
+        console.log('Full response:', response);
+        
         // Backend response: {success: true, data: {subjects}, count}
         allSubjects = response.data?.subjects || response.subjects || [];
         filteredSubjects = [...allSubjects];
+        
+        console.log('Total subjects loaded:', allSubjects.length);
+        console.log('Sample subject:', allSubjects[0]);
 
         // Update stats
         document.getElementById('totalSubjects').textContent = allSubjects.length;
@@ -270,11 +257,14 @@
         const totalQuestions = allSubjects.reduce((sum, s) => sum + (s.questionCount || 0), 0);
         document.getElementById('totalQuestions').textContent = totalQuestions;
         
-        // For now, use placeholder for exams and users
-        document.getElementById('totalExams').textContent = '-';
-        document.getElementById('totalUsers').textContent = '-';
+        // Get total users from API response
+        const totalUsers = response.data?.stats?.totalUsers || 0;
+        document.getElementById('totalUsers').textContent = totalUsers;
 
         renderSubjects();
+        
+        // Setup event listeners after data is loaded
+        setupEventListeners();
       } catch (error) {
         console.error('Error loading subjects:', error);
         Utils.showToast('Không thể tải danh sách môn học. Vui lòng thử lại.', 'error');
@@ -306,38 +296,35 @@
       container.classList.remove('hidden');
       emptyState.classList.add('hidden');
 
-      container.innerHTML = filteredSubjects.map(subject => `
+      container.innerHTML = filteredSubjects.map(subject => {
+        // Get data with fallbacks
+        const examCount = subject.examCount || subject.totalExams || 0;
+        const questionCount = subject.questionCount || subject.totalQuestions || 0;
+        const studentCount = subject.studentCount || subject.totalStudents || 0;
+        const category = subject.category || 'general';
+        
+        return `
         <div class="card bg-white hover:shadow-large transition-all duration-300 cursor-pointer" onclick="selectSubject('${subject._id}')">
           <div class="flex items-start gap-4 mb-4">
-            <div class="w-12 h-12 ${getSubjectColor(subject.category)} rounded-lg flex items-center justify-center flex-shrink-0">
-              <i class="fas ${getSubjectIcon(subject.category)} text-white text-xl"></i>
+            <div class="w-12 h-12 ${getSubjectColor(category)} rounded-lg flex items-center justify-center flex-shrink-0">
+              <i class="fas ${getSubjectIcon(category)} text-white text-xl"></i>
             </div>
             <div class="flex-1 min-w-0">
-              <h3 class="text-lg font-semibold text-gray-900 mb-1 truncate">${subject.name}</h3>
-              <div class="flex items-center gap-2 text-sm text-gray-600">
-                <span class="badge badge-${getLevelBadge(subject.level)}">${getLevelText(subject.level)}</span>
-                <span>•</span>
-                <span>${subject.totalExams || 0} đề thi</span>
-              </div>
+              <h3 class="text-lg font-semibold text-gray-900 mb-1 truncate" title="${subject.name}">${subject.name}</h3>
+              ${subject.code ? `<p class="text-sm text-gray-600 font-mono">${subject.code}</p>` : ''}
             </div>
           </div>
 
-          <p class="text-sm text-gray-600 mb-4 line-clamp-2">${subject.description || 'Không có mô tả'}</p>
+          <p class="text-sm text-gray-600 mb-4 line-clamp-2" title="${subject.description || ''}">${subject.description || 'Chưa có mô tả cho môn học này'}</p>
 
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-4 text-sm text-gray-500">
-              <div class="flex items-center gap-1">
-                <i class="fas fa-question-circle"></i>
-                <span>${subject.totalQuestions || 0} câu</span>
-              </div>
-              <div class="flex items-center gap-1">
-                <i class="fas fa-users"></i>
-                <span>${subject.totalStudents || 0}</span>
-              </div>
+          <div class="flex items-center gap-4 text-sm text-gray-500 mb-4">
+            <div class="flex items-center gap-1" title="Số câu hỏi">
+              <i class="fas fa-question-circle"></i>
+              <span>${questionCount}</span>
             </div>
-            <div class="flex items-center gap-1 text-yellow-500">
-              <i class="fas fa-star"></i>
-              <span class="text-sm font-semibold text-gray-700">${subject.rating || 0}</span>
+            <div class="flex items-center gap-1" title="Số học viên đã học">
+              <i class="fas fa-users"></i>
+              <span>${studentCount}</span>
             </div>
           </div>
 
@@ -346,59 +333,91 @@
             Bắt đầu học
           </button>
         </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     // Select subject
     function selectSubject(subjectId) {
-      window.location.href = `/pages/exams.html?subject=${subjectId}`;
+      window.location.href = `/tracnghiemluyenthi/public/pages/exams.html?subject=${subjectId}`;
     }
 
-    // Search
-    document.getElementById('searchInput').addEventListener('input', Utils.debounce((e) => {
-      const query = e.target.value.toLowerCase().trim();
-      applyFilters(query);
-    }, 300));
-
-    // Filter by level
-    document.getElementById('levelFilter').addEventListener('change', (e) => {
-      applyFilters(document.getElementById('searchInput').value.toLowerCase().trim());
-    });
-
-    // Sort
-    document.getElementById('sortBy').addEventListener('change', (e) => {
-      const sortBy = e.target.value;
+    // Setup event listeners (called after data is loaded)
+    let eventListenersSetup = false;
+    function setupEventListeners() {
+      if (eventListenersSetup) return; // Prevent duplicate listeners
       
-      switch(sortBy) {
-        case 'name':
-          filteredSubjects.sort((a, b) => a.name.localeCompare(b.name));
-          break;
-        case 'exams':
-          filteredSubjects.sort((a, b) => (b.totalExams || 0) - (a.totalExams || 0));
-          break;
-        case 'popular':
-        default:
-          filteredSubjects.sort((a, b) => (b.totalStudents || 0) - (a.totalStudents || 0));
-          break;
+      console.log('=== SETTING UP EVENT LISTENERS ===');
+      
+      // Search
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', Utils.debounce((e) => {
+          const query = e.target.value.toLowerCase().trim();
+          console.log('Search query:', query);
+          applyFilters(query);
+        }, 300));
+        console.log('✓ Search event listener attached');
+      } else {
+        console.error('✗ searchInput element not found');
+      }
+
+      // Sort
+      const sortBySelect = document.getElementById('sortBy');
+      if (sortBySelect) {
+        sortBySelect.addEventListener('change', (e) => {
+          const sortByValue = e.target.value;
+          console.log('Sort by:', sortByValue);
+          
+          switch(sortByValue) {
+            case 'name':
+              filteredSubjects.sort((a, b) => a.name.localeCompare(b.name));
+              break;
+            case 'exams':
+              filteredSubjects.sort((a, b) => {
+                const aExams = a.examCount || a.totalExams || 0;
+                const bExams = b.examCount || b.totalExams || 0;
+                return bExams - aExams;
+              });
+              break;
+            case 'popular':
+            default:
+              filteredSubjects.sort((a, b) => {
+                const aStudents = a.studentCount || a.totalStudents || 0;
+                const bStudents = b.studentCount || b.totalStudents || 0;
+                return bStudents - aStudents;
+              });
+              break;
+          }
+          
+          renderSubjects();
+        });
+        console.log('✓ Sort event listener attached');
+      } else {
+        console.error('✗ sortBy element not found');
       }
       
-      renderSubjects();
-    });
+      eventListenersSetup = true;
+      console.log('=== EVENT LISTENERS SETUP COMPLETE ===');
+    }
 
-    // Apply filters
-    function applyFilters(searchQuery) {
-      const level = document.getElementById('levelFilter').value;
+    // Apply filters (only search, no level filter for subjects)
+    function applyFilters(searchQuery = '') {
+      console.log('=== APPLYING FILTERS ===');
+      console.log('Search query:', searchQuery);
+      console.log('All subjects count:', allSubjects.length);
       
       filteredSubjects = allSubjects.filter(subject => {
+        // Search match
         const matchesSearch = !searchQuery || 
           subject.name.toLowerCase().includes(searchQuery) ||
+          (subject.code || '').toLowerCase().includes(searchQuery) ||
           (subject.description || '').toLowerCase().includes(searchQuery);
         
-        const matchesLevel = !level || subject.level === level;
-        
-        return matchesSearch && matchesLevel;
+        return matchesSearch;
       });
       
+      console.log('Filtered subjects count:', filteredSubjects.length);
       renderSubjects();
     }
 
@@ -437,26 +456,26 @@
       return colors[category] || 'bg-gray-500';
     }
 
-    function getLevelBadge(level) {
-      const badges = {
-        beginner: 'success',
-        intermediate: 'primary',
-        advanced: 'danger'
-      };
-      return badges[level] || 'primary';
-    }
-
-    function getLevelText(level) {
-      const texts = {
-        beginner: 'Cơ bản',
-        intermediate: 'Trung bình',
-        advanced: 'Nâng cao'
-      };
-      return texts[level] || level;
+    // Initialize event listeners
+    function initEventListeners() {
+      console.log('Initializing event listeners...');
+      
+      // This code already runs from above, just ensuring it happens
+      // Event listeners are already attached above in the global scope
     }
 
     // Initialize
-    loadSubjects();
+    async function init() {
+      await loadSubjects();
+      initEventListeners();
+    }
+
+    // Run init when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
   </script>
 </body>
 </html>

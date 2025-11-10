@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Làm bài thi - QuizMaster</title>
+  <title>Làm bài thi - Techie</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/tracnghiemluyenthi/public/assets/css/main.css">
+  <link rel="stylesheet" href="/tracnghiemluyenthi/public/assets/css/components.css">
   
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -66,6 +66,36 @@
       color: #374151;
     }
 
+    /* Answer feedback states */
+    .answer-correct {
+      background-color: #D1FAE5 !important;
+      border-color: #10B981 !important;
+      animation: correctPulse 0.5s ease;
+    }
+
+    .answer-wrong {
+      background-color: #FEE2E2 !important;
+      border-color: #EF4444 !important;
+      animation: wrongShake 0.5s ease;
+    }
+
+    .answer-disabled {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    @keyframes correctPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes wrongShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
     /* Timer warning animation */
     @keyframes pulse-red {
       0%, 100% { color: #EF4444; }
@@ -110,6 +140,11 @@
 
           <!-- Actions -->
           <div class="flex items-center gap-2">
+            <!-- Background Music Toggle (if enabled) -->
+            <button id="musicToggleBtn" class="hidden btn btn-secondary btn-sm" title="Nhạc nền">
+              <i class="fas fa-music"></i>
+            </button>
+            
             <button id="fullscreenBtn" class="btn btn-secondary btn-sm" title="Toàn màn hình">
               <i class="fas fa-expand"></i>
             </button>
@@ -140,10 +175,18 @@
             <h2 class="text-lg font-semibold text-gray-900">
               Câu <span id="currentQuestionNumber">1</span> / <span id="totalQuestions">0</span>
             </h2>
-            <button id="markBtn" class="btn btn-secondary btn-sm">
-              <i class="fas fa-flag"></i>
-              <span id="markText">Đánh dấu</span>
-            </button>
+            <div class="flex items-center gap-3">
+              <!-- Per Question Timer (in question card) -->
+              <div id="perQuestionTimerCard" class="hidden flex items-center gap-2 px-3 py-1.5 bg-purple-50 rounded-lg border-2 border-purple-200">
+                <i class="fas fa-stopwatch text-purple-600"></i>
+                <span class="font-mono font-bold text-base" id="perQuestionTimerCard">00:00</span>
+              </div>
+              
+              <button id="markBtn" class="btn btn-secondary btn-sm">
+                <i class="fas fa-flag"></i>
+                <span id="markText">Đánh dấu</span>
+              </button>
+            </div>
           </div>
 
           <!-- Question Content -->
@@ -164,23 +207,15 @@
             <!-- Will be populated by JavaScript -->
           </div>
 
-          <!-- Navigation Buttons -->
-          <div class="flex items-center justify-between mt-6 pt-6 border-t border-gray-200">
-            <button id="prevBtn" class="btn btn-secondary" disabled>
-              <i class="fas fa-chevron-left"></i>
-              Câu trước
+          <!-- Action Buttons -->
+          <div class="flex items-center justify-center gap-3 mt-6 pt-6 border-t border-gray-200">
+            <button id="clearBtn" class="btn btn-secondary">
+              <i class="fas fa-eraser"></i>
+              Xóa đáp án
             </button>
-
-            <div class="flex gap-2">
-              <button id="clearBtn" class="btn btn-secondary">
-                <i class="fas fa-eraser"></i>
-                Xóa đáp án
-              </button>
-            </div>
-
-            <button id="nextBtn" class="btn btn-primary">
-              Câu sau
-              <i class="fas fa-chevron-right"></i>
+            <button id="submitAnswerBtn" class="btn btn-primary hidden">
+              <i class="fas fa-check"></i>
+              Submit câu trả lời
             </button>
           </div>
         </div>
@@ -310,11 +345,17 @@
     </div>
   </div>
 
+  <!-- Audio Elements -->
+  <audio id="backgroundMusic" loop preload="auto" src="http://localhost:5000/assets/audio/background.mp3"></audio>
+  <audio id="correctSound" preload="auto" src="http://localhost:5000/assets/audio/correct.mp3"></audio>
+  <audio id="wrongSound" preload="auto" src="http://localhost:5000/assets/audio/wrong.mp3"></audio>
+  <audio id="timeUpSound" preload="auto" src="http://localhost:5000/assets/audio/time-up.mp3"></audio>
+
   <!-- Scripts -->
-  <script src="/assets/js/config.js"></script>
-  <script src="/assets/js/utils.js"></script>
-  <script src="/assets/js/api.js"></script>
-  <script src="/assets/js/auth.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/config.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/utils.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/api.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/auth.js"></script>
   
   <script>
     // Require authentication
@@ -322,13 +363,24 @@
       // Will redirect to login
     }
 
-    // Get exam ID from URL
+    // Get exam ID and settings from URL
     const urlParams = new URLSearchParams(window.location.search);
     const examId = urlParams.get('exam');
+    const timerPerQuestionEnabled = urlParams.get('timerPerQuestion') === '1';
+    const backgroundMusicEnabled = urlParams.get('backgroundMusic') === '1';
+    const soundEffectsEnabled = urlParams.get('soundEffects') === '1';
+    const timePerQuestion = parseInt(urlParams.get('timePerQuestion')) || 0; // in seconds
+
+    console.log('Quiz settings:', {
+      timerPerQuestionEnabled,
+      backgroundMusicEnabled,
+      soundEffectsEnabled,
+      timePerQuestion
+    });
 
     if (!examId) {
       Utils.showToast('Không tìm thấy đề thi', 'error');
-      setTimeout(() => window.location.href = '/pages/exams.html', 2000);
+      setTimeout(() => window.location.href = '/tracnghiemluyenthi/public/pages/exams.html', 2000);
     }
 
     // Quiz State
@@ -340,11 +392,19 @@
       markedQuestions: new Set(),
       startTime: null,
       timeLeft: 0, // in seconds
-      duration: 0 // in minutes
+      duration: 0, // in minutes
+      perQuestionTimeLeft: timePerQuestion, // seconds for current question
+      questionTimers: {}, // Track time left for each question {questionIndex: timeLeft}
+      tempSelectedAnswer: null, // Temporary selected answer before submit
+      isShowingFeedback: false, // Flag to prevent actions during feedback
+      submittedQuestions: new Set() // Track which questions have been submitted
     };
 
     let timerInterval = null;
     let autoSaveInterval = null;
+    let perQuestionTimerInterval = null;
+    let backgroundMusic = null;
+    let isMusicPlaying = false;
 
     // Load exam and questions
     async function loadExam() {
@@ -361,8 +421,16 @@
         const data = response.data || response;
         quizData.exam = data.exam;
         quizData.questions = data.questions || [];
-        quizData.duration = data.exam.duration || 30; // Default 30 minutes
+        // Get time limit from exam settings (in minutes)
+        quizData.duration = data.exam.settings?.timeLimit || 30; // Default 30 minutes
         quizData.startTime = new Date(data.startTime || Date.now());
+        
+        console.log('Exam loaded:', {
+          title: data.exam.title,
+          timeLimit: quizData.duration,
+          questionCount: quizData.questions.length,
+          settings: data.exam.settings
+        });
         
         // Restore saved progress if exists
         if (savedProgress) {
@@ -371,6 +439,7 @@
             if (saved.answers) quizData.answers = saved.answers;
             if (saved.markedQuestions) quizData.markedQuestions = new Set(saved.markedQuestions);
             if (saved.currentQuestion !== undefined) quizData.currentQuestionIndex = saved.currentQuestion;
+            if (saved.questionTimers) quizData.questionTimers = saved.questionTimers; // Restore per-question timers
             // Calculate remaining time based on saved time
             if (saved.savedAt && saved.startTime) {
               const elapsedMs = saved.savedAt - saved.startTime;
@@ -400,6 +469,20 @@
         renderCurrentQuestion();
         startTimer();
         startAutoSave();
+        
+        // Initialize background music if enabled
+        if (backgroundMusicEnabled) {
+          initializeBackgroundMusic();
+        }
+        
+        // Start per-question timer if enabled
+        if (timerPerQuestionEnabled && timePerQuestion > 0) {
+          const timerCard = document.getElementById('perQuestionTimerCard');
+          if (timerCard) {
+            timerCard.classList.remove('hidden');
+          }
+          startPerQuestionTimer();
+        }
 
         Utils.hideLoading();
 
@@ -413,7 +496,7 @@
         
         // Redirect back to exams page after 2 seconds
         setTimeout(() => {
-          window.location.href = '/pages/exams.html';
+          window.location.href = '/tracnghiemluyenthi/public/pages/exams.html';
         }, 2000);
       }
     }
@@ -469,11 +552,13 @@
       // Render answer options
       const selectedAnswer = quizData.answers[questionId];
       const optionsContainer = document.getElementById('answerOptions');
+      const isSubmitted = quizData.submittedQuestions.has(quizData.currentQuestionIndex);
       
       console.log('Rendering question:', {
         questionId,
         selectedAnswer,
-        options: question.options
+        options: question.options,
+        isSubmitted
       });
       
       optionsContainer.innerHTML = (question.options || []).map((option, index) => {
@@ -483,23 +568,25 @@
         const letter = String.fromCharCode(65 + index); // A, B, C, D
         
         return `
-          <label class="flex items-start gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
-            isSelected 
-              ? 'border-blue-500 bg-blue-50 shadow-md' 
-              : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'
+          <label class="flex items-start gap-3 p-4 border-2 rounded-lg transition-all ${
+            isSubmitted 
+              ? 'cursor-not-allowed opacity-70 ' + (isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200')
+              : 'cursor-pointer ' + (isSelected ? 'border-blue-500 bg-blue-50 shadow-md' : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50')
           }">
             <input 
               type="radio" 
               name="answer" 
               value="${index}"
               ${isSelected ? 'checked' : ''}
+              ${isSubmitted ? 'disabled' : ''}
               onchange="selectAnswer(${index})"
-              class="mt-1 w-5 h-5 text-blue-600 cursor-pointer"
+              class="mt-1 w-5 h-5 text-blue-600 ${isSubmitted ? 'cursor-not-allowed' : 'cursor-pointer'}"
             >
             <div class="flex-1">
               <span class="font-semibold text-gray-700 mr-2">${letter}.</span>
               <span class="text-gray-900">${optionText}</span>
               ${isSelected ? '<i class="fas fa-check-circle text-blue-600 ml-2"></i>' : ''}
+              ${isSubmitted && isSelected ? '<i class="fas fa-lock text-gray-500 ml-2"></i>' : ''}
             </div>
           </label>
         `;
@@ -509,68 +596,312 @@
       const isMarked = quizData.markedQuestions.has(quizData.currentQuestionIndex);
       document.getElementById('markText').textContent = isMarked ? 'Bỏ đánh dấu' : 'Đánh dấu';
       
-      // Update navigation buttons
-      document.getElementById('prevBtn').disabled = quizData.currentQuestionIndex === 0;
-      document.getElementById('nextBtn').textContent = quizData.currentQuestionIndex === quizData.questions.length - 1 
-        ? 'Nộp bài' 
-        : 'Câu sau';
+      // Update submit answer button and clear button visibility
+      const submitBtn = document.getElementById('submitAnswerBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const hasTempSelection = quizData.tempSelectedAnswer !== null;
+      
+      if (submitBtn) {
+        if (isSubmitted || !hasTempSelection) {
+          submitBtn.classList.add('hidden');
+        } else {
+          submitBtn.classList.remove('hidden');
+        }
+      }
+      
+      // Disable clear button if question is already submitted
+      if (clearBtn) {
+        clearBtn.disabled = isSubmitted;
+        if (isSubmitted) {
+          clearBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+          clearBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+      }
       
       // Update palette
       renderQuestionPalette();
     }
 
-    // Select answer
+    // Select answer (temporary selection, not saved until submit)
     function selectAnswer(answerIndex) {
+      // Prevent selection during feedback
+      if (quizData.isShowingFeedback) return;
+      
+      // Check if question already submitted
+      if (quizData.submittedQuestions.has(quizData.currentQuestionIndex)) return;
+      
       const question = quizData.questions[quizData.currentQuestionIndex];
       const questionId = question._id || quizData.currentQuestionIndex;
       
-      // Store answer text instead of index (backend expects text)
-      const option = question.options[answerIndex];
-      const answerText = typeof option === 'string' ? option : (option?.text || option);
-      quizData.answers[questionId] = answerText;
+      // Store temporary selection (not saved to answers yet)
+      quizData.tempSelectedAnswer = answerIndex;
       
-      console.log('Answer selected:', {
+      console.log('Answer selected (temp):', {
         questionIndex: quizData.currentQuestionIndex,
         questionId,
-        answerIndex,
-        answerText,
-        allAnswers: quizData.answers
+        answerIndex
       });
       
-      // Save progress immediately after selecting answer
-      saveProgress();
+      // Update CSS for all option labels
+      const optionsContainer = document.getElementById('answerOptions');
+      const labels = optionsContainer.querySelectorAll('label');
       
-      // Update palette to show answered status
-      renderQuestionPalette();
+      labels.forEach((label, index) => {
+        const isSelected = index === answerIndex;
+        
+        // Remove all selection classes first
+        label.classList.remove('border-blue-500', 'bg-blue-50', 'shadow-md', 'border-gray-200');
+        
+        // Add appropriate classes
+        if (isSelected) {
+          label.classList.add('border-blue-500', 'bg-blue-50', 'shadow-md');
+          
+          // Add check icon if not exists
+          const checkIcon = label.querySelector('.fa-check-circle');
+          if (!checkIcon) {
+            const textSpan = label.querySelector('div');
+            textSpan.innerHTML += ' <i class="fas fa-check-circle text-blue-600 ml-2"></i>';
+          }
+        } else {
+          label.classList.add('border-gray-200');
+          
+          // Remove check icon if exists
+          const checkIcon = label.querySelector('.fa-check-circle');
+          if (checkIcon) {
+            checkIcon.remove();
+          }
+        }
+      });
+      
+      // Show submit button when answer is selected
+      const submitBtn = document.getElementById('submitAnswerBtn');
+      if (submitBtn) {
+        submitBtn.classList.remove('hidden');
+      }
+    }
+
+    // Submit answer for current question
+    async function submitAnswerForCurrentQuestion() {
+      // Prevent double submit
+      if (quizData.tempSelectedAnswer === null) return;
+      if (quizData.isShowingFeedback) return;
+      if (quizData.submittedQuestions.has(quizData.currentQuestionIndex)) return;
+      
+      const question = quizData.questions[quizData.currentQuestionIndex];
+      const questionId = question._id || quizData.currentQuestionIndex;
+      
+      // Get selected option
+      const selectedIndex = quizData.tempSelectedAnswer;
+      const option = question.options[selectedIndex];
+      const answerText = typeof option === 'string' ? option : (option?.text || option);
+      
+      // Save answer to answers object
+      quizData.answers[questionId] = answerText;
+      
+      // Mark this question as submitted
+      quizData.submittedQuestions.add(quizData.currentQuestionIndex);
+      
+      try {
+        // Call API to check answer
+        const response = await API.post('/quiz/check-answer', {
+          questionId: questionId,
+          selectedAnswer: answerText
+        });
+        
+        const result = response.data || response;
+        const isCorrect = result.isCorrect;
+        const correctOptionsData = result.options; // Full options with isCorrect flags
+        
+        console.log('Answer checked:', {
+          questionIndex: quizData.currentQuestionIndex,
+          questionId,
+          selectedIndex,
+          answerText,
+          isCorrect,
+          correctAnswer: result.correctAnswer,
+          optionsData: correctOptionsData,
+          soundEffectsEnabled: soundEffectsEnabled
+        });
+        
+        // Play sound effect (always play for testing, check settings later)
+        console.log(`Attempting to play sound: ${isCorrect ? 'correct' : 'wrong'}, soundEffectsEnabled: ${soundEffectsEnabled}`);
+        playSound(isCorrect ? 'correct' : 'wrong');
+        
+        // Show visual feedback with correct answer info
+        showAnswerFeedback(isCorrect, selectedIndex, correctOptionsData);
+        
+        // Save progress
+        saveProgress();
+      } catch (error) {
+        console.error('Error checking answer:', error);
+        Utils.showToast('Lỗi khi kiểm tra đáp án', 'error');
+        
+        // Rollback
+        quizData.submittedQuestions.delete(quizData.currentQuestionIndex);
+        delete quizData.answers[questionId];
+      }
+    }
+
+    // Show answer feedback for 3 seconds then auto-next
+    function showAnswerFeedback(isCorrect, selectedIndex, correctOptionsData) {
+      quizData.isShowingFeedback = true;
+      
+      const question = quizData.questions[quizData.currentQuestionIndex];
+      const optionsContainer = document.getElementById('answerOptions');
+      const labels = optionsContainer.querySelectorAll('label');
+      
+      // Disable all options during feedback
+      optionsContainer.classList.add('answer-disabled');
+      
+      // Highlight correct answer (green) and wrong answer if selected (red)
+      labels.forEach((label, index) => {
+        const option = question.options[index];
+        const optionText = typeof option === 'string' ? option : (option?.text || option);
+        
+        // Clear any existing feedback classes first
+        label.classList.remove('answer-correct', 'answer-wrong');
+        
+        // Find if this option is correct using data from API
+        let isCorrectOption = false;
+        if (correctOptionsData && Array.isArray(correctOptionsData)) {
+          const matchingOption = correctOptionsData.find(opt => opt.text === optionText);
+          isCorrectOption = matchingOption && matchingOption.isCorrect === true;
+        }
+        
+        console.log(`Option ${index}:`, {
+          optionText,
+          isCorrectOption,
+          isSelected: index === selectedIndex,
+          userAnswerCorrect: isCorrect
+        });
+        
+        // Priority: Correct answer always gets green, even if it was selected
+        if (isCorrectOption) {
+          // Always highlight correct answer in green
+          label.classList.add('answer-correct');
+          console.log(`✅ Added green to option ${index} (correct answer)`);
+        } else if (index === selectedIndex && !isCorrect) {
+          // Only add red if: selected BUT not correct
+          label.classList.add('answer-wrong');
+          console.log(`❌ Added red to option ${index} (wrong answer)`);
+        }
+      });
+      
+      console.log('Showing feedback:', {
+        isCorrect,
+        selectedIndex,
+        questionOptions: question.options
+      });
+      
+      // Hide submit button
+      const submitBtn = document.getElementById('submitAnswerBtn');
+      if (submitBtn) {
+        submitBtn.classList.add('hidden');
+      }
+      
+      // Auto-next after 3 seconds
+      setTimeout(() => {
+        // Reset feedback state
+        quizData.isShowingFeedback = false;
+        quizData.tempSelectedAnswer = null;
+        
+        // Remove feedback classes
+        labels.forEach(label => {
+          label.classList.remove('answer-correct', 'answer-wrong');
+        });
+        optionsContainer.classList.remove('answer-disabled');
+        
+        // Move to next question or finish exam
+        if (quizData.currentQuestionIndex < quizData.questions.length - 1) {
+          goToQuestion(quizData.currentQuestionIndex + 1);
+        } else {
+          // Last question - show completion message
+          showToast('Đã hoàn thành tất cả các câu hỏi!', 'success');
+          // Auto-submit exam after a brief pause
+          setTimeout(() => {
+            submitQuiz(false);
+          }, 1000);
+        }
+      }, 1500);
+    }
+
+    // Play sound effect
+    function playSound(type) {
+      try {
+        let audio;
+        let elementId;
+        
+        if (type === 'correct') {
+          elementId = 'correctSound';
+          audio = document.getElementById(elementId);
+        } else if (type === 'wrong') {
+          elementId = 'wrongSound';
+          audio = document.getElementById(elementId);
+        } else if (type === 'timeUpSound') {
+          elementId = 'timeUpSound';
+          audio = document.getElementById(elementId);
+        }
+        
+        console.log(`playSound called with type: ${type}, elementId: ${elementId}, audio element:`, audio);
+        
+        if (audio) {
+          audio.volume = 0.5;
+          audio.currentTime = 0; // Reset to start
+          console.log(`About to play audio, src:`, audio.src);
+          audio.play()
+            .then(() => console.log(`✅ Playing ${type} sound successfully`))
+            .catch(err => console.error(`❌ Sound play error for ${type}:`, err));
+        } else {
+          console.error(`❌ Audio element not found for type: ${type}, elementId: ${elementId}`);
+        }
+      } catch (error) {
+        console.error('❌ Sound error:', error);
+      }
     }
 
     // Go to specific question
     function goToQuestion(index) {
+      // Prevent navigation during feedback
+      if (quizData.isShowingFeedback) return;
+      
+      // Reset temporary selection when changing question
+      quizData.tempSelectedAnswer = null;
+      
       quizData.currentQuestionIndex = index;
       renderCurrentQuestion();
+      
+      // Restart per-question timer if enabled
+      if (timerPerQuestionEnabled && timePerQuestion > 0) {
+        startPerQuestionTimer();
+      }
+      
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Navigation
-    document.getElementById('prevBtn').addEventListener('click', () => {
-      if (quizData.currentQuestionIndex > 0) {
-        goToQuestion(quizData.currentQuestionIndex - 1);
-      }
-    });
-
-    document.getElementById('nextBtn').addEventListener('click', () => {
-      if (quizData.currentQuestionIndex < quizData.questions.length - 1) {
-        goToQuestion(quizData.currentQuestionIndex + 1);
-      } else {
-        // Last question, show submit modal
-        showSubmitModal();
-      }
+    // Submit answer button
+    document.getElementById('submitAnswerBtn').addEventListener('click', () => {
+      submitAnswerForCurrentQuestion();
     });
 
     // Clear answer
     document.getElementById('clearBtn').addEventListener('click', () => {
+      // Prevent clearing submitted questions
+      if (quizData.submittedQuestions.has(quizData.currentQuestionIndex)) {
+        Utils.showToast('Không thể xóa câu trả lời đã submit!', 'warning');
+        return;
+      }
+      
       const questionId = quizData.questions[quizData.currentQuestionIndex]._id || quizData.currentQuestionIndex;
       delete quizData.answers[questionId];
+      quizData.tempSelectedAnswer = null;
+      
+      // Hide submit button when clearing
+      const submitBtn = document.getElementById('submitAnswerBtn');
+      if (submitBtn) {
+        submitBtn.classList.add('hidden');
+      }
+      
       renderCurrentQuestion();
     });
 
@@ -613,6 +944,7 @@
         // Auto submit at 0
         if (quizData.timeLeft <= 0) {
           clearInterval(timerInterval);
+          if (perQuestionTimerInterval) clearInterval(perQuestionTimerInterval);
           Utils.showToast('Hết giờ! Đang tự động nộp bài...', 'warning');
           setTimeout(() => submitQuiz(true), 1000);
         }
@@ -624,6 +956,132 @@
       const seconds = quizData.timeLeft % 60;
       const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
       document.getElementById('timer').textContent = display;
+    }
+
+    // Per-question timer
+    function startPerQuestionTimer() {
+      // Clear existing interval if any
+      if (perQuestionTimerInterval) {
+        clearInterval(perQuestionTimerInterval);
+      }
+      
+      const currentIndex = quizData.currentQuestionIndex;
+      
+      // Initialize timer for this question if not exists, or restore saved time
+      if (quizData.questionTimers[currentIndex] === undefined) {
+        quizData.questionTimers[currentIndex] = timePerQuestion;
+      }
+      
+      // Set current time left from saved state
+      quizData.perQuestionTimeLeft = quizData.questionTimers[currentIndex];
+      
+      // If time already ran out for this question, don't start timer
+      if (quizData.perQuestionTimeLeft <= 0) {
+        updatePerQuestionTimerDisplay();
+        return;
+      }
+      
+      updatePerQuestionTimerDisplay();
+      
+      perQuestionTimerInterval = setInterval(() => {
+        quizData.perQuestionTimeLeft--;
+        quizData.questionTimers[currentIndex] = quizData.perQuestionTimeLeft; // Save current state
+        updatePerQuestionTimerDisplay();
+        
+        // Warning at 10 seconds
+        if (quizData.perQuestionTimeLeft === 10) {
+          const timerDisplay = document.getElementById('perQuestionTimerCard');
+          if (timerDisplay) {
+            timerDisplay.classList.add('timer-warning');
+          }
+          if (soundEffectsEnabled) {
+            playSound('timeUpSound');
+          }
+        }
+        
+        // Auto submit and move to next question when time is up
+        if (quizData.perQuestionTimeLeft <= 0) {
+          clearInterval(perQuestionTimerInterval);
+          quizData.questionTimers[currentIndex] = 0; // Mark as expired
+          Utils.showToast('Hết thời gian cho câu này!', 'warning');
+          
+          // If user has selected an answer but not submitted, auto-submit it
+          if (quizData.tempSelectedAnswer !== null && !quizData.submittedQuestions.has(currentIndex)) {
+            submitAnswerForCurrentQuestion();
+          } else {
+            // No answer selected or already submitted, just move to next
+            setTimeout(() => {
+              if (quizData.currentQuestionIndex < quizData.questions.length - 1) {
+                goToQuestion(quizData.currentQuestionIndex + 1);
+              } else {
+                showSubmitModal();
+              }
+            }, 500);
+          }
+        }
+      }, 1000);
+    }
+
+    function updatePerQuestionTimerDisplay() {
+      const minutes = Math.floor(quizData.perQuestionTimeLeft / 60);
+      const seconds = quizData.perQuestionTimeLeft % 60;
+      const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      const timerElement = document.getElementById('perQuestionTimerCard');
+      
+      if (timerElement) {
+        timerElement.textContent = display;
+        
+        // Remove warning class if time increases (question changed)
+        if (quizData.perQuestionTimeLeft > 10) {
+          timerElement.classList.remove('timer-warning');
+        }
+      }
+    }
+
+    // Background music functions
+    function initializeBackgroundMusic() {
+      backgroundMusic = document.getElementById('backgroundMusic');
+      const musicToggleBtn = document.getElementById('musicToggleBtn');
+      
+      if (musicToggleBtn) {
+        musicToggleBtn.classList.remove('hidden');
+        
+        // Start music automatically
+        backgroundMusic.volume = 0.6; // Set to 60% volume
+        backgroundMusic.play().then(() => {
+          isMusicPlaying = true;
+          musicToggleBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+          console.log('Background music started');
+        }).catch(err => {
+          console.log('Could not auto-play music (user interaction required):', err);
+          isMusicPlaying = false;
+          musicToggleBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+        });
+        
+        // Toggle music on button click
+        musicToggleBtn.addEventListener('click', toggleBackgroundMusic);
+      }
+    }
+
+    function toggleBackgroundMusic() {
+      const musicToggleBtn = document.getElementById('musicToggleBtn');
+      
+      if (isMusicPlaying) {
+        backgroundMusic.pause();
+        isMusicPlaying = false;
+        if (musicToggleBtn) {
+          musicToggleBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+        }
+      } else {
+        backgroundMusic.play().then(() => {
+          isMusicPlaying = true;
+          if (musicToggleBtn) {
+            musicToggleBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+          }
+        }).catch(err => {
+          console.error('Error playing music:', err);
+        });
+      }
     }
 
     // Auto save
@@ -641,8 +1099,9 @@
           answers: quizData.answers,
           markedQuestions: Array.from(quizData.markedQuestions),
           timeLeft: quizData.timeLeft,
-          currentQuestion: quizData.currentQuestion,
+          currentQuestion: quizData.currentQuestionIndex,
           startTime: quizData.startTime,
+          questionTimers: quizData.questionTimers, // Save per-question timers
           savedAt: Date.now()
         }));
         console.log('Progress saved to localStorage');
@@ -677,10 +1136,16 @@
     // Submit quiz
     async function submitQuiz(isAutoSubmit = false) {
       try {
+        console.log('=== SUBMITTING QUIZ ===');
+        console.log('Exam ID:', examId);
+        console.log('Answers:', quizData.answers);
+        console.log('Number of answers:', Object.keys(quizData.answers).length);
+        
         document.getElementById('loadingOverlay').classList.remove('hidden');
         
         // Calculate time spent in seconds
         const timeSpent = Math.floor((Date.now() - quizData.startTime) / 1000);
+        console.log('Time spent:', timeSpent, 'seconds');
         
         const response = await API.post('/quiz/submit', {
           examId: examId,
@@ -688,9 +1153,17 @@
           timeSpent: timeSpent
         });
         
+        console.log('Submit response:', response);
+        
         // Clear intervals
         if (timerInterval) clearInterval(timerInterval);
         if (autoSaveInterval) clearInterval(autoSaveInterval);
+        if (perQuestionTimerInterval) clearInterval(perQuestionTimerInterval);
+        
+        // Stop background music
+        if (backgroundMusic && isMusicPlaying) {
+          backgroundMusic.pause();
+        }
         
         // Remove beforeunload listener
         window.removeEventListener('beforeunload', handleBeforeUnload);
@@ -702,12 +1175,26 @@
         const resultId = data.result?._id || data.result?.id;
         
         // Redirect to results
-        window.location.href = `/pages/results.html?result=${resultId}`;
+        window.location.href = `/tracnghiemluyenthi/public/pages/results.html?result=${resultId}`;
         
       } catch (error) {
-        console.error('Error submitting quiz:', error);
+        console.error('=== ERROR SUBMITTING QUIZ ===');
+        console.error('Error object:', error);
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+        
         document.getElementById('loadingOverlay').classList.add('hidden');
-        Utils.showToast('Không thể nộp bài. Vui lòng thử lại.', 'error');
+        
+        // Show detailed error message
+        const errorMessage = error.message || 'Không thể nộp bài. Vui lòng thử lại.';
+        Utils.showToast(errorMessage, 'error');
+        
+        // If it's an auth error, redirect to login
+        if (error.message && error.message.includes('token')) {
+          setTimeout(() => {
+            window.location.href = '/tracnghiemluyenthi/public/pages/auth/login.html';
+          }, 2000);
+        }
       }
     }
 
@@ -737,6 +1224,37 @@
       content.classList.toggle('hidden');
       icon.classList.toggle('fa-chevron-down');
       icon.classList.toggle('fa-chevron-up');
+    }
+
+    // Initialize audio on first user interaction
+    function initAudio() {
+      console.log('🔊 Initializing audio elements...');
+      const correctSound = document.getElementById('correctSound');
+      const wrongSound = document.getElementById('wrongSound');
+      const bgMusic = document.getElementById('backgroundMusic');
+      
+      console.log('Audio elements:', { correctSound, wrongSound, bgMusic });
+      
+      if (correctSound) {
+        correctSound.load();
+        console.log('✅ Correct sound loaded:', correctSound.src);
+      }
+      if (wrongSound) {
+        wrongSound.load();
+        console.log('✅ Wrong sound loaded:', wrongSound.src);
+      }
+      if (bgMusic) {
+        bgMusic.load();
+        console.log('✅ Background music loaded:', bgMusic.src);
+      }
+    }
+    
+    // Call initAudio when page loads
+    document.addEventListener('DOMContentLoaded', initAudio);
+    
+    // Also call immediately in case DOMContentLoaded already fired
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      initAudio();
     }
 
     // Demo data for testing

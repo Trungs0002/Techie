@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Đăng ký - QuizMaster</title>
+  <title>Đăng ký - Techie</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/tracnghiemluyenthi/public/assets/css/main.css">
+  <link rel="stylesheet" href="/tracnghiemluyenthi/public/assets/css/components.css">
   
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -20,12 +20,12 @@
   <header class="bg-white shadow-sm">
     <nav class="container mx-auto px-4 py-4">
       <div class="flex items-center justify-between">
-        <a href="/index.html" class="flex items-center space-x-2">
+        <a href="/tracnghiemluyenthi/public/index.html" class="flex items-center space-x-2">
           <i class="fas fa-graduation-cap text-2xl text-blue-600"></i>
-          <span class="text-xl font-bold text-gray-800">QuizMaster</span>
+          <span class="text-xl font-bold text-gray-800">Techie</span>
         </a>
         
-        <a href="/index.html" class="text-gray-600 hover:text-blue-600 transition">
+        <a href="/tracnghiemluyenthi/public/index.html" class="text-gray-600 hover:text-blue-600 transition">
           <i class="fas fa-arrow-left mr-2"></i>
           Trang chủ
         </a>
@@ -210,7 +210,7 @@
           <!-- Login Link -->
           <p class="text-center text-sm text-gray-600 mt-6">
             Đã có tài khoản? 
-            <a href="/pages/auth/login.html" class="text-blue-600 font-semibold hover:text-blue-700">
+            <a href="/tracnghiemluyenthi/public/pages/auth/login.html" class="text-blue-600 font-semibold hover:text-blue-700">
               Đăng nhập ngay
             </a>
           </p>
@@ -268,22 +268,18 @@
 
           <!-- Stats -->
           <div class="card bg-gradient-to-br from-blue-600 to-indigo-600 text-white">
-            <div class="text-center">
-              <p class="text-3xl font-bold mb-2">10,000+</p>
-              <p class="text-blue-100">Học viên đang học tập</p>
-            </div>
-            <div class="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-blue-400">
+            <div class="grid grid-cols-3 gap-4 border-blue-400">
               <div class="text-center">
-                <p class="text-xl font-bold">50K+</p>
+                <p class="text-xl font-bold">100+</p>
                 <p class="text-xs text-blue-100">Câu hỏi</p>
               </div>
               <div class="text-center">
-                <p class="text-xl font-bold">20+</p>
+                <p class="text-xl font-bold">10+</p>
                 <p class="text-xs text-blue-100">Môn học</p>
               </div>
               <div class="text-center">
-                <p class="text-xl font-bold">100K+</p>
-                <p class="text-xs text-blue-100">Lượt thi</p>
+                <p class="text-xl font-bold">100+</p>
+                <p class="text-xs text-blue-100">Lượt ôn luyện</p>
               </div>
             </div>
           </div>
@@ -293,10 +289,10 @@
   </main>
 
   <!-- Scripts -->
-  <script src="/assets/js/config.js"></script>
-  <script src="/assets/js/utils.js"></script>
-  <script src="/assets/js/api.js"></script>
-  <script src="/assets/js/auth.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/config.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/utils.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/api.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/auth.js"></script>
   
   <script>
     // DOM Elements
@@ -325,7 +321,7 @@
 
     // Check if already logged in
     if (Auth.isAuthenticated()) {
-      window.location.href = '/pages/dashboard.html';
+      window.location.href = '/tracnghiemluyenthi/public/pages/dashboard.html';
     }
 
     // Toggle password visibility
@@ -482,7 +478,7 @@
 
         // Redirect to dashboard after short delay
         setTimeout(() => {
-          window.location.href = '/pages/dashboard.html';
+          window.location.href = '/tracnghiemluyenthi/public/pages/dashboard.html';
         }, 500);
 
       } catch (error) {

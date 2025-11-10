@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Đề thi - QuizMaster</title>
+  <title>Đề thi - Techie</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/tracnghiemluyenthi/public/assets/css/main.css">
+  <link rel="stylesheet" href="/tracnghiemluyenthi/public/assets/css/components.css">
   
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -22,19 +22,19 @@
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center space-x-2">
           <i class="fas fa-graduation-cap text-2xl text-blue-600"></i>
-          <span class="text-xl font-bold text-gray-800">QuizMaster</span>
+          <span class="text-xl font-bold text-gray-800">Techie</span>
         </div>
 
         <div class="hidden md:flex items-center space-x-6">
-          <a href="/pages/dashboard.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
+          <a href="/tracnghiemluyenthi/public/pages/dashboard.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
             <i class="fas fa-home"></i>
             Dashboard
           </a>
-          <a href="/pages/subjects.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
+          <a href="/tracnghiemluyenthi/public/pages/subjects.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
             <i class="fas fa-book"></i>
             Môn học
           </a>
-          <a href="/pages/history.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
+          <a href="/tracnghiemluyenthi/public/pages/history.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
             <i class="fas fa-history"></i>
             Lịch sử
           </a>
@@ -56,11 +56,11 @@
             </button>
 
             <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-              <a href="/pages/profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
+              <a href="/tracnghiemluyenthi/public/pages/profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
                 <i class="fas fa-user mr-2"></i>
                 Hồ sơ
               </a>
-              <a href="/pages/settings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
+              <a href="/tracnghiemluyenthi/public/pages/settings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
                 <i class="fas fa-cog mr-2"></i>
                 Cài đặt
               </a>
@@ -79,19 +79,19 @@
       </div>
 
       <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 py-4">
-        <a href="/pages/dashboard.html" class="block py-2 text-gray-600 hover:text-blue-600">
+        <a href="/tracnghiemluyenthi/public/pages/dashboard.html" class="block py-2 text-gray-600 hover:text-blue-600">
           <i class="fas fa-home mr-2"></i>
           Dashboard
         </a>
-        <a href="/pages/subjects.html" class="block py-2 text-gray-600 hover:text-blue-600">
+        <a href="/tracnghiemluyenthi/public/pages/subjects.html" class="block py-2 text-gray-600 hover:text-blue-600">
           <i class="fas fa-book mr-2"></i>
           Môn học
         </a>
-        <a href="/pages/exams.html" class="block py-2 text-blue-600 font-semibold">
+        <a href="/tracnghiemluyenthi/public/pages/exams.html" class="block py-2 text-blue-600 font-semibold">
           <i class="fas fa-file-alt mr-2"></i>
           Đề thi
         </a>
-        <a href="/pages/history.html" class="block py-2 text-gray-600 hover:text-blue-600">
+        <a href="/tracnghiemluyenthi/public/pages/history.html" class="block py-2 text-gray-600 hover:text-blue-600">
           <i class="fas fa-history mr-2"></i>
           Lịch sử
         </a>
@@ -103,9 +103,9 @@
   <main class="container mx-auto px-4 py-6">
     <!-- Breadcrumb -->
     <div class="flex items-center gap-2 text-sm text-gray-600 mb-6">
-      <a href="/pages/dashboard.html" class="hover:text-blue-600">Dashboard</a>
+      <a href="/tracnghiemluyenthi/public/pages/dashboard.html" class="hover:text-blue-600">Dashboard</a>
       <i class="fas fa-chevron-right text-xs"></i>
-      <a href="/pages/subjects.html" class="hover:text-blue-600">Môn học</a>
+      <a href="/tracnghiemluyenthi/public/pages/subjects.html" class="hover:text-blue-600">Môn học</a>
       <i class="fas fa-chevron-right text-xs"></i>
       <span class="text-gray-900 font-medium" id="subjectName">Đề thi</span>
     </div>
@@ -121,7 +121,7 @@
       </div>
 
       <div class="flex gap-2">
-        <button onclick="window.location.href='/pages/subjects.html'" class="btn btn-secondary">
+        <button onclick="window.location.href = '/tracnghiemluyenthi/public/pages/subjects.html'" class="btn btn-secondary">
           <i class="fas fa-arrow-left"></i>
           Quay lại
         </button>
@@ -133,16 +133,22 @@
       <div class="flex flex-col md:flex-row items-center gap-6">
         <div class="flex-shrink-0">
           <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center">
-            <i class="fas fa-plus text-4xl"></i>
+            <i class="fas fa-graduation-cap text-4xl"></i>
           </div>
         </div>
         <div class="flex-1 text-center md:text-left">
-          <h2 class="text-2xl font-bold mb-2">Tạo Quiz Mới</h2>
-          <p class="text-blue-100 mb-4">Bắt đầu làm bài quiz với câu hỏi được chọn ngẫu nhiên từ <span id="subjectNameInline" class="font-semibold">môn học</span></p>
-          <button onclick="showCreateExamModal()" class="btn bg-white text-blue-600 hover:bg-blue-50 font-semibold">
-            <i class="fas fa-rocket"></i>
-            Bắt đầu ngay
-          </button>
+          <h2 class="text-2xl font-bold mb-2">Ôn luyện & Thi thử</h2>
+          <p class="text-blue-100 mb-4">Xem ngân hàng câu hỏi để ôn tập hoặc làm bài thi thử để đánh giá năng lực</p>
+          <div class="flex flex-wrap gap-3 justify-center md:justify-start">
+            <button onclick="showQuestionBankModal()" class="btn bg-white/10 hover:bg-white/20 text-white border-2 border-white font-semibold">
+              <i class="fas fa-database"></i>
+              Xem ngân hàng câu hỏi
+            </button>
+            <button onclick="showCreateExamModal()" class="btn bg-white text-blue-600 hover:bg-blue-50 font-semibold">
+              <i class="fas fa-play-circle"></i>
+              Luyện thi ngay
+            </button>
+          </div>
         </div>
         <div class="hidden md:block">
           <div class="text-center">
@@ -205,55 +211,116 @@
     </div>
   </main>
 
-  <!-- Create Exam Modal -->
+  <!-- Create Exam Modal (Luyện thi with settings) -->
   <div id="createExamModal" class="hidden modal-overlay" onclick="closeCreateExamModal()">
-    <div class="modal-content max-w-md" onclick="event.stopPropagation()">
+    <div class="modal-content max-w-2xl" onclick="event.stopPropagation()">
       <div class="modal-header">
-        <h2 class="modal-title">Tạo đề thi mới</h2>
+        <h2 class="modal-title">
+          <i class="fas fa-play-circle text-blue-600 mr-2"></i>
+          Luyện thi ngay
+        </h2>
         <button class="modal-close" onclick="closeCreateExamModal()">
           <i class="fas fa-times"></i>
         </button>
       </div>
 
       <div class="modal-body space-y-4">
+        <!-- Number of Questions -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">
-            Số câu hỏi
+            <i class="fas fa-list-ol mr-1"></i>Số câu hỏi
           </label>
           <input 
             type="number" 
-            id="questionCount" 
+            id="practiceQuestionCount" 
             class="form-input w-full" 
-            min="5" 
-            max="50" 
-            value="10"
-            placeholder="Nhập số câu hỏi (5-50)"
+            min="1" 
+            max="100" 
+            value="5"
+            placeholder="Nhập số câu hỏi"
           >
-          <p class="text-xs text-gray-500 mt-1">Số câu hỏi sẽ được chọn ngẫu nhiên</p>
+          <p class="text-xs text-gray-500 mt-1">
+            Tối đa: <span id="maxPracticeQuestions" class="font-semibold text-blue-600">0</span> câu
+          </p>
         </div>
 
+        <!-- Overall Timer -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">
-            Thời gian làm bài (phút)
+            <i class="fas fa-hourglass-half mr-1"></i>Thời gian làm bài (phút)
           </label>
-          <select id="timeLimit" class="form-input w-full">
+          <select id="practiceTimeLimit" class="form-input w-full">
+            <option value="0">Không giới hạn</option>
+            <option value="5">5 phút</option>
+            <option value="10">10 phút</option>
             <option value="15">15 phút</option>
-            <option value="30" selected>30 phút</option>
+            <option value="20">20 phút</option>
+            <option value="30">30 phút</option>
             <option value="45">45 phút</option>
             <option value="60">60 phút</option>
-            <option value="90">90 phút</option>
-            <option value="120">120 phút</option>
           </select>
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Loại bài thi
-          </label>
-          <select id="examType" class="form-input w-full">
-            <option value="practice">Luyện tập</option>
-            <option value="test">Kiểm tra</option>
-          </select>
+        <!-- Settings Grid -->
+        <div class="bg-gray-50 rounded-lg p-4 space-y-3">
+          <h4 class="font-semibold text-gray-800 mb-3">
+            <i class="fas fa-cog mr-2"></i>Cài đặt
+          </h4>
+
+          <!-- Timer per Question -->
+          <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
+            <div class="flex items-center gap-3 flex-1">
+              <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-stopwatch text-purple-600"></i>
+              </div>
+              <div class="flex-1">
+                <p class="font-medium text-gray-900">Đếm ngược mỗi câu</p>
+                <p class="text-sm text-gray-500">Giới hạn thời gian cho từng câu hỏi</p>
+                <p class="text-xs text-purple-600 font-semibold mt-1" id="timePerQuestionInfo" style="display: none;">
+                  <i class="fas fa-info-circle mr-1"></i>
+                  <span id="timePerQuestionText"></span>
+                </p>
+              </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="timerPerQuestion" class="sr-only peer" onchange="updateTimePerQuestionInfo()">
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
+          </div>
+
+          <!-- Background Music -->
+          <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-music text-green-600"></i>
+              </div>
+              <div>
+                <p class="font-medium text-gray-900">Nhạc nền</p>
+                <p class="text-sm text-gray-500">Phát nhạc nền trong khi làm bài</p>
+              </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="backgroundMusic" class="sr-only peer">
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
+          </div>
+
+          <!-- Sound Effects -->
+          <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-volume-up text-yellow-600"></i>
+              </div>
+              <div>
+                <p class="font-medium text-gray-900">Hiệu ứng âm thanh</p>
+                <p class="text-sm text-gray-500">Âm thanh khi trả lời đúng/sai</p>
+              </div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="soundEffects" class="sr-only peer">
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
+          </div>
         </div>
 
         <div id="createError" class="hidden text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
@@ -266,17 +333,81 @@
         <button class="btn btn-secondary" onclick="closeCreateExamModal()">Hủy</button>
         <button class="btn btn-primary" onclick="createAndStartExam()" id="createExamBtn">
           <i class="fas fa-play"></i>
-          Tạo và bắt đầu
+          Bắt đầu luyện thi
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Question Bank Modal -->
+  <div id="questionBankModal" class="hidden modal-overlay" onclick="closeQuestionBankModal()">
+    <div class="modal-content max-w-4xl max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+      <div class="modal-header sticky top-0 bg-white z-10">
+        <h2 class="modal-title">
+          <i class="fas fa-database text-blue-600 mr-2"></i>
+          Ngân hàng câu hỏi - <span id="questionBankSubjectName" class="text-blue-600">...</span>
+        </h2>
+        <button class="modal-close" onclick="closeQuestionBankModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Filter Section -->
+        <div class="flex flex-wrap gap-3 mb-6 pb-4 border-b">
+          <div class="flex-1 min-w-[200px]">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              <i class="fas fa-filter mr-1"></i>Độ khó
+            </label>
+            <select id="difficultyFilter" class="form-input w-full" onchange="filterQuestions()">
+              <option value="all">Tất cả</option>
+              <option value="easy">Dễ</option>
+              <option value="medium">Trung bình</option>
+              <option value="hard">Khó</option>
+            </select>
+          </div>
+          <div class="flex-1 min-w-[200px]">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              <i class="fas fa-question-circle mr-1"></i>Loại câu hỏi
+            </label>
+            <select id="typeFilter" class="form-input w-full" onchange="filterQuestions()">
+              <option value="all">Tất cả</option>
+              <option value="multiple_choice">Trắc nghiệm</option>
+              <option value="true_false">Đúng/Sai</option>
+            </select>
+          </div>
+          <div class="flex items-end">
+            <div class="text-center px-4 py-2 bg-blue-50 rounded-lg">
+              <div class="text-xs text-gray-600">Tổng câu hỏi</div>
+              <div class="text-lg font-bold text-blue-600" id="questionBankTotal">0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Questions List -->
+        <div id="questionBankList" class="space-y-4">
+          <div class="text-center py-8">
+            <i class="fas fa-spinner fa-spin text-4xl text-blue-600 mb-3"></i>
+            <p class="text-gray-600">Đang tải câu hỏi...</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer sticky bottom-0 bg-white border-t">
+        <button class="btn btn-secondary" onclick="closeQuestionBankModal()">Đóng</button>
+        <button class="btn btn-primary" onclick="closeQuestionBankModal(); showCreateExamModal();">
+          <i class="fas fa-play"></i>
+          Bắt đầu luyện thi
         </button>
       </div>
     </div>
   </div>
 
   <!-- Scripts -->
-  <script src="/assets/js/config.js"></script>
-  <script src="/assets/js/utils.js"></script>
-  <script src="/assets/js/api.js"></script>
-  <script src="/assets/js/auth.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/config.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/utils.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/api.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/auth.js"></script>
   
   <script>
     // Require authentication
@@ -284,11 +415,10 @@
       // Will redirect to login
     }
 
-    // Get current user
+    // Get current user and update header
     const currentUser = Auth.getCurrentUser();
     if (currentUser) {
-      document.getElementById('userName').textContent = currentUser.name || 'User';
-      document.getElementById('userInitial').textContent = (currentUser.name || 'U')[0].toUpperCase();
+      Utils.updateHeaderUser();
     }
 
     // Toggle user menu
@@ -330,33 +460,59 @@
     // Load subject info and stats
     async function loadSubjectInfo() {
       try {
-        if (subjectId) {
-          const response = await API.get(`/subjects/${subjectId}`);
-          currentSubject = response.data?.subject || response.subject;
-          
-          if (currentSubject) {
-            // Update all subject name elements
-            document.getElementById('subjectName').textContent = currentSubject.name;
-            document.getElementById('subjectTitle').textContent = currentSubject.name;
-            document.getElementById('subjectNameInline').textContent = currentSubject.name;
-            document.getElementById('emptySubjectName').textContent = currentSubject.name;
-            document.getElementById('historySubjectName').textContent = currentSubject.name;
-            document.getElementById('subjectDescription').textContent = currentSubject.description || 'Tạo quiz mới hoặc xem lại quiz đã làm';
-            document.getElementById('totalQuestionsLarge').textContent = currentSubject.questionCount || 0;
-            
-            // Update page title
-            document.title = `${currentSubject.name} - QuizMaster`;
-          }
-        } else {
-          // No subject selected, redirect to subjects page
-          window.location.href = '/pages/subjects.html';
+        if (!subjectId) {
+          console.error('No subject ID provided');
+          window.location.href = '/tracnghiemluyenthi/public/pages/subjects.html';
           return;
         }
+
+        console.log('Loading subject with ID:', subjectId);
+        const response = await API.get(`/subjects/${subjectId}`);
+        console.log('Subject API response:', response);
+        
+        // Try multiple ways to get subject from response
+        currentSubject = response.data?.subject || response.subject || response.data;
+        
+        console.log('Current subject loaded:', currentSubject);
+        
+        if (!currentSubject || !currentSubject.name) {
+          console.error('Subject data invalid:', currentSubject);
+          throw new Error('Không tìm thấy thông tin môn học');
+        }
+
+        // Update all subject name elements with null checks
+        const updateElement = (id, value) => {
+          const element = document.getElementById(id);
+          if (element) {
+            element.textContent = value;
+          } else {
+            console.warn(`Element with id '${id}' not found`);
+          }
+        };
+
+        updateElement('subjectName', currentSubject.name);
+        updateElement('subjectTitle', currentSubject.name);
+        updateElement('subjectNameInline', currentSubject.name);
+        updateElement('emptySubjectName', currentSubject.name);
+        updateElement('historySubjectName', currentSubject.name);
+        updateElement('subjectDescription', currentSubject.description || 'Xem ngân hàng câu hỏi để ôn tập hoặc làm bài thi thử');
+        updateElement('totalQuestionsLarge', currentSubject.questionCount || 0);
+        
+        // Update page title
+        document.title = `${currentSubject.name} - Techie`;
 
         // Load exam history stats
         await loadExamStats();
       } catch (error) {
         console.error('Error loading subject info:', error);
+        console.error('Error details:', error.message, error.response);
+        
+        // Show more detailed error message
+        const errorMsg = error.response?.data?.message || error.message || 'Không thể tải thông tin môn học';
+        alert(`${errorMsg}\n\nVui lòng kiểm tra:\n- Server đã chạy chưa?\n- Subject ID có đúng không?`);
+        
+        // Don't redirect immediately, let user see the error
+        // window.location.href = '/tracnghiemluyenthi/public/pages/subjects.html';
       }
     }
 
@@ -364,15 +520,31 @@
     async function loadExamStats() {
       try {
         const endpoint = subjectId ? `/quiz/history?subjectId=${subjectId}` : '/quiz/history';
+        console.log('📊 Loading stats from:', endpoint);
+        
         const response = await API.get(endpoint);
+        console.log('📊 Stats response:', response);
+        console.log('📊 Stats data:', response.data);
+        console.log('📊 Stats object:', response.data?.stats);
+        
         const stats = response.data?.stats || {};
         
-        document.getElementById('totalExams').textContent = stats.totalExams || 0;
-        document.getElementById('avgScore').textContent = stats.averageScore 
+        const totalExamsEl = document.getElementById('totalExams');
+        const avgScoreEl = document.getElementById('avgScore');
+        
+        console.log('📊 Total exams:', stats.totalExams);
+        console.log('📊 Average score:', stats.averageScore);
+        
+        if (totalExamsEl) totalExamsEl.textContent = stats.totalExams || 0;
+        if (avgScoreEl) avgScoreEl.textContent = stats.averageScore 
           ? Math.round(stats.averageScore) + '%' 
           : '0%';
+          
+        console.log('✅ Stats updated successfully');
       } catch (error) {
-        console.error('Error loading stats:', error);
+        console.error('❌ Error loading stats:', error);
+        console.error('Error message:', error.message);
+        console.error('Error response:', error.response);
       }
     }
 
@@ -482,7 +654,7 @@
 
     // View quiz result
     function viewResult(resultId) {
-      window.location.href = `/pages/results.html?result=${resultId}`;
+      window.location.href = `/tracnghiemluyenthi/public/pages/results.html?result=${resultId}`;
     }
 
     // Get score color (kept for compatibility)
@@ -584,70 +756,314 @@
       document.getElementById('examModal').classList.add('hidden');
     }
 
-    // Show create exam modal
+    // Update time per question info display
+    function updateTimePerQuestionInfo() {
+      const timerPerQuestion = document.getElementById('timerPerQuestion').checked;
+      const timeLimit = parseInt(document.getElementById('practiceTimeLimit').value) || 0;
+      const questionCount = parseInt(document.getElementById('practiceQuestionCount').value) || 5;
+      const infoElement = document.getElementById('timePerQuestionInfo');
+      const textElement = document.getElementById('timePerQuestionText');
+
+      if (timerPerQuestion && timeLimit > 0) {
+        const timePerQuestion = Math.floor((timeLimit * 60) / questionCount);
+        const minutes = Math.floor(timePerQuestion / 60);
+        const seconds = timePerQuestion % 60;
+        
+        let timeText = '';
+        if (minutes > 0) {
+          timeText = `${minutes} phút ${seconds} giây`;
+        } else {
+          timeText = `${seconds} giây`;
+        }
+        
+        textElement.textContent = `${timeText} cho mỗi câu`;
+        infoElement.style.display = 'block';
+      } else if (timerPerQuestion && timeLimit === 0) {
+        textElement.textContent = 'Cần chọn thời gian làm bài';
+        infoElement.style.display = 'block';
+      } else {
+        infoElement.style.display = 'none';
+      }
+    }
+
+    // Show create exam modal (Luyện thi with settings)
     function showCreateExamModal() {
       if (!subjectId) {
         alert('Vui lòng chọn môn học trước');
-        window.location.href = '/pages/subjects.html';
+        window.location.href = '/tracnghiemluyenthi/public/pages/subjects.html';
         return;
       }
+
+      // Update max questions
+      const maxQuestionsEl = document.getElementById('maxPracticeQuestions');
+      if (maxQuestionsEl && currentSubject) {
+        maxQuestionsEl.textContent = currentSubject.questionCount || 0;
+      }
+
+      // Set max attribute for input
+      const questionCountInput = document.getElementById('practiceQuestionCount');
+      if (questionCountInput && currentSubject) {
+        questionCountInput.max = currentSubject.questionCount || 100;
+        
+        // Add event listeners to update time per question info
+        questionCountInput.addEventListener('input', updateTimePerQuestionInfo);
+        const timeLimitSelect = document.getElementById('practiceTimeLimit');
+        if (timeLimitSelect) {
+          timeLimitSelect.addEventListener('change', updateTimePerQuestionInfo);
+        }
+      }
+      
       document.getElementById('createExamModal').classList.remove('hidden');
     }
 
     function closeCreateExamModal() {
-      document.getElementById('createExamModal').classList.add('hidden');
-      document.getElementById('createError').classList.add('hidden');
+      const modal = document.getElementById('createExamModal');
+      const errorDiv = document.getElementById('createError');
+      
+      if (modal) modal.classList.add('hidden');
+      if (errorDiv) errorDiv.classList.add('hidden');
     }
 
-    // Create and start exam
+    // Create and start exam (Luyện thi with custom settings)
     async function createAndStartExam() {
       const btn = document.getElementById('createExamBtn');
       const errorDiv = document.getElementById('createError');
       const errorMsg = document.getElementById('createErrorMessage');
 
       try {
-        const questionCount = parseInt(document.getElementById('questionCount').value);
-        const timeLimit = parseInt(document.getElementById('timeLimit').value);
-        const type = document.getElementById('examType').value;
+        // Get settings from form
+        const questionCount = parseInt(document.getElementById('practiceQuestionCount').value) || 5;
+        const timeLimit = parseInt(document.getElementById('practiceTimeLimit').value) || 0;
+        const timerPerQuestion = document.getElementById('timerPerQuestion').checked;
+        const backgroundMusic = document.getElementById('backgroundMusic').checked;
+        const soundEffects = document.getElementById('soundEffects').checked;
 
-        if (!questionCount || questionCount < 5 || questionCount > 50) {
-          throw new Error('Số câu hỏi phải từ 5 đến 50');
+        // Validate question count
+        const maxQuestions = currentSubject?.questionCount || 100;
+        if (questionCount < 1 || questionCount > maxQuestions) {
+          throw new Error(`Số câu hỏi phải từ 1 đến ${maxQuestions}`);
+        }
+
+        // Validate timer per question requirement
+        if (timerPerQuestion && timeLimit === 0) {
+          throw new Error('Vui lòng chọn thời gian làm bài để bật đếm ngược mỗi câu');
+        }
+
+        // Calculate time per question (in seconds) if timer per question is enabled
+        let timePerQuestion = 0;
+        if (timerPerQuestion && timeLimit > 0) {
+          // Convert minutes to seconds and divide by number of questions
+          timePerQuestion = Math.floor((timeLimit * 60) / questionCount);
+          console.log(`Time per question: ${timePerQuestion} seconds (${Math.floor(timePerQuestion / 60)}:${timePerQuestion % 60})`);
         }
 
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang tạo...';
-        errorDiv.classList.add('hidden');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang chuẩn bị...';
+        if (errorDiv) errorDiv.classList.add('hidden');
 
-        // Call API to create exam
+        // Call API to create exam with settings
         const response = await API.post('/exams/start', {
           subjectId,
           questionCount,
           timeLimit,
-          type
+          type: 'practice',
+          settings: {
+            timerPerQuestion,
+            backgroundMusic,
+            soundEffects,
+            timePerQuestion // Add calculated time per question
+          }
         });
 
         const exam = response.data?.exam || response.exam;
         if (!exam || !exam._id) {
-          throw new Error('Không thể tạo đề thi. Vui lòng thử lại.');
+          throw new Error('Không thể tạo bài luyện thi. Vui lòng thử lại.');
         }
 
-        // Redirect to quiz page
-        window.location.href = `/pages/quiz.html?exam=${exam._id}`;
+        // Build URL with settings as query params
+        const params = new URLSearchParams({
+          exam: exam._id,
+          timerPerQuestion: timerPerQuestion ? '1' : '0',
+          backgroundMusic: backgroundMusic ? '1' : '0',
+          soundEffects: soundEffects ? '1' : '0',
+          timePerQuestion: timePerQuestion.toString() // Pass time per question to quiz page
+        });
+
+        // Redirect to quiz page with settings
+        window.location.href = `/tracnghiemluyenthi/public/pages/quiz.html?${params.toString()}`;
         
       } catch (error) {
         console.error('Error creating exam:', error);
-        errorMsg.textContent = error.message || 'Có lỗi xảy ra. Vui lòng thử lại.';
-        errorDiv.classList.remove('hidden');
+        if (errorMsg) errorMsg.textContent = error.message || 'Có lỗi xảy ra. Vui lòng thử lại.';
+        if (errorDiv) errorDiv.classList.remove('hidden');
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-play"></i> Tạo và bắt đầu';
+        btn.innerHTML = '<i class="fas fa-play"></i> Bắt đầu luyện thi';
       }
+    }
+
+    // Question Bank Modal Functions
+    let allQuestions = [];
+    let filteredQuestionBank = [];
+
+    async function showQuestionBankModal() {
+      if (!subjectId) {
+        alert('Vui lòng chọn môn học trước');
+        return;
+      }
+
+      const modal = document.getElementById('questionBankModal');
+      const subjectNameEl = document.getElementById('questionBankSubjectName');
+      
+      if (modal) modal.classList.remove('hidden');
+      if (subjectNameEl) subjectNameEl.textContent = currentSubject?.name || 'Đang tải...';
+      
+      // Load questions
+      await loadQuestionBank();
+    }
+
+    function closeQuestionBankModal() {
+      const modal = document.getElementById('questionBankModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    async function loadQuestionBank() {
+      try {
+        // Use correct API endpoint with query parameter
+        const response = await API.get(`/questions?subjectId=${subjectId}&limit=1000`);
+        allQuestions = response.data?.questions || response.questions || [];
+        
+        console.log('Loaded questions:', allQuestions.length);
+        
+        // Reset filters with null checks
+        const difficultyFilter = document.getElementById('difficultyFilter');
+        const typeFilter = document.getElementById('typeFilter');
+        
+        if (difficultyFilter) difficultyFilter.value = 'all';
+        if (typeFilter) typeFilter.value = 'all';
+        
+        filterQuestions();
+      } catch (error) {
+        console.error('Error loading question bank:', error);
+        const listEl = document.getElementById('questionBankList');
+        if (listEl) {
+          listEl.innerHTML = `
+            <div class="text-center py-8">
+              <i class="fas fa-exclamation-circle text-4xl text-red-500 mb-3"></i>
+              <p class="text-red-600">Không thể tải ngân hàng câu hỏi</p>
+              <p class="text-sm text-gray-500 mt-2">${error.message || 'Vui lòng thử lại sau'}</p>
+            </div>
+          `;
+        }
+      }
+    }
+
+    function filterQuestions() {
+      const difficultyFilter = document.getElementById('difficultyFilter');
+      const typeFilter = document.getElementById('typeFilter');
+      
+      const difficulty = difficultyFilter ? difficultyFilter.value : 'all';
+      const type = typeFilter ? typeFilter.value : 'all';
+
+      filteredQuestionBank = allQuestions.filter(q => {
+        const matchDifficulty = difficulty === 'all' || q.difficulty === difficulty;
+        const matchType = type === 'all' || q.type === type;
+        return matchDifficulty && matchType;
+      });
+
+      const totalEl = document.getElementById('questionBankTotal');
+      if (totalEl) totalEl.textContent = filteredQuestionBank.length;
+      
+      renderQuestionBank();
+    }
+
+    function renderQuestionBank() {
+      const container = document.getElementById('questionBankList');
+
+      if (filteredQuestionBank.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8">
+            <i class="fas fa-search text-4xl text-gray-300 mb-3"></i>
+            <p class="text-gray-600">Không tìm thấy câu hỏi phù hợp</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filteredQuestionBank.map((question, index) => {
+        const difficultyColors = {
+          easy: 'bg-green-100 text-green-800',
+          medium: 'bg-yellow-100 text-yellow-800',
+          hard: 'bg-red-100 text-red-800'
+        };
+        const difficultyTexts = {
+          easy: 'Dễ',
+          medium: 'Trung bình',
+          hard: 'Khó'
+        };
+        const typeTexts = {
+          multiple_choice: 'Trắc nghiệm',
+          true_false: 'Đúng/Sai'
+        };
+
+        const correctOption = question.options?.find(opt => opt.isCorrect);
+        
+        return `
+          <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-gray-700">Câu ${index + 1}</span>
+                <span class="text-xs px-2 py-1 rounded-full ${difficultyColors[question.difficulty] || 'bg-gray-100 text-gray-800'}">
+                  ${difficultyTexts[question.difficulty] || question.difficulty}
+                </span>
+                <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">
+                  ${typeTexts[question.type] || question.type}
+                </span>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <p class="text-gray-900 font-medium">${question.content}</p>
+            </div>
+
+            <div class="space-y-2 mb-3">
+              ${question.options?.map((option, optIndex) => `
+                <div class="flex items-start gap-2 p-2 rounded ${option.isCorrect ? 'bg-green-50 border border-green-200' : 'bg-gray-50'}">
+                  <span class="flex-shrink-0 w-6 h-6 rounded-full ${option.isCorrect ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'} flex items-center justify-center text-sm font-semibold">
+                    ${String.fromCharCode(65 + optIndex)}
+                  </span>
+                  <span class="text-gray-700 flex-1">${option.text}</span>
+                  ${option.isCorrect ? '<i class="fas fa-check-circle text-green-600"></i>' : ''}
+                </div>
+              `).join('') || '<p class="text-gray-500 text-sm">Không có đáp án</p>'}
+            </div>
+
+            ${question.explanation ? `
+              <div class="bg-blue-50 border border-blue-200 rounded p-3 text-sm">
+                <p class="font-semibold text-blue-800 mb-1">
+                  <i class="fas fa-lightbulb mr-1"></i>Giải thích:
+                </p>
+                <p class="text-blue-700">${question.explanation}</p>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
     }
 
     // Start quiz - redirect to quiz page
     function startQuiz(quizId) {
-      window.location.href = `/pages/quiz.html?exam=${quizId}`;
+      window.location.href = `/tracnghiemluyenthi/public/pages/quiz.html?exam=${quizId}`;
     }
 
+    // Get difficulty text based on database values
+    function getDifficultyText(difficulty) {
+      const texts = {
+        easy: 'Dễ',
+        medium: 'Trung bình',
+        hard: 'Khó'
+      };
+      return texts[difficulty] || difficulty || 'Chưa xác định';
+    }
 
     // Initialize
     loadSubjectInfo();

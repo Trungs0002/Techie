@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {
   startQuiz,
+  checkAnswer,
   submitQuiz,
   getResult,
   getHistory
@@ -13,6 +14,7 @@ router.use(protect);
 
 // Quiz routes
 router.post('/start', startQuiz);
+router.post('/check-answer', checkAnswer);
 router.post('/submit', submitQuiz);
 router.get('/results/:resultId', getResult);
 router.get('/history', getHistory);

@@ -1,4 +1,6 @@
 const Subject = require('../models/Subject');
+const User = require('../models/User');
+const ExamResult = require('../models/ExamResult');
 
 // @desc    Get all subjects
 // @route   GET /api/subjects
@@ -12,14 +14,37 @@ const getAllSubjects = async (req, res) => {
       query.isActive = isActive === 'true';
     }
 
-    const subjects = await Subject.find(query)
-      .populate('createdBy', 'username fullName')
-      .sort({ dateCreated: -1 });
+    const [subjects, totalUsers] = await Promise.all([
+      Subject.find(query)
+        .populate('createdBy', 'username fullName')
+        .sort({ dateCreated: -1 }),
+      User.countDocuments() // Count total users in database
+    ]);
+
+    // Get unique user count per subject from ExamResult
+    const subjectsWithStats = await Promise.all(
+      subjects.map(async (subject) => {
+        const subjectObj = subject.toObject();
+        
+        // Count unique users who have taken exams for this subject
+        const uniqueUsers = await ExamResult.distinct('userId', { 
+          subjectId: subject._id 
+        });
+        
+        subjectObj.studentCount = uniqueUsers.length;
+        return subjectObj;
+      })
+    );
 
     res.status(200).json({
       success: true,
-      count: subjects.length,
-      data: { subjects }
+      count: subjectsWithStats.length,
+      data: { 
+        subjects: subjectsWithStats,
+        stats: {
+          totalUsers
+        }
+      }
     });
   } catch (error) {
     console.error('Get subjects error:', error);

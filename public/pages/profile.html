@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hồ sơ của tôi - QuizMaster</title>
+  <title>Hồ sơ của tôi - Techie</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/tracnghiemluyenthi/public/assets/css/main.css">
+  <link rel="stylesheet" href="/tracnghiemluyenthi/public/assets/css/components.css">
   
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -25,19 +25,19 @@
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center space-x-2">
           <i class="fas fa-graduation-cap text-2xl text-blue-600"></i>
-          <span class="text-xl font-bold text-gray-800">QuizMaster</span>
+          <span class="text-xl font-bold text-gray-800">Techie</span>
         </div>
 
         <div class="hidden md:flex items-center space-x-6">
-          <a href="/pages/dashboard.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
+          <a href="/tracnghiemluyenthi/public/pages/dashboard.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
             <i class="fas fa-home"></i>
             Dashboard
           </a>
-          <a href="/pages/subjects.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
+          <a href="/tracnghiemluyenthi/public/pages/subjects.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
             <i class="fas fa-book"></i>
             Môn học
           </a>
-          <a href="/pages/history.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
+          <a href="/tracnghiemluyenthi/public/pages/history.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
             <i class="fas fa-history"></i>
             Lịch sử
           </a>
@@ -59,11 +59,11 @@
             </button>
 
             <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-              <a href="/pages/profile.html" class="block px-4 py-2 text-blue-600 bg-blue-50 transition">
+              <a href="/tracnghiemluyenthi/public/pages/profile.html" class="block px-4 py-2 text-blue-600 bg-blue-50 transition">
                 <i class="fas fa-user mr-2"></i>
                 Hồ sơ
               </a>
-              <a href="/pages/settings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
+              <a href="/tracnghiemluyenthi/public/pages/settings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
                 <i class="fas fa-cog mr-2"></i>
                 Cài đặt
               </a>
@@ -82,15 +82,15 @@
       </div>
 
       <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 py-4">
-        <a href="/pages/dashboard.html" class="block py-2 text-gray-600 hover:text-blue-600">
+        <a href="/tracnghiemluyenthi/public/pages/dashboard.html" class="block py-2 text-gray-600 hover:text-blue-600">
           <i class="fas fa-home mr-2"></i>
           Dashboard
         </a>
-        <a href="/pages/subjects.html" class="block py-2 text-gray-600 hover:text-blue-600">
+        <a href="/tracnghiemluyenthi/public/pages/subjects.html" class="block py-2 text-gray-600 hover:text-blue-600">
           <i class="fas fa-book mr-2"></i>
           Môn học
         </a>
-        <a href="/pages/history.html" class="block py-2 text-gray-600 hover:text-blue-600">
+        <a href="/tracnghiemluyenthi/public/pages/history.html" class="block py-2 text-gray-600 hover:text-blue-600">
           <i class="fas fa-history mr-2"></i>
           Lịch sử
         </a>
@@ -483,11 +483,34 @@
     </div>
   </main>
 
+  <!-- Avatar Selection Modal -->
+  <div id="avatarModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+      <div class="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
+        <h2 class="text-2xl font-bold text-gray-900">
+          <i class="fas fa-user-circle text-blue-600"></i>
+          Chọn Avatar
+        </h2>
+        <button onclick="closeAvatarModal()" class="text-gray-500 hover:text-gray-700 transition">
+          <i class="fas fa-times text-2xl"></i>
+        </button>
+      </div>
+      
+      <div class="p-6">
+        <p class="text-gray-600 mb-6">Chọn một trong những avatar có sẵn bên dưới:</p>
+        
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4" id="avatarGrid">
+          <!-- Avatars will be populated here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts -->
-  <script src="/assets/js/config.js"></script>
-  <script src="/assets/js/utils.js"></script>
-  <script src="/assets/js/api.js"></script>
-  <script src="/assets/js/auth.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/config.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/utils.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/api.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/auth.js"></script>
   
   <script>
     // Require authentication
@@ -528,20 +551,30 @@
 
     // Display profile
     function displayProfile() {
-      // Header
-      document.getElementById('userName').textContent = currentUser.name;
-      document.getElementById('userInitial').textContent = currentUser.name[0].toUpperCase();
+      // Use fullName or username as fallback
+      const displayName = currentUser.fullName || currentUser.username || 'User';
+      const displayInitial = displayName[0].toUpperCase();
+      
+      // Update header user info (avatar and name)
+      Utils.updateHeaderUser();
 
       // Profile card
-      document.getElementById('profileName').textContent = currentUser.name;
+      document.getElementById('profileName').textContent = displayName;
       document.getElementById('profileEmail').textContent = currentUser.email;
-      document.getElementById('avatarDisplay').textContent = currentUser.name[0].toUpperCase();
       
-      const memberSince = new Date(currentUser.createdAt || Date.now());
+      // Display avatar or initial in profile card
+      const avatarDisplay = document.getElementById('avatarDisplay');
+      if (currentUser.avatar && currentUser.avatar !== '/assets/images/avatars/default.png') {
+        avatarDisplay.innerHTML = `<img src="${currentUser.avatar}" alt="Avatar" class="w-full h-full rounded-full object-cover" onerror="this.parentElement.innerHTML='${displayInitial}'">`;
+      } else {
+        avatarDisplay.textContent = displayInitial;
+      }
+      
+      const memberSince = new Date(currentUser.dateCreated || currentUser.createdAt || Date.now());
       document.getElementById('memberSince').textContent = Utils.formatDate(memberSince, 'DD/MM/YYYY');
 
       // Form fields
-      document.getElementById('inputName').value = currentUser.name || '';
+      document.getElementById('inputName').value = currentUser.fullName || '';
       document.getElementById('inputEmail').value = currentUser.email || '';
       document.getElementById('inputPhone').value = currentUser.phone || '';
       document.getElementById('inputBirthday').value = currentUser.birthday || '';
@@ -691,7 +724,7 @@
       e.preventDefault();
 
       const formData = {
-        name: document.getElementById('inputName').value.trim(),
+        fullName: document.getElementById('inputName').value.trim(),
         phone: document.getElementById('inputPhone').value.trim(),
         birthday: document.getElementById('inputBirthday').value,
         gender: document.getElementById('inputGender').value,
@@ -702,7 +735,7 @@
       try {
         Utils.showLoading('Đang lưu...');
         
-        const response = await API.put('/users/profile', formData);
+        const response = await API.put('/auth/profile', formData);
         
         currentUser = { ...currentUser, ...formData };
         originalData = { ...currentUser };
@@ -800,16 +833,96 @@
       }
     }
 
+    // Available avatars
+    const availableAvatars = [
+      '/tracnghiemluyenthi/public/assets/images/avatars/avatar1.svg',
+      '/tracnghiemluyenthi/public/assets/images/avatars/avatar2.svg',
+      '/tracnghiemluyenthi/public/assets/images/avatars/avatar3.svg',
+      '/tracnghiemluyenthi/public/assets/images/avatars/avatar4.svg',
+      '/tracnghiemluyenthi/public/assets/images/avatars/avatar5.svg',
+      '/tracnghiemluyenthi/public/assets/images/avatars/avatar6.svg',
+      '/tracnghiemluyenthi/public/assets/images/avatars/avatar7.svg',
+      '/tracnghiemluyenthi/public/assets/images/avatars/avatar8.svg',
+      '/tracnghiemluyenthi/public/assets/images/avatars/avatar9.svg',
+      '/tracnghiemluyenthi/public/assets/images/avatars/avatar10.svg'
+    ];
+
     // Change avatar
     function changeAvatar() {
-      document.getElementById('avatarInput').click();
+      // Populate avatar grid
+      const avatarGrid = document.getElementById('avatarGrid');
+      avatarGrid.innerHTML = availableAvatars.map((avatar, index) => `
+        <div 
+          class="avatar-option relative cursor-pointer group transition-transform hover:scale-105" 
+          onclick="selectAvatar('${avatar}')"
+        >
+          <div class="aspect-square rounded-xl overflow-hidden border-4 ${currentUser.avatar === avatar ? 'border-blue-600' : 'border-gray-200'} group-hover:border-blue-400 transition">
+            <img 
+              src="${avatar}" 
+              alt="Avatar ${index + 1}"
+              class="w-full h-full object-cover"
+              onerror="this.parentElement.innerHTML='<div class=\\'w-full h-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-2xl font-bold\\'>${index + 1}</div>'"
+            >
+          </div>
+          ${currentUser.avatar === avatar ? '<div class="absolute top-2 right-2 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-lg"><i class="fas fa-check"></i></div>' : ''}
+        </div>
+      `).join('');
       
-      document.getElementById('avatarInput').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          Utils.showToast('Tính năng upload avatar đang phát triển', 'info');
-        }
-      });
+      // Show modal
+      document.getElementById('avatarModal').classList.remove('hidden');
+    }
+
+    // Close avatar modal
+    function closeAvatarModal() {
+      document.getElementById('avatarModal').classList.add('hidden');
+    }
+
+    // Select avatar
+    async function selectAvatar(avatarPath) {
+      try {
+        Utils.showLoading('Đang cập nhật avatar...');
+        
+        const response = await API.put('/auth/profile', { avatar: avatarPath });
+        
+        // Update current user
+        currentUser.avatar = avatarPath;
+        Auth.setUser(currentUser);
+        
+        // Update all displays immediately
+        displayProfile(); // Updates profile card + header
+        
+        // Update avatar selection in modal (highlight selected)
+        const avatarGrid = document.getElementById('avatarGrid');
+        avatarGrid.innerHTML = availableAvatars.map((avatar, index) => `
+          <div 
+            class="avatar-option relative cursor-pointer group transition-transform hover:scale-105" 
+            onclick="selectAvatar('${avatar}')"
+          >
+            <div class="aspect-square rounded-xl overflow-hidden border-4 ${avatar === avatarPath ? 'border-blue-600' : 'border-gray-200'} group-hover:border-blue-400 transition">
+              <img 
+                src="${avatar}" 
+                alt="Avatar ${index + 1}"
+                class="w-full h-full object-cover"
+                onerror="this.parentElement.innerHTML='<div class=\\'w-full h-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-2xl font-bold\\'>${index + 1}</div>'"
+              >
+            </div>
+            ${avatar === avatarPath ? '<div class="absolute top-2 right-2 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-lg"><i class="fas fa-check"></i></div>' : ''}
+          </div>
+        `).join('');
+        
+        Utils.hideLoading();
+        Utils.showToast('Cập nhật avatar thành công!', 'success');
+        
+        // Close modal after short delay to show the update
+        setTimeout(() => {
+          closeAvatarModal();
+        }, 500);
+        
+      } catch (error) {
+        console.error('Error updating avatar:', error);
+        Utils.hideLoading();
+        Utils.showToast(error.message || 'Cập nhật avatar thất bại', 'error');
+      }
     }
 
     // Toggle 2FA

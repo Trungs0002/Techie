@@ -94,9 +94,9 @@ examResultSchema.statics.getBestScore = async function(userId, subjectId) {
 
 // Method to get user's average score
 examResultSchema.statics.getAverageScore = async function(userId, subjectId = null) {
-  const match = { userId };
+  const match = { userId: new mongoose.Types.ObjectId(userId.toString()) };
   if (subjectId) {
-    match.subjectId = subjectId;
+    match.subjectId = new mongoose.Types.ObjectId(subjectId.toString());
   }
   
   const result = await this.aggregate([
@@ -104,7 +104,7 @@ examResultSchema.statics.getAverageScore = async function(userId, subjectId = nu
     {
       $group: {
         _id: null,
-        avgScore: { $avg: '$percentage' },
+        avgScore: { $avg: '$score' }, // Use score instead of percentage (score is now percentage)
         totalExams: { $sum: 1 }
       }
     }

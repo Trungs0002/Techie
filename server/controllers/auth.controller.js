@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const ExamResult = require('../models/ExamResult');
 const { generateToken } = require('../utils/jwt');
 
 // @desc    Register new user
@@ -123,10 +124,30 @@ const login = async (req, res) => {
 const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select('-password');
+    
+    // Get user stats from ExamResult
+    const stats = await ExamResult.getAverageScore(req.user._id);
+    
+    // Get highest score
+    const highestScoreResult = await ExamResult.findOne({ userId: req.user._id })
+      .sort({ score: -1 })
+      .limit(1);
+    
+    // Add stats to user object
+    const userWithStats = {
+      ...user.toObject(),
+      stats: {
+        totalExams: stats.totalExams || 0,
+        avgScore: Math.round(stats.avgScore || 0),
+        highestScore: highestScoreResult ? Math.round(highestScoreResult.score) : 0,
+        rank: '-', // TODO: Calculate rank
+        streak: 0  // TODO: Calculate streak
+      }
+    };
 
     res.status(200).json({
       success: true,
-      data: { user }
+      data: { user: userWithStats }
     });
   } catch (error) {
     console.error('Get me error:', error);
@@ -142,12 +163,17 @@ const getMe = async (req, res) => {
 // @access  Private
 const updateProfile = async (req, res) => {
   try {
-    const { fullName, avatar } = req.body;
+    const { fullName, avatar, phone, birthday, gender, address, bio } = req.body;
 
     const user = await User.findById(req.user._id);
 
-    if (fullName) user.fullName = fullName;
-    if (avatar) user.avatar = avatar;
+    if (fullName !== undefined) user.fullName = fullName;
+    if (avatar !== undefined) user.avatar = avatar;
+    if (phone !== undefined) user.phone = phone;
+    if (birthday !== undefined) user.birthday = birthday;
+    if (gender !== undefined) user.gender = gender;
+    if (address !== undefined) user.address = address;
+    if (bio !== undefined) user.bio = bio;
 
     await user.save();
 

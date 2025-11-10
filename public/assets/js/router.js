@@ -1,17 +1,17 @@
 // Simple Client-Side Router
 const Router = {
   routes: {
-    '/': '/index.html',
-    '/login': '/pages/auth/login.html',
-    '/register': '/pages/auth/register.html',
-    '/dashboard': '/pages/dashboard.html',
-    '/subjects': '/pages/subjects.html',
-    '/exams': '/pages/exams.html',
-    '/quiz': '/pages/quiz.html',
-    '/results': '/pages/results.html',
-    '/history': '/pages/history.html',
-    '/profile': '/pages/profile.html',
-    '/settings': '/pages/settings.html'
+    '/': '/tracnghiemluyenthi/public/index.html',
+    '/login': '/tracnghiemluyenthi/public/pages/auth/login.html',
+    '/register': '/tracnghiemluyenthi/public/pages/auth/register.html',
+    '/dashboard': '/tracnghiemluyenthi/public/pages/dashboard.html',
+    '/subjects': '/tracnghiemluyenthi/public/pages/subjects.html',
+    '/exams': '/tracnghiemluyenthi/public/pages/exams.html',
+    '/quiz': '/tracnghiemluyenthi/public/pages/quiz.html',
+    '/results': '/tracnghiemluyenthi/public/pages/results.html',
+    '/history': '/tracnghiemluyenthi/public/pages/history.html',
+    '/profile': '/tracnghiemluyenthi/public/pages/profile.html',
+    '/settings': '/tracnghiemluyenthi/public/pages/settings.html'
   },
   
   protectedRoutes: [

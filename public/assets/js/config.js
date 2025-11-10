@@ -10,17 +10,17 @@ const CONFIG = {
   },
   
   ROUTES: {
-    HOME: '/',
-    LOGIN: '/pages/auth/login.html',
-    REGISTER: '/pages/auth/register.html',
-    DASHBOARD: '/pages/dashboard.html',
-    SUBJECTS: '/pages/subjects.html',
-    EXAMS: '/pages/exams.html',
-    QUIZ: '/pages/quiz.html',
-    RESULTS: '/pages/results.html',
-    HISTORY: '/pages/history.html',
-    PROFILE: '/pages/profile.html',
-    SETTINGS: '/pages/settings.html'
+    HOME: '/tracnghiemluyenthi/public/index.html',
+    LOGIN: '/tracnghiemluyenthi/public/pages/auth/login.html',
+    REGISTER: '/tracnghiemluyenthi/public/pages/auth/register.html',
+    DASHBOARD: '/tracnghiemluyenthi/public/pages/dashboard.html',
+    SUBJECTS: '/tracnghiemluyenthi/public/pages/subjects.html',
+    EXAMS: '/tracnghiemluyenthi/public/pages/exams.html',
+    QUIZ: '/tracnghiemluyenthi/public/pages/quiz.html',
+    RESULTS: '/tracnghiemluyenthi/public/pages/results.html',
+    HISTORY: '/tracnghiemluyenthi/public/pages/history.html',
+    PROFILE: '/tracnghiemluyenthi/public/pages/profile.html',
+    SETTINGS: '/tracnghiemluyenthi/public/pages/settings.html'
   },
   
   QUIZ_SETTINGS: {

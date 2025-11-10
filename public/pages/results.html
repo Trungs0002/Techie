@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kết quả thi - QuizMaster</title>
+  <title>Kết quả thi - Techie</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="stylesheet" href="/assets/css/components.css">
+  <link rel="stylesheet" href="/tracnghiemluyenthi/public/assets/css/main.css">
+  <link rel="stylesheet" href="/tracnghiemluyenthi/public/assets/css/components.css">
   
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -40,15 +40,15 @@
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center space-x-2">
           <i class="fas fa-graduation-cap text-2xl text-blue-600"></i>
-          <span class="text-xl font-bold text-gray-800">QuizMaster</span>
+          <span class="text-xl font-bold text-gray-800">Techie</span>
         </div>
 
         <div class="flex items-center gap-3">
-          <a href="/pages/dashboard.html" class="btn btn-secondary btn-sm">
+          <a href="/tracnghiemluyenthi/public/pages/dashboard.html" class="btn btn-secondary btn-sm">
             <i class="fas fa-home"></i>
             Dashboard
           </a>
-          <a href="/pages/history.html" class="btn btn-outline btn-sm">
+          <a href="/tracnghiemluyenthi/public/pages/history.html" class="btn btn-outline btn-sm">
             <i class="fas fa-history"></i>
             Lịch sử
           </a>
@@ -150,7 +150,24 @@
               <div class="progress mb-2">
                 <div class="progress-bar" id="timeProgressBar" style="width: 0%"></div>
               </div>
-              <p class="text-xs text-gray-500 text-center">Tốc độ làm bài</p>
+              <p class="text-xs text-gray-500 text-center">Sử dụng thời gian (<span id="timePercentageText">0</span>%)</p>
+            </div>
+
+            <!-- Recommendations inside Time Analysis -->
+            <div class="pt-4 mt-4 border-t border-gray-200">
+              <div class="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-4">
+                <div class="flex items-start gap-3">
+                  <div class="flex-shrink-0 w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-lightbulb text-white text-lg"></i>
+                  </div>
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-purple-900 mb-2 text-sm">Gợi ý cải thiện</h4>
+                    <div id="recommendations" class="text-xs text-purple-800 space-y-1">
+                      <!-- Will be populated by JavaScript -->
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -158,8 +175,15 @@
 
       <!-- Comparison -->
       <div class="card bg-white mb-6">
-        <h3 class="font-semibold text-gray-900 mb-4">So sánh với các lần thi trước</h3>
-        <canvas id="comparisonChart" height="100"></canvas>
+        <h3 class="font-semibold text-gray-900 mb-4">So sánh với các lần trước</h3>
+        <div id="comparisonContainer">
+          <canvas id="comparisonChart" height="100"></canvas>
+        </div>
+        <div id="noComparisonMessage" class="hidden text-center py-8 text-gray-500">
+          <i class="fas fa-chart-line text-4xl mb-3 opacity-50"></i>
+          <p>Chưa có lần trước để so sánh</p>
+          <p class="text-sm mt-1">Làm lại bài này để xem tiến độ cải thiện</p>
+        </div>
       </div>
 
       <!-- Answer Review (Collapsible) -->
@@ -191,29 +215,14 @@
           </div>
         </div>
       </div>
-
-      <!-- Recommendations -->
-      <div class="card bg-gradient-to-r from-purple-100 to-pink-100 border border-purple-200">
-        <div class="flex items-start gap-4">
-          <div class="flex-shrink-0 w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
-            <i class="fas fa-lightbulb text-white text-xl"></i>
-          </div>
-          <div class="flex-1">
-            <h3 class="font-semibold text-purple-900 mb-2">Gợi ý cải thiện</h3>
-            <div id="recommendations" class="text-sm text-purple-800 space-y-1">
-              <!-- Will be populated by JavaScript -->
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </main>
 
   <!-- Scripts -->
-  <script src="/assets/js/config.js"></script>
-  <script src="/assets/js/utils.js"></script>
-  <script src="/assets/js/api.js"></script>
-  <script src="/assets/js/auth.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/config.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/utils.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/api.js"></script>
+  <script src="/tracnghiemluyenthi/public/assets/js/auth.js"></script>
   
   <script>
     // Require authentication
@@ -226,12 +235,56 @@
     const resultId = urlParams.get('result');
 
     if (!resultId) {
-      Utils.showToast('Không tìm thấy kết quả bài thi', 'error');
-      setTimeout(() => window.location.href = '/pages/dashboard.html', 2000);
+      Utils.showToast('Không tìm thấy kết quả bài', 'error');
+      setTimeout(() => window.location.href = '/tracnghiemluyenthi/public/pages/dashboard.html', 2000);
     }
 
     let resultData = null;
     let reviewFilter = 'all';
+
+    // Load previous attempts for comparison
+    async function loadPreviousAttempts() {
+      try {
+        // Get exam ID from current result
+        const examId = resultData.examId?._id || resultData.examId;
+        
+        if (!examId) {
+          console.log('No exam ID found for comparison');
+          resultData.previousAttempts = [];
+          return;
+        }
+
+        console.log('Loading previous attempts for exam:', examId);
+        
+        // Get all history for this user
+        const historyResponse = await API.get('/quiz/history');
+        const historyData = historyResponse.data || historyResponse;
+        
+        console.log('History data:', historyData);
+        
+        // Filter to get previous attempts of the same exam (excluding current one)
+        const allAttempts = historyData.results || [];
+        const previousAttempts = allAttempts
+          .filter(attempt => {
+            const attemptExamId = attempt.examId?._id || attempt.examId;
+            const currentResultId = resultData._id;
+            return attemptExamId === examId && attempt._id !== currentResultId;
+          })
+          .sort((a, b) => new Date(a.dateCompleted) - new Date(b.dateCompleted)) // Sort by date, oldest first
+          .map(attempt => ({
+            percentage: attempt.percentage,
+            date: attempt.dateCompleted,
+            score: attempt.score
+          }));
+
+        console.log('Previous attempts found:', previousAttempts.length);
+        resultData.previousAttempts = previousAttempts;
+        
+      } catch (error) {
+        console.error('Error loading previous attempts:', error);
+        resultData.previousAttempts = [];
+      }
+    }
 
     // Load result
     async function loadResult() {
@@ -243,6 +296,7 @@
         const data = response.data || response;
         
         console.log('Result data from API:', data);
+        console.log('data.result.timeSpent:', data.result?.timeSpent);
         
         // Backend returns: {result: {...}, details: [...]}
         resultData = {
@@ -253,7 +307,11 @@
         };
 
         console.log('Processed resultData:', resultData);
+        console.log('resultData.timeSpent:', resultData.timeSpent);
         console.log('Details count:', resultData.details.length);
+
+        // Load previous attempts for comparison chart
+        await loadPreviousAttempts();
 
         displayResult();
         renderCharts();
@@ -271,7 +329,7 @@
         Utils.hideLoading();
         Utils.showToast('Không thể tải kết quả. Chuyển về trang lịch sử...', 'error');
         setTimeout(() => {
-          window.location.href = '/pages/history.html';
+          window.location.href = '/tracnghiemluyenthi/public/pages/history.html';
         }, 2000);
       }
     }
@@ -280,27 +338,35 @@
     function displayResult() {
       const { score, totalQuestions, correctAnswers, incorrectAnswers, timeSpent, percentage, exam, subject } = resultData;
 
+      console.log('=== DISPLAY RESULT ===');
+      console.log('timeSpent:', timeSpent);
+      console.log('exam:', exam);
+      console.log('exam.timeLimit:', exam?.timeLimit);
+      console.log('exam.duration:', exam?.duration);
+
       // Update exam title
       const examTitle = exam?.type === 'practice' ? 'Bài luyện tập' : 'Bài kiểm tra';
       const subjectName = subject?.name || exam?.subject?.name || 'Môn học';
       document.getElementById('examTitle').textContent = `${examTitle} - ${subjectName}`;
 
-      // Use backend percentage or calculate
-      const finalPercentage = percentage || Math.round((correctAnswers / totalQuestions) * 100);
+      // Use backend percentage (score is now percentage)
+      const finalPercentage = score || percentage || Math.round((correctAnswers / totalQuestions) * 100);
       const grade = Utils.getGrade(finalPercentage);
 
       // Update displays
-      document.getElementById('scoreDisplay').textContent = `${score || correctAnswers}/${totalQuestions}`;
+      document.getElementById('scoreDisplay').textContent = `${correctAnswers}/${totalQuestions}`;
       document.getElementById('gradeDisplay').textContent = grade.grade;
       document.getElementById('gradeDisplay').className = `text-lg ${grade.color}`;
-      document.getElementById('percentageDisplay').textContent = `${finalPercentage}%`;
+      document.getElementById('percentageDisplay').textContent = `${Math.round(finalPercentage)}%`;
 
       document.getElementById('correctCount').textContent = correctAnswers;
       document.getElementById('wrongCount').textContent = incorrectAnswers;
       
-      const minutes = Math.floor(timeSpent / 60);
-      const seconds = timeSpent % 60;
-      document.getElementById('timeUsed').textContent = `${minutes}m ${seconds}s`;
+      // Handle timeSpent (could be 0 or undefined)
+      const validTimeSpent = timeSpent || 0;
+      const minutes = Math.floor(validTimeSpent / 60);
+      const seconds = validTimeSpent % 60;
+      document.getElementById('timeUsed').textContent = validTimeSpent > 0 ? `${minutes}m ${seconds}s` : 'N/A';
 
       // Result title and icon based on score
       const resultIcon = document.getElementById('resultIcon');
@@ -321,17 +387,47 @@
       }
 
       // Time stats
-      const duration = exam?.timeLimit || exam?.duration || 30;
-      const usedMinutes = Math.floor(timeSpent / 60);
-      const remainingMinutes = Math.max(0, duration - usedMinutes);
-      const avgTimePerQuestion = Math.round(timeSpent / totalQuestions);
-      const timePercentage = Math.min(100, Math.round((usedMinutes / duration) * 100));
+      const validTimeSpentForStats = timeSpent || 0;
+      const durationInMinutes = exam?.timeLimit || exam?.duration || 30;
+      const durationInSeconds = durationInMinutes * 60; // Convert to seconds
+      
+      // Used time
+      const usedMinutes = Math.floor(validTimeSpentForStats / 60);
+      const usedSeconds = validTimeSpentForStats % 60;
+      
+      // Remaining time
+      const remainingTimeInSeconds = Math.max(0, durationInSeconds - validTimeSpentForStats);
+      const remainingMinutes = Math.floor(remainingTimeInSeconds / 60);
+      const remainingSeconds = remainingTimeInSeconds % 60;
+      
+      // Average time per question
+      const avgTimePerQuestion = totalQuestions > 0 ? Math.round(validTimeSpentForStats / totalQuestions) : 0;
+      
+      // Time percentage
+      const timePercentage = durationInSeconds > 0 ? Math.min(100, Math.round((validTimeSpentForStats / durationInSeconds) * 100)) : 0;
 
-      document.getElementById('totalTime').textContent = `${duration} phút`;
-      document.getElementById('usedTime').textContent = `${usedMinutes} phút`;
-      document.getElementById('remainingTime').textContent = `${remainingMinutes} phút`;
+      console.log('=== TIME STATS ===');
+      console.log('validTimeSpentForStats:', validTimeSpentForStats);
+      console.log('durationInMinutes:', durationInMinutes);
+      console.log('durationInSeconds:', durationInSeconds);
+      console.log('usedMinutes:', usedMinutes, 'usedSeconds:', usedSeconds);
+      console.log('remainingMinutes:', remainingMinutes, 'remainingSeconds:', remainingSeconds);
+      console.log('avgTimePerQuestion:', avgTimePerQuestion);
+      console.log('timePercentage:', timePercentage);
+
+      // Format time as MM:SS
+      const formatTime = (minutes, seconds) => {
+        const mm = String(minutes).padStart(2, '0');
+        const ss = String(seconds).padStart(2, '0');
+        return `${mm}:${ss}`;
+      };
+
+      document.getElementById('totalTime').textContent = formatTime(durationInMinutes, 0);
+      document.getElementById('usedTime').textContent = formatTime(usedMinutes, usedSeconds);
+      document.getElementById('remainingTime').textContent = formatTime(remainingMinutes, remainingSeconds);
       document.getElementById('avgTimePerQuestion').textContent = `${avgTimePerQuestion}s`;
       document.getElementById('timeProgressBar').style.width = `${timePercentage}%`;
+      document.getElementById('timePercentageText').textContent = timePercentage;
     }
 
     // Render charts
@@ -359,21 +455,49 @@
       });
 
       // Comparison chart (line)
-      const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
       const attempts = resultData.previousAttempts || [];
       const currentPercentage = Math.round((resultData.correctAnswers / resultData.totalQuestions) * 100);
       
+      console.log('=== COMPARISON CHART ===');
+      console.log('Previous attempts:', attempts);
+      console.log('Current percentage:', currentPercentage);
+      
+      // Check if there are previous attempts
+      if (attempts.length === 0) {
+        // Show message, hide chart
+        document.getElementById('comparisonContainer').classList.add('hidden');
+        document.getElementById('noComparisonMessage').classList.remove('hidden');
+        return;
+      }
+      
+      // Show chart, hide message
+      document.getElementById('comparisonContainer').classList.remove('hidden');
+      document.getElementById('noComparisonMessage').classList.add('hidden');
+      
+      // Create labels and data
+      const labels = [...attempts.map((_, i) => `Lần ${i + 1}`), 'Lần này'];
+      const data = [...attempts.map(a => Math.round(a.percentage)), currentPercentage];
+      
+      console.log('Chart labels:', labels);
+      console.log('Chart data:', data);
+      
+      const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
       new Chart(comparisonCtx, {
         type: 'line',
         data: {
-          labels: [...attempts.map((_, i) => `Lần ${i + 1}`), 'Lần này'],
+          labels: labels,
           datasets: [{
             label: 'Điểm số (%)',
-            data: [...attempts.map(a => a.percentage), currentPercentage],
+            data: data,
             borderColor: '#3B82F6',
             backgroundColor: 'rgba(59, 130, 246, 0.1)',
             tension: 0.4,
-            fill: true
+            fill: true,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            pointBackgroundColor: '#3B82F6',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2
           }]
         },
         options: {
@@ -382,12 +506,24 @@
           scales: {
             y: {
               beginAtZero: true,
-              max: 100
+              max: 100,
+              ticks: {
+                callback: function(value) {
+                  return value + '%';
+                }
+              }
             }
           },
           plugins: {
             legend: {
               display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return 'Điểm: ' + context.parsed.y + '%';
+                }
+              }
             }
           }
         }
@@ -416,7 +552,7 @@
       } else {
         recommendations = [
           '• Cần ôn tập kỹ lưỡng kiến thức cơ bản.',
-          '• Làm lại đề thi này sau khi đã học kỹ.',
+          '• Làm lại đề này sau khi đã học kỹ.',
           '• Tham khảo tài liệu và bài giảng liên quan.',
           '• Không nên nản chí, hãy cố gắng hơn!'
         ];
@@ -585,19 +721,36 @@
 
     // Retake exam
     function retakeExam() {
-      if (confirm('Bạn có chắc muốn làm lại bài thi này?')) {
-        window.location.href = `/pages/quiz.html?exam=${resultData.exam._id}`;
+      console.log('=== RETAKE EXAM ===');
+      console.log('resultData:', resultData);
+      console.log('resultData.exam:', resultData.exam);
+      console.log('resultData.examId:', resultData.examId);
+      
+      // Try to get exam ID from multiple possible locations
+      const examId = resultData.exam?._id || resultData.exam?.id || resultData.examId?._id || resultData.examId;
+      
+      console.log('Exam ID:', examId);
+      
+      if (!examId) {
+        alert('Không tìm thấy ID bài. Vui lòng thử lại.');
+        return;
+      }
+      
+      if (confirm('Bạn có chắc muốn làm lại bài này?')) {
+        const url = `/tracnghiemluyenthi/public/pages/quiz.html?exam=${examId}`;
+        console.log('Redirecting to:', url);
+        window.location.href = url;
       }
     }
 
     // Share result
     function shareResult() {
       const percentage = Math.round((resultData.correctAnswers / resultData.totalQuestions) * 100);
-      const text = `Tôi vừa đạt ${percentage}% trong bài thi "${resultData.exam?.title}" trên QuizMaster! 🎉`;
+      const text = `Tôi vừa đạt ${percentage}% trong bài"${resultData.exam?.title}" trên Techie! 🎉`;
       
       if (navigator.share) {
         navigator.share({
-          title: 'Kết quả thi - QuizMaster',
+          title: 'Kết quả thi - Techie',
           text: text
         });
       } else {
