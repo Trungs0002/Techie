@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kết quả thi - QuizMaster</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  
+  <style>
+    @keyframes confetti {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      z-index: 9999;
+      animation: confetti 3s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- Navigation -->
+  <nav class="bg-white shadow-sm">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-graduation-cap text-2xl text-blue-600"></i>
+          <span class="text-xl font-bold text-gray-800">QuizMaster</span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <a href="/pages/dashboard.html" class="btn btn-secondary btn-sm">
+            <i class="fas fa-home"></i>
+            Dashboard
+          </a>
+          <a href="/pages/history.html" class="btn btn-outline btn-sm">
+            <i class="fas fa-history"></i>
+            Lịch sử
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-6">
+    <!-- Score Card -->
+    <div class="max-w-4xl mx-auto">
+      <!-- Result Header -->
+      <div class="card bg-gradient-to-br from-blue-600 to-indigo-600 text-white mb-6 text-center animate-fade-in">
+        <div class="mb-4">
+          <div class="inline-flex items-center justify-center w-20 h-20 bg-white bg-opacity-20 rounded-full mb-4">
+            <i class="fas fa-trophy text-4xl" id="resultIcon"></i>
+          </div>
+          <h1 class="text-3xl font-bold mb-2" id="resultTitle">Hoàn thành bài thi!</h1>
+          <p class="text-blue-100" id="examTitle">Đang tải...</p>
+        </div>
+
+        <!-- Score Display -->
+        <div class="bg-white bg-opacity-10 rounded-xl p-6 backdrop-blur-sm">
+          <p class="text-sm opacity-90 mb-2">Điểm số của bạn</p>
+          <div class="text-6xl font-bold mb-2" id="scoreDisplay">0</div>
+          <div class="flex items-center justify-center gap-2">
+            <span class="text-lg" id="gradeDisplay">-</span>
+            <span class="text-blue-100">•</span>
+            <span class="text-lg" id="percentageDisplay">0%</span>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-3 gap-4 mt-6">
+          <div class="bg-white bg-opacity-10 rounded-lg p-3 backdrop-blur-sm">
+            <i class="fas fa-check-circle text-2xl mb-2"></i>
+            <p class="text-2xl font-bold" id="correctCount">0</p>
+            <p class="text-sm opacity-90">Đúng</p>
+          </div>
+          <div class="bg-white bg-opacity-10 rounded-lg p-3 backdrop-blur-sm">
+            <i class="fas fa-times-circle text-2xl mb-2"></i>
+            <p class="text-2xl font-bold" id="wrongCount">0</p>
+            <p class="text-sm opacity-90">Sai</p>
+          </div>
+          <div class="bg-white bg-opacity-10 rounded-lg p-3 backdrop-blur-sm">
+            <i class="fas fa-clock text-2xl mb-2"></i>
+            <p class="text-2xl font-bold" id="timeUsed">0m</p>
+            <p class="text-sm opacity-90">Thời gian</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex flex-wrap gap-3 mb-6">
+        <button onclick="toggleReview()" class="btn btn-primary flex-1">
+          <i class="fas fa-list-alt"></i>
+          Xem đáp án chi tiết
+        </button>
+        <button onclick="retakeExam()" class="btn btn-secondary flex-1">
+          <i class="fas fa-redo"></i>
+          Làm lại
+        </button>
+        <button onclick="shareResult()" class="btn btn-outline">
+          <i class="fas fa-share-alt"></i>
+          Chia sẻ
+        </button>
+      </div>
+
+      <!-- Detailed Stats -->
+      <div class="grid md:grid-cols-2 gap-6 mb-6">
+        <!-- Performance Chart -->
+        <div class="card bg-white">
+          <h3 class="font-semibold text-gray-900 mb-4">Phân tích kết quả</h3>
+          <canvas id="performanceChart" height="200"></canvas>
+        </div>
+
+        <!-- Time Analysis -->
+        <div class="card bg-white">
+          <h3 class="font-semibold text-gray-900 mb-4">Thống kê thời gian</h3>
+          <div class="space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">Thời gian cho phép:</span>
+              <span class="font-semibold" id="totalTime">0 phút</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">Thời gian đã dùng:</span>
+              <span class="font-semibold text-blue-600" id="usedTime">0 phút</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">Thời gian còn lại:</span>
+              <span class="font-semibold text-green-600" id="remainingTime">0 phút</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">TB mỗi câu:</span>
+              <span class="font-semibold" id="avgTimePerQuestion">0s</span>
+            </div>
+            <div class="pt-3 border-t border-gray-200">
+              <div class="progress mb-2">
+                <div class="progress-bar" id="timeProgressBar" style="width: 0%"></div>
+              </div>
+              <p class="text-xs text-gray-500 text-center">Tốc độ làm bài</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparison -->
+      <div class="card bg-white mb-6">
+        <h3 class="font-semibold text-gray-900 mb-4">So sánh với các lần thi trước</h3>
+        <canvas id="comparisonChart" height="100"></canvas>
+      </div>
+
+      <!-- Answer Review (Collapsible) -->
+      <div id="reviewSection" class="hidden">
+        <div class="card bg-white mb-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+            <h3 class="font-semibold text-gray-900 text-lg">
+              <i class="fas fa-list-check text-blue-600 mr-2"></i>
+              Chi tiết từng câu hỏi
+            </h3>
+            <div class="flex gap-2">
+              <button onclick="filterReview('all')" class="filter-btn px-4 py-2 rounded-lg font-medium transition-all bg-blue-500 text-white" id="filterAll">
+                <i class="fas fa-list mr-1"></i>
+                Tất cả
+              </button>
+              <button onclick="filterReview('correct')" class="filter-btn px-4 py-2 rounded-lg font-medium transition-all bg-white text-green-600 border-2 border-green-500 hover:bg-green-50" id="filterCorrect">
+                <i class="fas fa-check mr-1"></i>
+                Đúng
+              </button>
+              <button onclick="filterReview('wrong')" class="filter-btn px-4 py-2 rounded-lg font-medium transition-all bg-white text-red-600 border-2 border-red-500 hover:bg-red-50" id="filterWrong">
+                <i class="fas fa-times mr-1"></i>
+                Sai
+              </button>
+            </div>
+          </div>
+
+          <div id="reviewContent" class="space-y-3">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Recommendations -->
+      <div class="card bg-gradient-to-r from-purple-100 to-pink-100 border border-purple-200">
+        <div class="flex items-start gap-4">
+          <div class="flex-shrink-0 w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
+            <i class="fas fa-lightbulb text-white text-xl"></i>
+          </div>
+          <div class="flex-1">
+            <h3 class="font-semibold text-purple-900 mb-2">Gợi ý cải thiện</h3>
+            <div id="recommendations" class="text-sm text-purple-800 space-y-1">
+              <!-- Will be populated by JavaScript -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="/assets/js/config.js"></script>
+  <script src="/assets/js/utils.js"></script>
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  
+  <script>
+    // Require authentication
+    if (!Auth.requireAuth()) {
+      // Will redirect to login
+    }
+
+    // Get result ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const resultId = urlParams.get('result');
+
+    if (!resultId) {
+      Utils.showToast('Không tìm thấy kết quả bài thi', 'error');
+      setTimeout(() => window.location.href = '/pages/dashboard.html', 2000);
+    }
+
+    let resultData = null;
+    let reviewFilter = 'all';
+
+    // Load result
+    async function loadResult() {
+      try {
+        Utils.showLoading('Đang tải kết quả...');
+
+        console.log('Loading result ID:', resultId);
+        const response = await API.get(`/quiz/results/${resultId}`);
+        const data = response.data || response;
+        
+        console.log('Result data from API:', data);
+        
+        // Backend returns: {result: {...}, details: [...]}
+        resultData = {
+          ...data.result,
+          details: data.details || [],
+          exam: data.result.exam,
+          subject: data.result.subject
+        };
+
+        console.log('Processed resultData:', resultData);
+        console.log('Details count:', resultData.details.length);
+
+        displayResult();
+        renderCharts();
+        renderRecommendations();
+
+        Utils.hideLoading();
+
+        // Show confetti for high scores
+        if (resultData.score >= 80) {
+          showConfetti();
+        }
+
+      } catch (error) {
+        console.error('Error loading result:', error);
+        Utils.hideLoading();
+        Utils.showToast('Không thể tải kết quả. Chuyển về trang lịch sử...', 'error');
+        setTimeout(() => {
+          window.location.href = '/pages/history.html';
+        }, 2000);
+      }
+    }
+
+    // Display result
+    function displayResult() {
+      const { score, totalQuestions, correctAnswers, incorrectAnswers, timeSpent, percentage, exam, subject } = resultData;
+
+      // Update exam title
+      const examTitle = exam?.type === 'practice' ? 'Bài luyện tập' : 'Bài kiểm tra';
+      const subjectName = subject?.name || exam?.subject?.name || 'Môn học';
+      document.getElementById('examTitle').textContent = `${examTitle} - ${subjectName}`;
+
+      // Use backend percentage or calculate
+      const finalPercentage = percentage || Math.round((correctAnswers / totalQuestions) * 100);
+      const grade = Utils.getGrade(finalPercentage);
+
+      // Update displays
+      document.getElementById('scoreDisplay').textContent = `${score || correctAnswers}/${totalQuestions}`;
+      document.getElementById('gradeDisplay').textContent = grade.grade;
+      document.getElementById('gradeDisplay').className = `text-lg ${grade.color}`;
+      document.getElementById('percentageDisplay').textContent = `${finalPercentage}%`;
+
+      document.getElementById('correctCount').textContent = correctAnswers;
+      document.getElementById('wrongCount').textContent = incorrectAnswers;
+      
+      const minutes = Math.floor(timeSpent / 60);
+      const seconds = timeSpent % 60;
+      document.getElementById('timeUsed').textContent = `${minutes}m ${seconds}s`;
+
+      // Result title and icon based on score
+      const resultIcon = document.getElementById('resultIcon');
+      const resultTitle = document.getElementById('resultTitle');
+      
+      if (finalPercentage >= 80) {
+        resultIcon.className = 'fas fa-trophy text-4xl text-yellow-300';
+        resultTitle.textContent = 'Xuất sắc! 🎉';
+      } else if (finalPercentage >= 60) {
+        resultIcon.className = 'fas fa-star text-4xl';
+        resultTitle.textContent = 'Tốt lắm! 👍';
+      } else if (finalPercentage >= 40) {
+        resultIcon.className = 'fas fa-smile text-4xl';
+        resultTitle.textContent = 'Cố gắng hơn nữa! 💪';
+      } else {
+        resultIcon.className = 'fas fa-frown text-4xl';
+        resultTitle.textContent = 'Cần ôn tập thêm! 📚';
+      }
+
+      // Time stats
+      const duration = exam?.timeLimit || exam?.duration || 30;
+      const usedMinutes = Math.floor(timeSpent / 60);
+      const remainingMinutes = Math.max(0, duration - usedMinutes);
+      const avgTimePerQuestion = Math.round(timeSpent / totalQuestions);
+      const timePercentage = Math.min(100, Math.round((usedMinutes / duration) * 100));
+
+      document.getElementById('totalTime').textContent = `${duration} phút`;
+      document.getElementById('usedTime').textContent = `${usedMinutes} phút`;
+      document.getElementById('remainingTime').textContent = `${remainingMinutes} phút`;
+      document.getElementById('avgTimePerQuestion').textContent = `${avgTimePerQuestion}s`;
+      document.getElementById('timeProgressBar').style.width = `${timePercentage}%`;
+    }
+
+    // Render charts
+    function renderCharts() {
+      // Performance chart (pie)
+      const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+      new Chart(performanceCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Đúng', 'Sai'],
+          datasets: [{
+            data: [resultData.correctAnswers, resultData.incorrectAnswers],
+            backgroundColor: ['#10B981', '#EF4444']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+
+      // Comparison chart (line)
+      const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+      const attempts = resultData.previousAttempts || [];
+      const currentPercentage = Math.round((resultData.correctAnswers / resultData.totalQuestions) * 100);
+      
+      new Chart(comparisonCtx, {
+        type: 'line',
+        data: {
+          labels: [...attempts.map((_, i) => `Lần ${i + 1}`), 'Lần này'],
+          datasets: [{
+            label: 'Điểm số (%)',
+            data: [...attempts.map(a => a.percentage), currentPercentage],
+            borderColor: '#3B82F6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    }
+
+    // Render recommendations
+    function renderRecommendations() {
+      const percentage = Math.round((resultData.correctAnswers / resultData.totalQuestions) * 100);
+      const container = document.getElementById('recommendations');
+      
+      let recommendations = [];
+      
+      if (percentage >= 80) {
+        recommendations = [
+          '✓ Bạn đã làm rất tốt! Hãy thử các đề thi khó hơn.',
+          '✓ Duy trì phong độ bằng cách luyện tập đều đặn.',
+          '✓ Chia sẻ kinh nghiệm với bạn bè để cùng tiến bộ.'
+        ];
+      } else if (percentage >= 60) {
+        recommendations = [
+          '• Ôn tập lại các câu hỏi đã sai để củng cố kiến thức.',
+          '• Làm thêm các bài tập tương tự để nắm vững.',
+          '• Phân tích lỗi sai để tránh lặp lại.'
+        ];
+      } else {
+        recommendations = [
+          '• Cần ôn tập kỹ lưỡng kiến thức cơ bản.',
+          '• Làm lại đề thi này sau khi đã học kỹ.',
+          '• Tham khảo tài liệu và bài giảng liên quan.',
+          '• Không nên nản chí, hãy cố gắng hơn!'
+        ];
+      }
+      
+      container.innerHTML = recommendations.map(r => `<p>${r}</p>`).join('');
+    }
+
+    // Toggle review section
+    function toggleReview() {
+      const section = document.getElementById('reviewSection');
+      
+      if (section.classList.contains('hidden')) {
+        section.classList.remove('hidden');
+        renderReview();
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        section.classList.add('hidden');
+      }
+    }
+
+    // Render review
+    function renderReview() {
+      const container = document.getElementById('reviewContent');
+      const details = resultData.details || [];
+
+      const filteredDetails = details.filter(detail => {
+        if (reviewFilter === 'correct') return detail.isCorrect;
+        if (reviewFilter === 'wrong') return !detail.isCorrect;
+        return true;
+      });
+
+      if (filteredDetails.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-gray-500">
+            <i class="fas fa-inbox text-4xl mb-3"></i>
+            <p>Không có câu hỏi nào</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filteredDetails.map((detail, index) => {
+        const isCorrect = detail.isCorrect;
+        const options = detail.options || [];
+        const userAnswer = detail.userAnswer || 'Không trả lời';
+        const correctAnswer = detail.correctAnswer || '';
+
+        // Debug logging
+        console.log(`Question ${index + 1}:`, {
+          isCorrect,
+          userAnswer,
+          correctAnswer,
+          options
+        });
+
+        return `
+          <div class="border-2 rounded-lg p-4 mb-3 ${isCorrect ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}">
+            <div class="flex items-center justify-between mb-3">
+              <h4 class="font-semibold text-gray-900 text-lg">
+                <i class="fas fa-${isCorrect ? 'check-circle text-green-600' : 'times-circle text-red-600'} mr-2"></i>
+                Câu ${index + 1}
+              </h4>
+              <span class="px-3 py-1 rounded-full text-sm font-semibold flex items-center justify-center ${isCorrect ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}">
+                ${isCorrect ? '✓ Đúng' : '✗ Sai'}
+              </span>
+            </div>
+
+            <div class="mb-4 p-3 bg-white rounded-lg border border-gray-200">
+              <p class="text-gray-900 font-medium">${detail.content}</p>
+            </div>
+
+            <div class="space-y-2">
+              ${options.map((opt, i) => {
+                const optText = typeof opt === 'string' ? opt : opt.text || opt;
+                const optTextClean = (optText || '').toString().trim();
+                const userAnswerClean = (userAnswer || '').toString().trim();
+                const correctAnswerClean = (correctAnswer || '').toString().trim();
+                
+                const isUserAnswer = optTextClean === userAnswerClean;
+                const isCorrectAnswer = optTextClean === correctAnswerClean;
+                
+                // Debug each option comparison
+                if (i === 0) {
+                  console.log('Comparing for question:', detail.content.substring(0, 50));
+                  console.log('User Answer (clean):', userAnswerClean);
+                  console.log('Correct Answer (clean):', correctAnswerClean);
+                }
+                console.log(`  Option ${i}: "${optTextClean}" | isUser: ${isUserAnswer}, isCorrect: ${isCorrectAnswer}`);
+                
+                let className = 'p-3 rounded-lg border-2 transition-all ';
+                let icon = '';
+                let label = '';
+                
+                if (isCorrectAnswer && isUserAnswer) {
+                  // User chọn đúng
+                  className += 'border-green-500 bg-green-100';
+                  icon = '<i class="fas fa-check-circle text-green-600 text-xl"></i>';
+                } else if (isCorrectAnswer) {
+                  // Đáp án đúng nhưng user không chọn
+                  className += 'border-green-500 bg-green-50';
+                  icon = '<i class="fas fa-check-circle text-green-600 text-xl"></i>';
+                } else if (isUserAnswer) {
+                  // User chọn sai
+                  className += 'border-red-500 bg-red-100';
+                  icon = '<i class="fas fa-times-circle text-red-600 text-xl"></i>';
+                } else {
+                  // Các đáp án khác
+                  className += 'border-gray-300 bg-gray-50 opacity-60';
+                }
+
+                return `
+                  <div class="${className}">
+                    <div class="flex items-start gap-3">
+                      <div class="flex-shrink-0 mt-1">${icon}</div>
+                      <div class="flex-1">
+                        <span class="font-semibold text-gray-700 mr-2">${String.fromCharCode(65 + i)}.</span>
+                        <span class="text-gray-900">${optText}</span>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+
+
+            ${detail.explanation ? `
+              <div class="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p class="text-sm font-semibold text-blue-900 mb-1">
+                  <i class="fas fa-lightbulb"></i> Giải thích:
+                </p>
+                <p class="text-sm text-blue-800">${detail.explanation}</p>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Filter review
+    function filterReview(filter) {
+      reviewFilter = filter;
+      
+      // Update button styles
+      const allBtn = document.getElementById('filterAll');
+      const correctBtn = document.getElementById('filterCorrect');
+      const wrongBtn = document.getElementById('filterWrong');
+      
+      // Reset all buttons
+      allBtn.className = 'filter-btn px-4 py-2 rounded-lg font-medium transition-all bg-white text-blue-600 border-2 border-blue-500 hover:bg-blue-50';
+      correctBtn.className = 'filter-btn px-4 py-2 rounded-lg font-medium transition-all bg-white text-green-600 border-2 border-green-500 hover:bg-green-50';
+      wrongBtn.className = 'filter-btn px-4 py-2 rounded-lg font-medium transition-all bg-white text-red-600 border-2 border-red-500 hover:bg-red-50';
+      
+      // Set active button
+      if (filter === 'all') {
+        allBtn.className = 'filter-btn px-4 py-2 rounded-lg font-medium transition-all bg-blue-500 text-white border-2 border-blue-500';
+      } else if (filter === 'correct') {
+        correctBtn.className = 'filter-btn px-4 py-2 rounded-lg font-medium transition-all bg-green-500 text-white border-2 border-green-500';
+      } else if (filter === 'wrong') {
+        wrongBtn.className = 'filter-btn px-4 py-2 rounded-lg font-medium transition-all bg-red-500 text-white border-2 border-red-500';
+      }
+      
+      renderReview();
+    }
+
+    // Retake exam
+    function retakeExam() {
+      if (confirm('Bạn có chắc muốn làm lại bài thi này?')) {
+        window.location.href = `/pages/quiz.html?exam=${resultData.exam._id}`;
+      }
+    }
+
+    // Share result
+    function shareResult() {
+      const percentage = Math.round((resultData.correctAnswers / resultData.totalQuestions) * 100);
+      const text = `Tôi vừa đạt ${percentage}% trong bài thi "${resultData.exam?.title}" trên QuizMaster! 🎉`;
+      
+      if (navigator.share) {
+        navigator.share({
+          title: 'Kết quả thi - QuizMaster',
+          text: text
+        });
+      } else {
+        Utils.copyToClipboard(text);
+      }
+    }
+
+    // Show confetti animation
+    function showConfetti() {
+      const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F'];
+      
+      for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+          const confetti = document.createElement('div');
+          confetti.className = 'confetti';
+          confetti.style.left = Math.random() * 100 + '%';
+          confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.animationDelay = Math.random() * 0.5 + 's';
+          document.body.appendChild(confetti);
+          
+          setTimeout(() => confetti.remove(), 3000);
+        }, i * 50);
+      }
+    }
+
+    // Initialize
+    loadResult();
+  </script>
+</body>
+</html>

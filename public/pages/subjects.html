@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Môn học - QuizMaster</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+  <!-- Navigation -->
+  <nav class="bg-white shadow-sm sticky top-0 z-40">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-graduation-cap text-2xl text-blue-600"></i>
+          <span class="text-xl font-bold text-gray-800">QuizMaster</span>
+        </div>
+
+        <div class="hidden md:flex items-center space-x-6">
+          <a href="/pages/dashboard.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
+            <i class="fas fa-home"></i>
+            Dashboard
+          </a>
+          <a href="/pages/subjects.html" class="text-blue-600 font-semibold flex items-center gap-2">
+            <i class="fas fa-book"></i>
+            Môn học
+          </a>
+          <a href="/pages/history.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
+            <i class="fas fa-history"></i>
+            Lịch sử
+          </a>
+        </div>
+
+        <div class="flex items-center space-x-4">
+          <button class="relative text-gray-600 hover:text-blue-600 transition">
+            <i class="fas fa-bell text-xl"></i>
+            <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+          </button>
+
+          <div class="relative">
+            <button id="userMenuBtn" class="flex items-center space-x-2 hover:bg-gray-100 rounded-lg px-3 py-2 transition">
+              <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                <span id="userInitial">U</span>
+              </div>
+              <span class="hidden md:block text-gray-700 font-medium" id="userName">User</span>
+              <i class="fas fa-chevron-down text-gray-500 text-sm"></i>
+            </button>
+
+            <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+              <a href="/pages/profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
+                <i class="fas fa-user mr-2"></i>
+                Hồ sơ
+              </a>
+              <a href="/pages/settings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
+                <i class="fas fa-cog mr-2"></i>
+                Cài đặt
+              </a>
+              <hr class="my-2">
+              <button id="logoutBtn" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                Đăng xuất
+              </button>
+            </div>
+          </div>
+
+          <button id="mobileMenuBtn" class="md:hidden text-gray-600">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 py-4">
+        <a href="/pages/dashboard.html" class="block py-2 text-gray-600 hover:text-blue-600">
+          <i class="fas fa-home mr-2"></i>
+          Dashboard
+        </a>
+        <a href="/pages/subjects.html" class="block py-2 text-blue-600 font-semibold">
+          <i class="fas fa-book mr-2"></i>
+          Môn học
+        </a>
+        <a href="/pages/history.html" class="block py-2 text-gray-600 hover:text-blue-600">
+          <i class="fas fa-history mr-2"></i>
+          Lịch sử
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-6">
+    <!-- Header -->
+    <div class="mb-6">
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+        <i class="fas fa-book text-blue-600"></i>
+        Chọn môn học
+      </h1>
+      <p class="text-gray-600">Khám phá và luyện tập với hơn 20+ môn học đa dạng</p>
+    </div>
+
+    <!-- Search & Filter -->
+    <div class="card bg-white mb-6">
+      <div class="flex flex-col md:flex-row gap-4">
+        <!-- Search -->
+        <div class="flex-1 relative">
+          <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input 
+            type="text" 
+            id="searchInput"
+            placeholder="Tìm kiếm môn học..." 
+            class="form-input pl-10 w-full"
+          >
+        </div>
+
+        <!-- Filter by Level -->
+        <select id="levelFilter" class="form-input md:w-48">
+          <option value="">Tất cả cấp độ</option>
+          <option value="beginner">Cơ bản</option>
+          <option value="intermediate">Trung bình</option>
+          <option value="advanced">Nâng cao</option>
+        </select>
+
+        <!-- Sort -->
+        <select id="sortBy" class="form-input md:w-48">
+          <option value="popular">Phổ biến nhất</option>
+          <option value="name">Tên A-Z</option>
+          <option value="exams">Số đề thi</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div class="card bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+        <div class="flex items-center gap-3">
+          <i class="fas fa-book text-2xl"></i>
+          <div>
+            <p class="text-sm opacity-90">Tổng môn học</p>
+            <p class="text-2xl font-bold" id="totalSubjects">0</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-gradient-to-br from-green-500 to-green-600 text-white">
+        <div class="flex items-center gap-3">
+          <i class="fas fa-file-alt text-2xl"></i>
+          <div>
+            <p class="text-sm opacity-90">Tổng đề thi</p>
+            <p class="text-2xl font-bold" id="totalExams">0</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+        <div class="flex items-center gap-3">
+          <i class="fas fa-question-circle text-2xl"></i>
+          <div>
+            <p class="text-sm opacity-90">Tổng câu hỏi</p>
+            <p class="text-2xl font-bold" id="totalQuestions">0</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-gradient-to-br from-orange-500 to-orange-600 text-white">
+        <div class="flex items-center gap-3">
+          <i class="fas fa-users text-2xl"></i>
+          <div>
+            <p class="text-sm opacity-90">Học viên</p>
+            <p class="text-2xl font-bold" id="totalUsers">0</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subjects Grid -->
+    <div id="subjectsGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Loading skeletons -->
+      <div class="card bg-white animate-pulse">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-12 h-12 bg-gray-300 rounded-lg"></div>
+          <div class="flex-1">
+            <div class="h-5 bg-gray-300 rounded w-3/4 mb-2"></div>
+            <div class="h-4 bg-gray-300 rounded w-1/2"></div>
+          </div>
+        </div>
+        <div class="h-3 bg-gray-300 rounded w-full mb-2"></div>
+        <div class="h-3 bg-gray-300 rounded w-5/6 mb-4"></div>
+        <div class="h-10 bg-gray-300 rounded"></div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-12">
+      <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+      <h3 class="text-xl font-semibold text-gray-700 mb-2">Không tìm thấy môn học</h3>
+      <p class="text-gray-500">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="/assets/js/config.js"></script>
+  <script src="/assets/js/utils.js"></script>
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  
+  <script>
+    // Require authentication
+    if (!Auth.requireAuth()) {
+      // Will redirect to login
+    }
+
+    // Get current user
+    const currentUser = Auth.getCurrentUser();
+    if (currentUser) {
+      document.getElementById('userName').textContent = currentUser.name || 'User';
+      document.getElementById('userInitial').textContent = (currentUser.name || 'U')[0].toUpperCase();
+    }
+
+    // Toggle user menu
+    const userMenuBtn = document.getElementById('userMenuBtn');
+    const userMenu = document.getElementById('userMenu');
+    
+    userMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      userMenu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', () => {
+      userMenu.classList.add('hidden');
+    });
+
+    // Toggle mobile menu
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      if (confirm('Bạn có chắc muốn đăng xuất?')) {
+        Auth.logout();
+      }
+    });
+
+    // State
+    let allSubjects = [];
+    let filteredSubjects = [];
+
+    // Load subjects
+    async function loadSubjects() {
+      try {
+        const response = await API.get('/subjects');
+        // Backend response: {success: true, data: {subjects}, count}
+        allSubjects = response.data?.subjects || response.subjects || [];
+        filteredSubjects = [...allSubjects];
+
+        // Update stats
+        document.getElementById('totalSubjects').textContent = allSubjects.length;
+        
+        // Calculate total questions from subjects
+        const totalQuestions = allSubjects.reduce((sum, s) => sum + (s.questionCount || 0), 0);
+        document.getElementById('totalQuestions').textContent = totalQuestions;
+        
+        // For now, use placeholder for exams and users
+        document.getElementById('totalExams').textContent = '-';
+        document.getElementById('totalUsers').textContent = '-';
+
+        renderSubjects();
+      } catch (error) {
+        console.error('Error loading subjects:', error);
+        Utils.showToast('Không thể tải danh sách môn học. Vui lòng thử lại.', 'error');
+        
+        // Show error state
+        document.getElementById('subjectsGrid').innerHTML = `
+          <div class="col-span-full text-center py-12">
+            <i class="fas fa-exclamation-triangle text-6xl text-red-400 mb-4"></i>
+            <p class="text-gray-600 text-lg mb-4">Không thể tải dữ liệu</p>
+            <button onclick="loadSubjects()" class="btn btn-primary">
+              <i class="fas fa-redo mr-2"></i> Thử lại
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    // Render subjects
+    function renderSubjects() {
+      const container = document.getElementById('subjectsGrid');
+      const emptyState = document.getElementById('emptyState');
+
+      if (filteredSubjects.length === 0) {
+        container.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      container.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+
+      container.innerHTML = filteredSubjects.map(subject => `
+        <div class="card bg-white hover:shadow-large transition-all duration-300 cursor-pointer" onclick="selectSubject('${subject._id}')">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="w-12 h-12 ${getSubjectColor(subject.category)} rounded-lg flex items-center justify-center flex-shrink-0">
+              <i class="fas ${getSubjectIcon(subject.category)} text-white text-xl"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-lg font-semibold text-gray-900 mb-1 truncate">${subject.name}</h3>
+              <div class="flex items-center gap-2 text-sm text-gray-600">
+                <span class="badge badge-${getLevelBadge(subject.level)}">${getLevelText(subject.level)}</span>
+                <span>•</span>
+                <span>${subject.totalExams || 0} đề thi</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-sm text-gray-600 mb-4 line-clamp-2">${subject.description || 'Không có mô tả'}</p>
+
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-4 text-sm text-gray-500">
+              <div class="flex items-center gap-1">
+                <i class="fas fa-question-circle"></i>
+                <span>${subject.totalQuestions || 0} câu</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <i class="fas fa-users"></i>
+                <span>${subject.totalStudents || 0}</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-1 text-yellow-500">
+              <i class="fas fa-star"></i>
+              <span class="text-sm font-semibold text-gray-700">${subject.rating || 0}</span>
+            </div>
+          </div>
+
+          <button class="btn btn-primary w-full" onclick="event.stopPropagation(); selectSubject('${subject._id}')">
+            <i class="fas fa-play"></i>
+            Bắt đầu học
+          </button>
+        </div>
+      `).join('');
+    }
+
+    // Select subject
+    function selectSubject(subjectId) {
+      window.location.href = `/pages/exams.html?subject=${subjectId}`;
+    }
+
+    // Search
+    document.getElementById('searchInput').addEventListener('input', Utils.debounce((e) => {
+      const query = e.target.value.toLowerCase().trim();
+      applyFilters(query);
+    }, 300));
+
+    // Filter by level
+    document.getElementById('levelFilter').addEventListener('change', (e) => {
+      applyFilters(document.getElementById('searchInput').value.toLowerCase().trim());
+    });
+
+    // Sort
+    document.getElementById('sortBy').addEventListener('change', (e) => {
+      const sortBy = e.target.value;
+      
+      switch(sortBy) {
+        case 'name':
+          filteredSubjects.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        case 'exams':
+          filteredSubjects.sort((a, b) => (b.totalExams || 0) - (a.totalExams || 0));
+          break;
+        case 'popular':
+        default:
+          filteredSubjects.sort((a, b) => (b.totalStudents || 0) - (a.totalStudents || 0));
+          break;
+      }
+      
+      renderSubjects();
+    });
+
+    // Apply filters
+    function applyFilters(searchQuery) {
+      const level = document.getElementById('levelFilter').value;
+      
+      filteredSubjects = allSubjects.filter(subject => {
+        const matchesSearch = !searchQuery || 
+          subject.name.toLowerCase().includes(searchQuery) ||
+          (subject.description || '').toLowerCase().includes(searchQuery);
+        
+        const matchesLevel = !level || subject.level === level;
+        
+        return matchesSearch && matchesLevel;
+      });
+      
+      renderSubjects();
+    }
+
+    // Helper functions
+    function getSubjectIcon(category) {
+      const icons = {
+        math: 'fa-calculator',
+        science: 'fa-flask',
+        language: 'fa-language',
+        history: 'fa-landmark',
+        literature: 'fa-book-open',
+        english: 'fa-globe',
+        physics: 'fa-atom',
+        chemistry: 'fa-vial',
+        biology: 'fa-dna',
+        geography: 'fa-map-marked-alt',
+        it: 'fa-laptop-code'
+      };
+      return icons[category] || 'fa-book';
+    }
+
+    function getSubjectColor(category) {
+      const colors = {
+        math: 'bg-blue-500',
+        science: 'bg-green-500',
+        language: 'bg-purple-500',
+        history: 'bg-orange-500',
+        literature: 'bg-pink-500',
+        english: 'bg-indigo-500',
+        physics: 'bg-cyan-500',
+        chemistry: 'bg-teal-500',
+        biology: 'bg-lime-500',
+        geography: 'bg-amber-500',
+        it: 'bg-violet-500'
+      };
+      return colors[category] || 'bg-gray-500';
+    }
+
+    function getLevelBadge(level) {
+      const badges = {
+        beginner: 'success',
+        intermediate: 'primary',
+        advanced: 'danger'
+      };
+      return badges[level] || 'primary';
+    }
+
+    function getLevelText(level) {
+      const texts = {
+        beginner: 'Cơ bản',
+        intermediate: 'Trung bình',
+        advanced: 'Nâng cao'
+      };
+      return texts[level] || level;
+    }
+
+    // Initialize
+    loadSubjects();
+  </script>
+</body>
+</html>

@@ -64,7 +64,17 @@ const examResultSchema = new mongoose.Schema({
       correct: { type: Number, default: 0 },
       total: { type: Number, default: 0 }
     }
-  }
+  },
+  // Store detailed answers for review
+  detailedResults: [{
+    questionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Question' },
+    content: String,
+    userAnswer: String,
+    correctAnswer: String,
+    isCorrect: Boolean,
+    difficulty: String,
+    explanation: String
+  }]
 }, {
   timestamps: true,
   collection: 'exam_results'

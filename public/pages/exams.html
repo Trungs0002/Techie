@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đề thi - QuizMaster</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+  <!-- Navigation -->
+  <nav class="bg-white shadow-sm sticky top-0 z-40">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-graduation-cap text-2xl text-blue-600"></i>
+          <span class="text-xl font-bold text-gray-800">QuizMaster</span>
+        </div>
+
+        <div class="hidden md:flex items-center space-x-6">
+          <a href="/pages/dashboard.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
+            <i class="fas fa-home"></i>
+            Dashboard
+          </a>
+          <a href="/pages/subjects.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
+            <i class="fas fa-book"></i>
+            Môn học
+          </a>
+          <a href="/pages/history.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
+            <i class="fas fa-history"></i>
+            Lịch sử
+          </a>
+        </div>
+
+        <div class="flex items-center space-x-4">
+          <button class="relative text-gray-600 hover:text-blue-600 transition">
+            <i class="fas fa-bell text-xl"></i>
+            <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+          </button>
+
+          <div class="relative">
+            <button id="userMenuBtn" class="flex items-center space-x-2 hover:bg-gray-100 rounded-lg px-3 py-2 transition">
+              <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                <span id="userInitial">U</span>
+              </div>
+              <span class="hidden md:block text-gray-700 font-medium" id="userName">User</span>
+              <i class="fas fa-chevron-down text-gray-500 text-sm"></i>
+            </button>
+
+            <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+              <a href="/pages/profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
+                <i class="fas fa-user mr-2"></i>
+                Hồ sơ
+              </a>
+              <a href="/pages/settings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
+                <i class="fas fa-cog mr-2"></i>
+                Cài đặt
+              </a>
+              <hr class="my-2">
+              <button id="logoutBtn" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                Đăng xuất
+              </button>
+            </div>
+          </div>
+
+          <button id="mobileMenuBtn" class="md:hidden text-gray-600">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 py-4">
+        <a href="/pages/dashboard.html" class="block py-2 text-gray-600 hover:text-blue-600">
+          <i class="fas fa-home mr-2"></i>
+          Dashboard
+        </a>
+        <a href="/pages/subjects.html" class="block py-2 text-gray-600 hover:text-blue-600">
+          <i class="fas fa-book mr-2"></i>
+          Môn học
+        </a>
+        <a href="/pages/exams.html" class="block py-2 text-blue-600 font-semibold">
+          <i class="fas fa-file-alt mr-2"></i>
+          Đề thi
+        </a>
+        <a href="/pages/history.html" class="block py-2 text-gray-600 hover:text-blue-600">
+          <i class="fas fa-history mr-2"></i>
+          Lịch sử
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-6">
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2 text-sm text-gray-600 mb-6">
+      <a href="/pages/dashboard.html" class="hover:text-blue-600">Dashboard</a>
+      <i class="fas fa-chevron-right text-xs"></i>
+      <a href="/pages/subjects.html" class="hover:text-blue-600">Môn học</a>
+      <i class="fas fa-chevron-right text-xs"></i>
+      <span class="text-gray-900 font-medium" id="subjectName">Đề thi</span>
+    </div>
+
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+          <i class="fas fa-book-open text-blue-600"></i>
+          <span id="subjectTitle">Môn học</span>
+        </h1>
+        <p class="text-gray-600" id="subjectDescription">Tạo quiz mới hoặc xem lại quiz đã làm</p>
+      </div>
+
+      <div class="flex gap-2">
+        <button onclick="window.location.href='/pages/subjects.html'" class="btn btn-secondary">
+          <i class="fas fa-arrow-left"></i>
+          Quay lại
+        </button>
+      </div>
+    </div>
+
+    <!-- Create New Quiz Section -->
+    <div class="card bg-gradient-to-br from-blue-500 to-blue-600 text-white mb-6">
+      <div class="flex flex-col md:flex-row items-center gap-6">
+        <div class="flex-shrink-0">
+          <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center">
+            <i class="fas fa-plus text-4xl"></i>
+          </div>
+        </div>
+        <div class="flex-1 text-center md:text-left">
+          <h2 class="text-2xl font-bold mb-2">Tạo Quiz Mới</h2>
+          <p class="text-blue-100 mb-4">Bắt đầu làm bài quiz với câu hỏi được chọn ngẫu nhiên từ <span id="subjectNameInline" class="font-semibold">môn học</span></p>
+          <button onclick="showCreateExamModal()" class="btn bg-white text-blue-600 hover:bg-blue-50 font-semibold">
+            <i class="fas fa-rocket"></i>
+            Bắt đầu ngay
+          </button>
+        </div>
+        <div class="hidden md:block">
+          <div class="text-center">
+            <div class="text-3xl font-bold mb-1" id="totalQuestionsLarge">0</div>
+            <div class="text-sm text-blue-100">Câu hỏi có sẵn</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiz History Section -->
+    <div class="mb-4">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-xl font-bold text-gray-900 mb-1">
+            <i class="fas fa-history text-gray-600"></i>
+            Quiz đã làm - <span id="historySubjectName" class="text-blue-600">...</span>
+          </h2>
+          <p class="text-sm text-gray-500">Lịch sử các quiz bạn đã hoàn thành</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="text-center px-3 py-2 bg-blue-50 rounded-lg">
+            <div class="text-xs text-gray-600">Tổng quiz</div>
+            <div class="text-lg font-bold text-blue-600" id="totalExams">0</div>
+          </div>
+          <div class="text-center px-3 py-2 bg-green-50 rounded-lg">
+            <div class="text-xs text-gray-600">Điểm TB</div>
+            <div class="text-lg font-bold text-green-600" id="avgScore">0%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exams List -->
+    <div id="examsList" class="space-y-3">
+      <!-- Loading skeleton -->
+      <div class="card bg-white animate-pulse">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 bg-gray-300 rounded-lg"></div>
+          <div class="flex-1">
+            <div class="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+            <div class="h-3 bg-gray-300 rounded w-1/2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-12">
+      <div class="max-w-md mx-auto">
+        <i class="fas fa-clipboard-list text-6xl text-gray-300 mb-4"></i>
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">Chưa có quiz nào</h3>
+        <p class="text-gray-500 mb-1">Bạn chưa làm quiz nào cho môn</p>
+        <p class="text-blue-600 font-semibold text-lg mb-4" id="emptySubjectName">...</p>
+        <button onclick="showCreateExamModal()" class="btn btn-primary">
+          <i class="fas fa-plus"></i>
+          Tạo quiz đầu tiên
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Create Exam Modal -->
+  <div id="createExamModal" class="hidden modal-overlay" onclick="closeCreateExamModal()">
+    <div class="modal-content max-w-md" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">Tạo đề thi mới</h2>
+        <button class="modal-close" onclick="closeCreateExamModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Số câu hỏi
+          </label>
+          <input 
+            type="number" 
+            id="questionCount" 
+            class="form-input w-full" 
+            min="5" 
+            max="50" 
+            value="10"
+            placeholder="Nhập số câu hỏi (5-50)"
+          >
+          <p class="text-xs text-gray-500 mt-1">Số câu hỏi sẽ được chọn ngẫu nhiên</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Thời gian làm bài (phút)
+          </label>
+          <select id="timeLimit" class="form-input w-full">
+            <option value="15">15 phút</option>
+            <option value="30" selected>30 phút</option>
+            <option value="45">45 phút</option>
+            <option value="60">60 phút</option>
+            <option value="90">90 phút</option>
+            <option value="120">120 phút</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Loại bài thi
+          </label>
+          <select id="examType" class="form-input w-full">
+            <option value="practice">Luyện tập</option>
+            <option value="test">Kiểm tra</option>
+          </select>
+        </div>
+
+        <div id="createError" class="hidden text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
+          <i class="fas fa-exclamation-circle mr-2"></i>
+          <span id="createErrorMessage"></span>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeCreateExamModal()">Hủy</button>
+        <button class="btn btn-primary" onclick="createAndStartExam()" id="createExamBtn">
+          <i class="fas fa-play"></i>
+          Tạo và bắt đầu
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/assets/js/config.js"></script>
+  <script src="/assets/js/utils.js"></script>
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  
+  <script>
+    // Require authentication
+    if (!Auth.requireAuth()) {
+      // Will redirect to login
+    }
+
+    // Get current user
+    const currentUser = Auth.getCurrentUser();
+    if (currentUser) {
+      document.getElementById('userName').textContent = currentUser.name || 'User';
+      document.getElementById('userInitial').textContent = (currentUser.name || 'U')[0].toUpperCase();
+    }
+
+    // Toggle user menu
+    const userMenuBtn = document.getElementById('userMenuBtn');
+    const userMenu = document.getElementById('userMenu');
+    
+    userMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      userMenu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', () => {
+      userMenu.classList.add('hidden');
+    });
+
+    // Toggle mobile menu
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      if (confirm('Bạn có chắc muốn đăng xuất?')) {
+        Auth.logout();
+      }
+    });
+
+    // Get subject from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const subjectId = urlParams.get('subject');
+
+    // State
+    let allExams = [];
+    let filteredExams = [];
+    let currentSubject = null;
+
+    // Load subject info and stats
+    async function loadSubjectInfo() {
+      try {
+        if (subjectId) {
+          const response = await API.get(`/subjects/${subjectId}`);
+          currentSubject = response.data?.subject || response.subject;
+          
+          if (currentSubject) {
+            // Update all subject name elements
+            document.getElementById('subjectName').textContent = currentSubject.name;
+            document.getElementById('subjectTitle').textContent = currentSubject.name;
+            document.getElementById('subjectNameInline').textContent = currentSubject.name;
+            document.getElementById('emptySubjectName').textContent = currentSubject.name;
+            document.getElementById('historySubjectName').textContent = currentSubject.name;
+            document.getElementById('subjectDescription').textContent = currentSubject.description || 'Tạo quiz mới hoặc xem lại quiz đã làm';
+            document.getElementById('totalQuestionsLarge').textContent = currentSubject.questionCount || 0;
+            
+            // Update page title
+            document.title = `${currentSubject.name} - QuizMaster`;
+          }
+        } else {
+          // No subject selected, redirect to subjects page
+          window.location.href = '/pages/subjects.html';
+          return;
+        }
+
+        // Load exam history stats
+        await loadExamStats();
+      } catch (error) {
+        console.error('Error loading subject info:', error);
+      }
+    }
+
+    // Load exam statistics
+    async function loadExamStats() {
+      try {
+        const endpoint = subjectId ? `/quiz/history?subjectId=${subjectId}` : '/quiz/history';
+        const response = await API.get(endpoint);
+        const stats = response.data?.stats || {};
+        
+        document.getElementById('totalExams').textContent = stats.totalExams || 0;
+        document.getElementById('avgScore').textContent = stats.averageScore 
+          ? Math.round(stats.averageScore) + '%' 
+          : '0%';
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    }
+
+    // Load exams (user's quiz history for this subject)
+    async function loadExams() {
+      try {
+        const endpoint = subjectId 
+          ? `/quiz/history?subjectId=${subjectId}&limit=50` 
+          : '/quiz/history?limit=50';
+        
+        console.log('Loading quiz history for subject:', subjectId);
+        console.log('API endpoint:', endpoint);
+        
+        const response = await API.get(endpoint);
+        allExams = response.data?.results || response.results || [];
+        filteredExams = [...allExams];
+
+        console.log('Loaded quiz history:', allExams.length, 'results');
+        
+        renderExams();
+      } catch (error) {
+        console.error('Error loading exams:', error);
+        allExams = [];
+        filteredExams = [];
+        renderExams();
+      }
+    }
+
+    // Render exams (quiz history)
+    function renderExams() {
+      const container = document.getElementById('examsList');
+      const emptyState = document.getElementById('emptyState');
+
+      if (filteredExams.length === 0) {
+        container.innerHTML = '';
+        container.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      container.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+
+      container.innerHTML = filteredExams.map(result => {
+        const score = result.score || 0;
+        const scoreColor = getScoreColor(score);
+        const passed = score >= 50;
+        
+        return `
+        <div class="card bg-white hover:shadow-lg transition-all duration-300 cursor-pointer" onclick="viewResult('${result._id}')">
+          <div class="flex items-center gap-4">
+            <!-- Score Badge -->
+            <div class="flex-shrink-0">
+              <div class="w-16 h-16 ${passed ? 'bg-green-100' : 'bg-red-100'} rounded-lg flex items-center justify-center">
+                <div class="text-center">
+                  <div class="text-2xl font-bold ${scoreColor}">${score}%</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quiz Info -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <i class="fas fa-${passed ? 'check-circle text-green-600' : 'times-circle text-red-600'}"></i>
+                <span class="font-semibold text-gray-900">${passed ? 'Đạt' : 'Chưa đạt'}</span>
+                <span class="text-gray-400">•</span>
+                <span class="text-sm text-gray-600">${Utils.formatDate(result.completedAt || result.createdAt, 'DD/MM/YYYY HH:mm')}</span>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-3 text-sm text-gray-600">
+                <div class="flex items-center gap-1">
+                  <i class="fas fa-check-circle text-green-600"></i>
+                  <span>${result.correctAnswers || 0} đúng</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <i class="fas fa-times-circle text-red-600"></i>
+                  <span>${result.wrongAnswers || 0} sai</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <i class="fas fa-question-circle text-gray-400"></i>
+                  <span>${result.totalQuestions || 0} câu</span>
+                </div>
+                ${result.timeTaken ? `
+                  <div class="flex items-center gap-1">
+                    <i class="fas fa-clock text-blue-600"></i>
+                    <span>${Math.floor(result.timeTaken / 60)}:${String(result.timeTaken % 60).padStart(2, '0')}</span>
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+
+            <!-- Action Button -->
+            <div class="flex items-center gap-2">
+              <button 
+                class="btn btn-sm btn-primary"
+                onclick="event.stopPropagation(); viewResult('${result._id}')"
+              >
+                <i class="fas fa-eye"></i>
+                Xem chi tiết
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      }).join('');
+    }
+
+    // View quiz result
+    function viewResult(resultId) {
+      window.location.href = `/pages/results.html?result=${resultId}`;
+    }
+
+    // Get score color (kept for compatibility)
+    function getScoreColor(score) {
+      if (score >= 80) return 'text-green-600';
+      if (score >= 60) return 'text-blue-600';
+      if (score >= 40) return 'text-yellow-600';
+      return 'text-red-600';
+    }
+
+    // Show exam details
+    function showExamDetails(examId) {
+      const exam = filteredExams.find(e => e._id === examId);
+      if (!exam) return;
+
+      document.getElementById('modalTitle').textContent = exam.title;
+      document.getElementById('modalContent').innerHTML = `
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold text-gray-900 mb-2">Mô tả:</h4>
+            <p class="text-gray-600">${exam.description || 'Không có mô tả'}</p>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-question-circle text-blue-600"></i>
+              </div>
+              <div>
+                <p class="text-sm text-gray-600">Số câu hỏi</p>
+                <p class="font-semibold text-gray-900">${exam.totalQuestions || 0} câu</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-clock text-green-600"></i>
+              </div>
+              <div>
+                <p class="text-sm text-gray-600">Thời gian</p>
+                <p class="font-semibold text-gray-900">${exam.duration || 0} phút</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-chart-bar text-purple-600"></i>
+              </div>
+              <div>
+                <p class="text-sm text-gray-600">Độ khó</p>
+                <p class="font-semibold text-gray-900">${getDifficultyText(exam.difficulty)}</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-users text-orange-600"></i>
+              </div>
+              <div>
+                <p class="text-sm text-gray-600">Lượt thi</p>
+                <p class="font-semibold text-gray-900">${exam.totalAttempts || 0}</p>
+              </div>
+            </div>
+          </div>
+
+          ${exam.hasDone ? `
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle"></i>
+              <div>
+                <p class="font-semibold">Bạn đã làm bài thi này</p>
+                <p>Điểm số: <span class="font-bold">${exam.lastScore}%</span> - ${Utils.formatDate(exam.lastAttempt, 'DD/MM/YYYY HH:mm')}</p>
+              </div>
+            </div>
+          ` : ''}
+
+          <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+              <p class="font-semibold">Lưu ý:</p>
+              <ul class="text-sm mt-1 space-y-1">
+                <li>• Không được thoát ra ngoài trong khi làm bài</li>
+                <li>• Bài thi sẽ tự động nộp khi hết giờ</li>
+                <li>• Mỗi câu hỏi chỉ được chọn 1 đáp án</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('startExamBtn').onclick = () => {
+        closeExamModal();
+        startExam(examId);
+      };
+
+      document.getElementById('examModal').classList.remove('hidden');
+    }
+
+    function closeExamModal() {
+      document.getElementById('examModal').classList.add('hidden');
+    }
+
+    // Show create exam modal
+    function showCreateExamModal() {
+      if (!subjectId) {
+        alert('Vui lòng chọn môn học trước');
+        window.location.href = '/pages/subjects.html';
+        return;
+      }
+      document.getElementById('createExamModal').classList.remove('hidden');
+    }
+
+    function closeCreateExamModal() {
+      document.getElementById('createExamModal').classList.add('hidden');
+      document.getElementById('createError').classList.add('hidden');
+    }
+
+    // Create and start exam
+    async function createAndStartExam() {
+      const btn = document.getElementById('createExamBtn');
+      const errorDiv = document.getElementById('createError');
+      const errorMsg = document.getElementById('createErrorMessage');
+
+      try {
+        const questionCount = parseInt(document.getElementById('questionCount').value);
+        const timeLimit = parseInt(document.getElementById('timeLimit').value);
+        const type = document.getElementById('examType').value;
+
+        if (!questionCount || questionCount < 5 || questionCount > 50) {
+          throw new Error('Số câu hỏi phải từ 5 đến 50');
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang tạo...';
+        errorDiv.classList.add('hidden');
+
+        // Call API to create exam
+        const response = await API.post('/exams/start', {
+          subjectId,
+          questionCount,
+          timeLimit,
+          type
+        });
+
+        const exam = response.data?.exam || response.exam;
+        if (!exam || !exam._id) {
+          throw new Error('Không thể tạo đề thi. Vui lòng thử lại.');
+        }
+
+        // Redirect to quiz page
+        window.location.href = `/pages/quiz.html?exam=${exam._id}`;
+        
+      } catch (error) {
+        console.error('Error creating exam:', error);
+        errorMsg.textContent = error.message || 'Có lỗi xảy ra. Vui lòng thử lại.';
+        errorDiv.classList.remove('hidden');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-play"></i> Tạo và bắt đầu';
+      }
+    }
+
+    // Start quiz - redirect to quiz page
+    function startQuiz(quizId) {
+      window.location.href = `/pages/quiz.html?exam=${quizId}`;
+    }
+
+
+    // Initialize
+    loadSubjectInfo();
+    loadExams();
+  </script>
+</body>
+</html>

@@ -44,7 +44,7 @@ const subjectSchema = new mongoose.Schema({
 });
 
 // Indexes
-subjectSchema.index({ code: 1 });
+// subjectSchema.index({ code: 1 }); // Removed: duplicate of unique: true on line 13
 subjectSchema.index({ isActive: 1 });
 
 // Virtual for getting active questions

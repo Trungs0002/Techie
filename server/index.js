@@ -46,6 +46,7 @@ app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/subjects', require('./routes/subject.routes'));
 app.use('/api/questions', require('./routes/question.routes'));
 app.use('/api/exams', require('./routes/exam.routes'));
+app.use('/api/quiz', require('./routes/quiz.routes'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {

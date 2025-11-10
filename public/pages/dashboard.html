@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - QuizMaster</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Chart.js for statistics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="bg-gray-50">
+  <!-- Navigation -->
+  <nav class="bg-white shadow-sm sticky top-0 z-40">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo -->
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-graduation-cap text-2xl text-blue-600"></i>
+          <span class="text-xl font-bold text-gray-800">QuizMaster</span>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex items-center space-x-6">
+          <a href="/pages/dashboard.html" class="text-blue-600 font-semibold flex items-center gap-2">
+            <i class="fas fa-home"></i>
+            Dashboard
+          </a>
+          <a href="/pages/subjects.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
+            <i class="fas fa-book"></i>
+            Môn học
+          </a>
+          <a href="/pages/history.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
+            <i class="fas fa-history"></i>
+            Lịch sử
+          </a>
+        </div>
+
+        <!-- Right Section -->
+        <div class="flex items-center space-x-4">
+          <!-- Notifications -->
+          <button class="relative text-gray-600 hover:text-blue-600 transition">
+            <i class="fas fa-bell text-xl"></i>
+            <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+          </button>
+
+          <!-- User Menu -->
+          <div class="relative">
+            <button id="userMenuBtn" class="flex items-center space-x-2 hover:bg-gray-100 rounded-lg px-3 py-2 transition">
+              <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                <span id="userInitial">U</span>
+              </div>
+              <span class="hidden md:block text-gray-700 font-medium" id="userName">User</span>
+              <i class="fas fa-chevron-down text-gray-500 text-sm"></i>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+              <a href="/pages/profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
+                <i class="fas fa-user mr-2"></i>
+                Hồ sơ
+              </a>
+              <a href="/pages/settings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
+                <i class="fas fa-cog mr-2"></i>
+                Cài đặt
+              </a>
+              <hr class="my-2">
+              <button id="logoutBtn" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                Đăng xuất
+              </button>
+            </div>
+          </div>
+
+          <!-- Mobile Menu Toggle -->
+          <button id="mobileMenuBtn" class="md:hidden text-gray-600">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 py-4">
+        <a href="/pages/dashboard.html" class="block py-2 text-blue-600 font-semibold">
+          <i class="fas fa-home mr-2"></i>
+          Dashboard
+        </a>
+        <a href="/pages/subjects.html" class="block py-2 text-gray-600 hover:text-blue-600">
+          <i class="fas fa-book mr-2"></i>
+          Môn học
+        </a>
+        <a href="/pages/history.html" class="block py-2 text-gray-600 hover:text-blue-600">
+          <i class="fas fa-history mr-2"></i>
+          Lịch sử
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-6">
+    <!-- Welcome Section -->
+    <div class="mb-6">
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+        Xin chào, <span id="welcomeName">User</span>! 👋
+      </h1>
+      <p class="text-gray-600">Hãy tiếp tục hành trình học tập của bạn hôm nay</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <!-- Total Exams -->
+      <div class="card bg-white">
+        <div class="flex items-center justify-between mb-2">
+          <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+            <i class="fas fa-file-alt text-blue-600"></i>
+          </div>
+          <span class="badge badge-primary">+12%</span>
+        </div>
+        <p class="text-gray-600 text-sm mb-1">Tổng bài thi</p>
+        <p class="text-2xl font-bold text-gray-900" id="totalExams">0</p>
+      </div>
+
+      <!-- Average Score -->
+      <div class="card bg-white">
+        <div class="flex items-center justify-between mb-2">
+          <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+            <i class="fas fa-chart-line text-green-600"></i>
+          </div>
+          <span class="badge badge-success">+5.2%</span>
+        </div>
+        <p class="text-gray-600 text-sm mb-1">Điểm TB</p>
+        <p class="text-2xl font-bold text-gray-900" id="avgScore">0</p>
+      </div>
+
+      <!-- Time Spent -->
+      <div class="card bg-white">
+        <div class="flex items-center justify-between mb-2">
+          <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+            <i class="fas fa-clock text-purple-600"></i>
+          </div>
+          <span class="badge badge-primary">2.5h</span>
+        </div>
+        <p class="text-gray-600 text-sm mb-1">Thời gian</p>
+        <p class="text-2xl font-bold text-gray-900" id="timeSpent">0h</p>
+      </div>
+
+      <!-- Rank -->
+      <div class="card bg-white">
+        <div class="flex items-center justify-between mb-2">
+          <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+            <i class="fas fa-trophy text-orange-600"></i>
+          </div>
+          <span class="badge badge-warning">Top 10%</span>
+        </div>
+        <p class="text-gray-600 text-sm mb-1">Xếp hạng</p>
+        <p class="text-2xl font-bold text-gray-900" id="userRank">#0</p>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid lg:grid-cols-3 gap-6">
+      <!-- Left Column (2/3) -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Progress Chart -->
+        <div class="card bg-white">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-900">Tiến độ học tập</h2>
+            <select class="text-sm border border-gray-300 rounded-lg px-3 py-1.5" id="chartPeriod">
+              <option value="7">7 ngày</option>
+              <option value="30" selected>30 ngày</option>
+              <option value="90">90 ngày</option>
+            </select>
+          </div>
+          <canvas id="progressChart" height="80"></canvas>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="card bg-white">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-900">Hoạt động gần đây</h2>
+            <a href="/pages/history.html" class="text-sm text-blue-600 hover:text-blue-700">
+              Xem tất cả <i class="fas fa-arrow-right ml-1"></i>
+            </a>
+          </div>
+
+          <div id="recentActivities" class="space-y-3">
+            <!-- Loading skeleton -->
+            <div class="flex items-center gap-4 p-3 bg-gray-50 rounded-lg animate-pulse">
+              <div class="w-10 h-10 bg-gray-300 rounded-lg"></div>
+              <div class="flex-1">
+                <div class="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                <div class="h-3 bg-gray-300 rounded w-1/2"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card bg-gradient-to-br from-blue-600 to-indigo-600 text-white">
+          <h2 class="text-lg font-semibold mb-4">Bắt đầu học ngay</h2>
+          <div class="grid md:grid-cols-2 gap-3">
+            <a href="/pages/subjects.html" class="btn bg-white text-blue-600 hover:bg-gray-100">
+              <i class="fas fa-book"></i>
+              Chọn môn học
+            </a>
+            <a href="/pages/exams.html" class="btn bg-white bg-opacity-20 hover:bg-opacity-30 text-white border border-white">
+              <i class="fas fa-play"></i>
+              Làm bài ngay
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column (1/3) -->
+      <div class="space-y-6">
+        <!-- Leaderboard -->
+        <div class="card bg-white">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-900">Môn học mới</h2>
+            <span class="text-xs text-gray-500">Tuần này</span>
+          </div>
+
+          <div id="leaderboard" class="space-y-3">
+            <!-- Loading skeleton -->
+            <div class="flex items-center gap-3 animate-pulse">
+              <div class="w-6 h-6 bg-gray-300 rounded"></div>
+              <div class="w-8 h-8 bg-gray-300 rounded-full"></div>
+              <div class="flex-1">
+                <div class="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                <div class="h-3 bg-gray-300 rounded w-1/2"></div>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-secondary w-full mt-4">
+            <i class="fas fa-trophy"></i>
+            Xem môn học đầy đủ
+          </button>
+        </div>
+
+        <!-- Achievement -->
+        <div class="card bg-gradient-to-br from-purple-600 to-pink-600 text-white">
+          <div class="text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-white bg-opacity-20 rounded-full mb-3">
+              <i class="fas fa-medal text-3xl"></i>
+            </div>
+            <h3 class="font-semibold mb-2">Thành tích mới!</h3>
+            <p class="text-sm text-purple-100 mb-4">Hoàn thành 10 bài thi</p>
+            <div class="bg-white bg-opacity-20 rounded-lg p-3">
+              <div class="flex items-center justify-between text-sm mb-2">
+                <span>Tiến độ</span>
+                <span class="font-semibold">10/10</span>
+              </div>
+              <div class="progress bg-white bg-opacity-20">
+                <div class="progress-bar bg-white" style="width: 100%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Study Streak -->
+        <div class="card bg-white">
+          <div class="text-center">
+            <i class="fas fa-fire text-4xl text-orange-500 mb-3"></i>
+            <p class="text-3xl font-bold text-gray-900 mb-1" id="studyStreak">0</p>
+            <p class="text-sm text-gray-600">Ngày học liên tiếp</p>
+            <p class="text-xs text-gray-500 mt-2">Tiếp tục duy trì phong độ!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="/assets/js/config.js"></script>
+  <script src="/assets/js/utils.js"></script>
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  
+  <script>
+    // Require authentication
+    if (!Auth.requireAuth()) {
+      // Will redirect to login
+    }
+
+    // Get current user
+    const currentUser = Auth.getCurrentUser();
+    
+    // Update user info in navbar
+    if (currentUser) {
+      document.getElementById('userName').textContent = currentUser.name || 'User';
+      document.getElementById('welcomeName').textContent = currentUser.name || 'User';
+      document.getElementById('userInitial').textContent = (currentUser.name || 'U')[0].toUpperCase();
+    }
+
+    // Toggle user menu
+    const userMenuBtn = document.getElementById('userMenuBtn');
+    const userMenu = document.getElementById('userMenu');
+    
+    userMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      userMenu.classList.toggle('hidden');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!userMenuBtn.contains(e.target) && !userMenu.contains(e.target)) {
+        userMenu.classList.add('hidden');
+      }
+    });
+
+    // Toggle mobile menu
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      if (confirm('Bạn có chắc muốn đăng xuất?')) {
+        Auth.logout();
+      }
+    });
+
+    // Load dashboard data
+    async function loadDashboardData() {
+      try {
+        // Show loading
+        Utils.showLoading('Đang tải dữ liệu...');
+
+        // Fetch real data from quiz history
+        const historyResponse = await API.get('/quiz/history?limit=100');
+        const historyData = historyResponse.data || historyResponse;
+        const results = historyData.results || [];
+        const stats = historyData.stats || {};
+        
+        // Calculate stats from real quiz history
+        const totalExams = results.length;
+        const avgScore = stats.averageScore || 0;
+        const totalTimeSpent = results.reduce((sum, r) => sum + (r.timeSpent || 0), 0);
+        const timeSpentHours = Math.floor(totalTimeSpent / 3600); // Convert seconds to hours
+        
+        // Update stats cards
+        document.getElementById('totalExams').textContent = totalExams;
+        document.getElementById('avgScore').textContent = Math.round(avgScore);
+        document.getElementById('timeSpent').textContent = `${timeSpentHours}h`;
+        document.getElementById('userRank').textContent = '#-'; // Disable rank feature for now
+        document.getElementById('studyStreak').textContent = '-'; // Disable streak for now
+
+        // Load recent activities from quiz history
+        await loadRecentActivities(results.slice(0, 5));
+
+        // Load subjects instead of leaderboard
+        await loadSubjects();
+
+        // Load progress chart from real data
+        await loadProgressChart(results);
+
+        Utils.hideLoading();
+      } catch (error) {
+        console.error('Error loading dashboard:', error);
+        Utils.hideLoading();
+        Utils.showToast('Không thể tải dữ liệu dashboard. Vui lòng thử lại.', 'error');
+      }
+    }
+
+    // Load recent activities from quiz results
+    async function loadRecentActivities(recentResults = []) {
+      try {
+        const container = document.getElementById('recentActivities');
+        
+        if (recentResults.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-8 text-gray-500">
+              <i class="fas fa-inbox text-4xl mb-3"></i>
+              <p>Chưa có hoạt động nào</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = recentResults.map(result => {
+          const percentage = result.percentage || 0;
+          const examName = result.exam?.subject?.name || 'Bài thi';
+          const examType = result.exam?.type === 'practice' ? 'Luyện tập' : 'Kiểm tra';
+          
+          return `
+            <div class="flex items-center gap-4 p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition">
+              <div class="w-10 h-10 ${percentage >= 80 ? 'bg-green-500' : percentage >= 60 ? 'bg-blue-500' : 'bg-yellow-500'} rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-file-alt text-white"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="font-medium text-gray-900 truncate">${examName}</p>
+                <p class="text-sm text-gray-600">${examType} - ${result.totalQuestions} câu</p>
+              </div>
+              <div class="text-right flex-shrink-0">
+                <p class="text-sm font-semibold ${getScoreColor(percentage)}">${Math.round(percentage)}%</p>
+                <p class="text-xs text-gray-500">${Utils.formatDate(new Date(result.createdAt), 'DD/MM')}</p>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (error) {
+        console.error('Error loading activities:', error);
+      }
+    }
+
+    // Load subjects (replace leaderboard)
+    async function loadSubjects() {
+      try {
+        const response = await API.get('/subjects');
+        const data = response.data || response;
+        const subjects = data.subjects || [];
+        
+        const container = document.getElementById('leaderboard');
+        
+        if (subjects.length === 0) {
+          container.innerHTML = '<p class="text-gray-500 text-center py-4">Chưa có môn học</p>';
+          return;
+        }
+        
+        container.innerHTML = subjects.slice(0, 5).map((subject, index) => `
+          <div class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer" onclick="window.location.href='/pages/exams.html?subject=${subject._id}'">
+            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded flex items-center justify-center text-white font-semibold text-sm">
+              ${subject.code?.substring(0, 2) || subject.name[0]}
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="font-medium text-gray-900 truncate">${subject.name}</p>
+              <p class="text-xs text-gray-500">${subject.questionCount || 0} câu hỏi</p>
+            </div>
+            <i class="fas fa-chevron-right text-gray-400"></i>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Error loading subjects:', error);
+      }
+    }
+
+    // Load progress chart
+    let progressChart = null;
+
+    async function loadProgressChart(results = []) {
+      try {
+        const ctx = document.getElementById('progressChart').getContext('2d');
+        
+        // Destroy existing chart
+        if (progressChart) {
+          progressChart.destroy();
+        }
+
+        // Prepare data from real quiz results (last 10 attempts)
+        const recentResults = results.slice(0, 10).reverse();
+        const labels = recentResults.map((r, i) => `Lần ${i + 1}`);
+        const scores = recentResults.map(r => Math.round(r.percentage || 0));
+
+        if (scores.length === 0) {
+          labels.push('Chưa có dữ liệu');
+          scores.push(0);
+        }
+
+        progressChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Điểm số (%)',
+              data: scores,
+              borderColor: '#3B82F6',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              tension: 0.4,
+              fill: true
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+              legend: {
+                display: false
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 100
+              }
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Error loading chart:', error);
+      }
+    }
+
+    // Helper functions
+    function getActivityIcon(type) {
+      const icons = {
+        exam: 'fa-file-alt',
+        quiz: 'fa-question-circle',
+        achievement: 'fa-trophy'
+      };
+      return icons[type] || 'fa-circle';
+    }
+
+    function getActivityColor(type) {
+      const colors = {
+        exam: 'bg-blue-500',
+        quiz: 'bg-green-500',
+        achievement: 'bg-purple-500'
+      };
+      return colors[type] || 'bg-gray-500';
+    }
+
+    function getScoreColor(score) {
+      if (score >= 80) return 'text-green-600';
+      if (score >= 60) return 'text-blue-600';
+      if (score >= 40) return 'text-yellow-600';
+      return 'text-red-600';
+    }
+
+    function getRankBadge(index) {
+      if (index === 0) return 'bg-yellow-500 text-white';
+      if (index === 1) return 'bg-gray-400 text-white';
+      if (index === 2) return 'bg-orange-600 text-white';
+      return 'bg-gray-200 text-gray-700';
+    }
+
+    // Initialize
+    loadDashboardData();
+  </script>
+</body>
+</html>

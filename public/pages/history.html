@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lịch sử thi - QuizMaster</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/components.css">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+  <!-- Navigation -->
+  <nav class="bg-white shadow-sm sticky top-0 z-40">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-graduation-cap text-2xl text-blue-600"></i>
+          <span class="text-xl font-bold text-gray-800">QuizMaster</span>
+        </div>
+
+        <div class="hidden md:flex items-center space-x-6">
+          <a href="/pages/dashboard.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
+            <i class="fas fa-home"></i>
+            Dashboard
+          </a>
+          <a href="/pages/subjects.html" class="text-gray-600 hover:text-blue-600 transition flex items-center gap-2">
+            <i class="fas fa-book"></i>
+            Môn học
+          </a>
+          <a href="/pages/history.html" class="text-blue-600 font-semibold flex items-center gap-2">
+            <i class="fas fa-history"></i>
+            Lịch sử
+          </a>
+        </div>
+
+        <div class="flex items-center space-x-4">
+          <button class="relative text-gray-600 hover:text-blue-600 transition">
+            <i class="fas fa-bell text-xl"></i>
+            <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+          </button>
+
+          <div class="relative">
+            <button id="userMenuBtn" class="flex items-center space-x-2 hover:bg-gray-100 rounded-lg px-3 py-2 transition">
+              <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                <span id="userInitial">U</span>
+              </div>
+              <span class="hidden md:block text-gray-700 font-medium" id="userName">User</span>
+              <i class="fas fa-chevron-down text-gray-500 text-sm"></i>
+            </button>
+
+            <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+              <a href="/pages/profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
+                <i class="fas fa-user mr-2"></i>
+                Hồ sơ
+              </a>
+              <a href="/pages/settings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
+                <i class="fas fa-cog mr-2"></i>
+                Cài đặt
+              </a>
+              <hr class="my-2">
+              <button id="logoutBtn" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                Đăng xuất
+              </button>
+            </div>
+          </div>
+
+          <button id="mobileMenuBtn" class="md:hidden text-gray-600">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 py-4">
+        <a href="/pages/dashboard.html" class="block py-2 text-gray-600 hover:text-blue-600">
+          <i class="fas fa-home mr-2"></i>
+          Dashboard
+        </a>
+        <a href="/pages/subjects.html" class="block py-2 text-gray-600 hover:text-blue-600">
+          <i class="fas fa-book mr-2"></i>
+          Môn học
+        </a>
+        <a href="/pages/history.html" class="block py-2 text-blue-600 font-semibold">
+          <i class="fas fa-history mr-2"></i>
+          Lịch sử
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-6">
+    <!-- Header -->
+    <div class="mb-6">
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+        <i class="fas fa-history text-blue-600"></i>
+        Lịch sử thi
+      </h1>
+      <p class="text-gray-600">Xem lại các bài thi bạn đã hoàn thành</p>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div class="card bg-white">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+            <i class="fas fa-file-alt text-blue-600"></i>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600">Tổng bài thi</p>
+            <p class="text-2xl font-bold text-gray-900" id="totalAttempts">0</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-white">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+            <i class="fas fa-chart-line text-green-600"></i>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600">Điểm TB</p>
+            <p class="text-2xl font-bold text-gray-900" id="avgScore">0%</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-white">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+            <i class="fas fa-trophy text-purple-600"></i>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600">Điểm cao nhất</p>
+            <p class="text-2xl font-bold text-gray-900" id="highestScore">0%</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-white">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+            <i class="fas fa-clock text-orange-600"></i>
+          </div>
+          <div>
+            <p class="text-sm text-gray-600">Thời gian</p>
+            <p class="text-2xl font-bold text-gray-900" id="totalTime">0h</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card bg-white mb-6">
+      <div class="grid md:grid-cols-4 gap-4">
+        <div class="md:col-span-2 relative">
+          <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input 
+            type="text" 
+            id="searchInput"
+            placeholder="Tìm kiếm bài thi..." 
+            class="form-input pl-10 w-full"
+          >
+        </div>
+
+        <select id="subjectFilter" class="form-input">
+          <option value="">Tất cả môn học</option>
+        </select>
+
+        <select id="sortBy" class="form-input">
+          <option value="recent">Gần đây nhất</option>
+          <option value="oldest">Cũ nhất</option>
+          <option value="highest">Điểm cao nhất</option>
+          <option value="lowest">Điểm thấp nhất</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- History List -->
+    <div id="historyList" class="space-y-4">
+      <!-- Loading skeleton -->
+      <div class="card bg-white animate-pulse">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 bg-gray-300 rounded-lg"></div>
+          <div class="flex-1">
+            <div class="h-5 bg-gray-300 rounded w-3/4 mb-2"></div>
+            <div class="h-4 bg-gray-300 rounded w-1/2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-12">
+      <i class="fas fa-history text-6xl text-gray-300 mb-4"></i>
+      <h3 class="text-xl font-semibold text-gray-700 mb-2">Chưa có lịch sử thi</h3>
+      <p class="text-gray-500 mb-4">Bắt đầu làm bài thi để xem lịch sử tại đây</p>
+      <a href="/pages/subjects.html" class="btn btn-primary">
+        <i class="fas fa-book"></i>
+        Chọn môn học
+      </a>
+    </div>
+
+    <!-- Pagination -->
+    <div id="pagination" class="hidden flex justify-center items-center gap-2 mt-6">
+      <button id="prevPage" class="btn btn-secondary btn-sm" disabled>
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <span class="text-sm text-gray-600" id="pageInfo">Trang 1 / 1</span>
+      <button id="nextPage" class="btn btn-secondary btn-sm" disabled>
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="/assets/js/config.js"></script>
+  <script src="/assets/js/utils.js"></script>
+  <script src="/assets/js/api.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  
+  <script>
+    // Require authentication
+    if (!Auth.requireAuth()) {
+      // Will redirect to login
+    }
+
+    // Get current user
+    const currentUser = Auth.getCurrentUser();
+    if (currentUser) {
+      document.getElementById('userName').textContent = currentUser.name || 'User';
+      document.getElementById('userInitial').textContent = (currentUser.name || 'U')[0].toUpperCase();
+    }
+
+    // Toggle user menu
+    const userMenuBtn = document.getElementById('userMenuBtn');
+    const userMenu = document.getElementById('userMenu');
+    
+    userMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      userMenu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', () => {
+      userMenu.classList.add('hidden');
+    });
+
+    // Toggle mobile menu
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      if (confirm('Bạn có chắc muốn đăng xuất?')) {
+        Auth.logout();
+      }
+    });
+
+    // State
+    let allHistory = [];
+    let filteredHistory = [];
+    let currentPage = 1;
+    const itemsPerPage = 10;
+
+    // Load history
+    async function loadHistory() {
+      try {
+        Utils.showLoading('Đang tải lịch sử...');
+
+        console.log('Loading history from API...');
+        const response = await API.get('/quiz/history?limit=100');
+        console.log('History API response:', response);
+        
+        // Response structure: {success, data: {results, stats, pagination}}
+        const responseData = response.data || response;
+        console.log('Response data:', responseData);
+        
+        allHistory = responseData.results || [];
+        filteredHistory = [...allHistory];
+        
+        console.log('Loaded history items:', allHistory.length);
+
+        // Update stats
+        const stats = responseData.stats || {};
+        document.getElementById('totalAttempts').textContent = stats.totalExams || 0;
+        document.getElementById('avgScore').textContent = `${Math.round(stats.averageScore || 0)}%`;
+        document.getElementById('highestScore').textContent = `${Math.round(stats.highestScore || 0)}%`;
+        
+        // Calculate total time from results
+        const totalMinutes = allHistory.reduce((sum, r) => sum + (r.timeSpent || 0), 0) / 60;
+        document.getElementById('totalTime').textContent = `${Math.floor(totalMinutes)}h`;
+
+        // Load subjects for filter
+        await loadSubjectsFilter();
+
+        renderHistory();
+        Utils.hideLoading();
+
+      } catch (error) {
+        console.error('Error loading history:', error);
+        Utils.hideLoading();
+        Utils.showToast('Không thể tải lịch sử. Vui lòng thử lại.', 'error');
+      }
+    }
+
+    // Load subjects for filter
+    async function loadSubjectsFilter() {
+      try {
+        const response = await API.get('/subjects');
+        console.log('Subjects API response:', response);
+        
+        const select = document.getElementById('subjectFilter');
+        
+        // Response structure: {success, data: subjects} or {subjects}
+        const subjects = response.data || response.subjects || [];
+        
+        subjects.forEach(subject => {
+          const option = document.createElement('option');
+          option.value = subject._id;
+          option.textContent = subject.name;
+          select.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Error loading subjects:', error);
+      }
+    }
+
+    // Render history
+    function renderHistory() {
+      const container = document.getElementById('historyList');
+      const emptyState = document.getElementById('emptyState');
+
+      if (filteredHistory.length === 0) {
+        container.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      container.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+
+      // Pagination
+      const totalPages = Math.ceil(filteredHistory.length / itemsPerPage);
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const pageItems = filteredHistory.slice(startIndex, endIndex);
+
+      container.innerHTML = pageItems.map(attempt => {
+        const percentage = Math.round((attempt.correctAnswers / attempt.totalQuestions) * 100);
+        const grade = Utils.getGrade(percentage);
+        
+        // Handle null examId or subjectId
+        const examTitle = attempt.examId?.title || 'Bài thi';
+        const subjectName = attempt.subjectId?.name || 'Môn học';
+        const timeSpent = attempt.timeSpent || 0;
+
+        return `
+          <div class="card bg-white hover:shadow-large transition-all duration-300">
+            <div class="flex flex-col md:flex-row gap-4">
+              <!-- Icon -->
+              <div class="flex-shrink-0">
+                <div class="w-12 h-12 ${getScoreColor(percentage)} rounded-lg flex items-center justify-center">
+                  <i class="fas ${getScoreIcon(percentage)} text-white text-xl"></i>
+                </div>
+              </div>
+
+              <!-- Info -->
+              <div class="flex-1 min-w-0">
+                <div class="flex flex-wrap items-start justify-between gap-2 mb-2">
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-900">${examTitle}</h3>
+                    <p class="text-sm text-gray-600">${subjectName}</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-2xl font-bold ${grade.color}">${percentage}%</p>
+                    <p class="text-sm text-gray-600">${grade.grade}</p>
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-3">
+                  <div class="flex items-center gap-1">
+                    <i class="fas fa-check-circle text-green-600"></i>
+                    <span>${attempt.correctAnswers} đúng</span>
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <i class="fas fa-times-circle text-red-600"></i>
+                    <span>${attempt.incorrectAnswers || 0} sai</span>
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <i class="fas fa-clock"></i>
+                    <span>${Math.floor(timeSpent / 60)}m ${timeSpent % 60}s</span>
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <i class="fas fa-calendar"></i>
+                    <span>${Utils.formatDate(attempt.dateCompleted || attempt.completedAt || new Date(), 'DD/MM/YYYY HH:mm')}</span>
+                  </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="mb-3">
+                  <div class="progress">
+                    <div class="progress-bar ${getProgressColor(percentage)}" style="width: ${percentage}%"></div>
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex flex-wrap gap-2">
+                  <button onclick="viewResult('${attempt._id}')" class="btn btn-primary btn-sm">
+                    <i class="fas fa-eye"></i>
+                    Xem chi tiết
+                  </button>
+                  ${attempt.examId?._id ? `
+                    <button onclick="retakeExam('${attempt.examId._id}')" class="btn btn-secondary btn-sm">
+                      <i class="fas fa-redo"></i>
+                      Làm lại
+                    </button>
+                    <button onclick="compareAttempts('${attempt.examId._id}')" class="btn btn-outline btn-sm">
+                      <i class="fas fa-chart-line"></i>
+                      So sánh
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Update pagination
+      updatePagination(totalPages);
+    }
+
+    // Update pagination
+    function updatePagination(totalPages) {
+      const pagination = document.getElementById('pagination');
+      const pageInfo = document.getElementById('pageInfo');
+      const prevBtn = document.getElementById('prevPage');
+      const nextBtn = document.getElementById('nextPage');
+
+      if (totalPages <= 1) {
+        pagination.classList.add('hidden');
+        return;
+      }
+
+      pagination.classList.remove('hidden');
+      pageInfo.textContent = `Trang ${currentPage} / ${totalPages}`;
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.disabled = currentPage === totalPages;
+    }
+
+    // Pagination handlers
+    document.getElementById('prevPage').addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderHistory();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+
+    document.getElementById('nextPage').addEventListener('click', () => {
+      const totalPages = Math.ceil(filteredHistory.length / itemsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderHistory();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+
+    // Search
+    document.getElementById('searchInput').addEventListener('input', Utils.debounce((e) => {
+      applyFilters();
+    }, 300));
+
+    // Filters
+    document.getElementById('subjectFilter').addEventListener('change', applyFilters);
+    document.getElementById('sortBy').addEventListener('change', applyFilters);
+
+    // Apply filters
+    function applyFilters() {
+      const searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
+      const subject = document.getElementById('subjectFilter').value;
+      const sortBy = document.getElementById('sortBy').value;
+
+      // Filter
+      filteredHistory = allHistory.filter(attempt => {
+        const matchesSearch = !searchQuery || 
+          attempt.exam.title.toLowerCase().includes(searchQuery) ||
+          (attempt.exam.subject?.name || '').toLowerCase().includes(searchQuery);
+        
+        const matchesSubject = !subject || attempt.exam.subject?._id === subject;
+        
+        return matchesSearch && matchesSubject;
+      });
+
+      // Sort
+      switch(sortBy) {
+        case 'recent':
+          filteredHistory.sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt));
+          break;
+        case 'oldest':
+          filteredHistory.sort((a, b) => new Date(a.completedAt) - new Date(b.completedAt));
+          break;
+        case 'highest':
+          filteredHistory.sort((a, b) => {
+            const aPercentage = (a.correctAnswers / a.totalQuestions) * 100;
+            const bPercentage = (b.correctAnswers / b.totalQuestions) * 100;
+            return bPercentage - aPercentage;
+          });
+          break;
+        case 'lowest':
+          filteredHistory.sort((a, b) => {
+            const aPercentage = (a.correctAnswers / a.totalQuestions) * 100;
+            const bPercentage = (b.correctAnswers / b.totalQuestions) * 100;
+            return aPercentage - bPercentage;
+          });
+          break;
+      }
+
+      currentPage = 1;
+      renderHistory();
+    }
+
+    // View result
+    function viewResult(attemptId) {
+      window.location.href = `/pages/results.html?attempt=${attemptId}`;
+    }
+
+    // Retake exam
+    function retakeExam(examId) {
+      if (confirm('Bạn có chắc muốn làm lại bài thi này?')) {
+        window.location.href = `/pages/quiz.html?exam=${examId}`;
+      }
+    }
+
+    // Compare attempts
+    function compareAttempts(examId) {
+      Utils.showToast('Tính năng đang phát triển', 'info');
+    }
+
+    // Helper functions
+    function getScoreColor(percentage) {
+      if (percentage >= 80) return 'bg-green-500';
+      if (percentage >= 60) return 'bg-blue-500';
+      if (percentage >= 40) return 'bg-yellow-500';
+      return 'bg-red-500';
+    }
+
+    function getScoreIcon(percentage) {
+      if (percentage >= 80) return 'fa-trophy';
+      if (percentage >= 60) return 'fa-star';
+      if (percentage >= 40) return 'fa-smile';
+      return 'fa-frown';
+    }
+
+    function getProgressColor(percentage) {
+      if (percentage >= 80) return 'bg-green-500';
+      if (percentage >= 60) return 'bg-blue-500';
+      if (percentage >= 40) return 'bg-yellow-500';
+      return 'bg-red-500';
+    }
+
+    // Initialize
+    loadHistory();
+  </script>
+</body>
+</html>
