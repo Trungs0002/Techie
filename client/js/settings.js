@@ -1,7 +1,7 @@
 /**
  * Settings Page JavaScript
  */
-s
+s;
 let currentSettings = null;
 let currentProfile = null;
 
@@ -21,7 +21,7 @@ const userAPI = {
   },
 
   getSettings: async () => {
-    return await apiCall("/users/setting", { method: "GET" });
+    return await apiCall("/users/settings", { method: "GET" });
   },
 
   updateSettings: async (data) => {
