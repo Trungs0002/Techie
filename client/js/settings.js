@@ -1,7 +1,7 @@
 /**
  * Settings Page JavaScript
  */
-
+s
 let currentSettings = null;
 let currentProfile = null;
 
@@ -21,7 +21,7 @@ const userAPI = {
   },
 
   getSettings: async () => {
-    return await apiCall("/users/settings", { method: "GET" });
+    return await apiCall("/users/setting", { method: "GET" });
   },
 
   updateSettings: async (data) => {
@@ -121,11 +121,39 @@ function displaySettings(settings) {
 
   // Current Avatar
   const currentAvatar = document.getElementById("current-avatar");
-  if (currentAvatar && settings.selectedAvatar) {
-    currentAvatar.src = `assets/avatars/${settings.selectedAvatar}`;
-    currentAvatar.onerror = function () {
-      this.src = "assets/avatars/default.png";
-    };
+  if (currentAvatar) {
+    if (settings.selectedAvatar) {
+      // Map avatar name to file name
+      const avatarFileMap = {
+        avt1: "avt1.png",
+        avt2: "avt2.png",
+        avt3: "avt3.avif",
+        avt4: "avt4.png",
+        avt5: "avt5.jpg",
+        avt6: "avt6.png",
+      };
+
+      const avatarName = settings.selectedAvatar.replace(
+        /\.(png|jpg|jpeg|avif)$/i,
+        ""
+      );
+      const avatarFile = avatarFileMap[avatarName] || settings.selectedAvatar;
+
+      currentAvatar.src = `assets/avatars/${avatarFile}`;
+      currentAvatar.onerror = function () {
+        // Fallback nếu không tìm thấy file
+        this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+          avatarName
+        )}&size=120&background=6366f1&color=fff`;
+      };
+    } else {
+      // Default avatar (avt1)
+      currentAvatar.src = "assets/avatars/avt1.png";
+      currentAvatar.onerror = function () {
+        this.src =
+          "https://ui-avatars.com/api/?name=User&size=120&background=6366f1&color=fff";
+      };
+    }
   }
 }
 
@@ -147,7 +175,7 @@ async function updateSetting(settingName, value) {
   } catch (error) {
     console.error("Update setting error:", error);
     showError(error.message || "Không thể cập nhật cài đặt");
-    
+
     // Revert checkbox state
     const checkbox = document.getElementById(settingName);
     if (checkbox) {
@@ -179,7 +207,7 @@ async function updateProfile() {
     if (response.success) {
       currentProfile = response.data.user;
       showSuccess("Thông tin đã được cập nhật");
-      
+
       // Cập nhật localStorage nếu có
       const userStr = localStorage.getItem("user");
       if (userStr) {
@@ -201,45 +229,81 @@ async function updateProfile() {
  * Load avatars
  */
 function loadAvatars() {
-  // Danh sách avatar mẫu (bạn có thể thay đổi theo số lượng avatar thực tế)
-  const avatarNames = [
-    "avatar1.png",
-    "avatar2.png",
-    "avatar3.png",
-    "avatar4.png",
-    "avatar5.png",
-    "avatar6.png",
-    "default.png",
+  // Danh sách các file avatar có sẵn trong folder assets/avatars
+  const avatarFiles = [
+    { name: "avt1", file: "avt1.png" },
+    { name: "avt2", file: "avt2.png" },
+    { name: "avt3", file: "avt3.avif" },
+    { name: "avt4", file: "avt4.png" },
+    { name: "avt5", file: "avt5.jpg" },
+    { name: "avt6", file: "avt6.png" },
   ];
 
   const avatarGrid = document.getElementById("avatar-grid");
-  if (!avatarGrid) return;
+  if (!avatarGrid) {
+    console.error("Avatar grid element not found");
+    return;
+  }
 
   avatarGrid.innerHTML = "";
 
-  avatarNames.forEach((avatarName) => {
+  avatarFiles.forEach((avatarData) => {
+    const avatarName = avatarData.name;
+    const avatarFile = avatarData.file;
+
+    // Lấy selectedAvatar (có thể có extension hoặc không)
+    const selectedAvatar = currentSettings?.selectedAvatar || "";
+    const selectedAvatarName = selectedAvatar.replace(
+      /\.(png|jpg|jpeg|avif)$/i,
+      ""
+    );
+
     const avatarItem = document.createElement("div");
     avatarItem.className = "avatar-item";
-    
+    avatarItem.style.cursor = "pointer";
+
     // Kiểm tra nếu là avatar đang chọn
-    if (currentSettings && currentSettings.selectedAvatar === avatarName) {
+    const isSelected =
+      selectedAvatarName === avatarName ||
+      selectedAvatar === avatarName ||
+      selectedAvatar === avatarFile;
+
+    if (isSelected) {
       avatarItem.classList.add("selected");
     }
 
-    avatarItem.onclick = () => selectAvatar(avatarName);
+    // Bind click event
+    avatarItem.addEventListener(
+      "click",
+      (function (name, file) {
+        return function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log("Avatar clicked:", name, file);
+          selectAvatar(name);
+        };
+      })(avatarName, avatarFile)
+    );
 
+    // Tạo image element - load trực tiếp từ file
     const img = document.createElement("img");
-    img.src = `assets/avatars/${avatarName}`;
+    img.src = `assets/avatars/${avatarFile}`;
     img.alt = avatarName;
+    img.style.cssText =
+      "width: 100%; height: 100%; object-fit: cover; border-radius: 12px; display: block;";
+
     img.onerror = function () {
-      // Nếu không tìm thấy ảnh, tạo avatar placeholder
-      this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(avatarName)}&size=100`;
+      console.error(`Failed to load avatar: ${avatarFile}`);
+      // Hiển thị placeholder nếu không load được
+      this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        avatarName
+      )}&size=100&background=6366f1&color=fff`;
     };
 
     avatarItem.appendChild(img);
 
     // Thêm checkmark nếu đang được chọn
-    if (currentSettings && currentSettings.selectedAvatar === avatarName) {
+    if (isSelected) {
       const check = document.createElement("div");
       check.className = "avatar-check";
       check.textContent = "✓";
@@ -248,12 +312,19 @@ function loadAvatars() {
 
     avatarGrid.appendChild(avatarItem);
   });
+
+  console.log(
+    "Avatars loaded, current selected:",
+    currentSettings?.selectedAvatar
+  );
 }
 
 /**
  * Chọn avatar
  */
 async function selectAvatar(avatarName) {
+  console.log("selectAvatar called with:", avatarName);
+
   try {
     showLoading(true);
 
@@ -268,9 +339,23 @@ async function selectAvatar(avatarName) {
       // Cập nhật preview
       const currentAvatar = document.getElementById("current-avatar");
       if (currentAvatar) {
-        currentAvatar.src = `assets/avatars/${avatarName}`;
+        // Map avatar name to file name
+        const avatarFileMap = {
+          avt1: "avt1.png",
+          avt2: "avt2.png",
+          avt3: "avt3.avif",
+          avt4: "avt4.png",
+          avt5: "avt5.jpg",
+          avt6: "avt6.png",
+        };
+
+        const avatarFile = avatarFileMap[avatarName] || `${avatarName}.png`;
+        currentAvatar.src = `assets/avatars/${avatarFile}`;
         currentAvatar.onerror = function () {
-          this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(avatarName)}&size=120`;
+          // Fallback nếu không tìm thấy file
+          this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+            avatarName
+          )}&size=120&background=6366f1&color=fff`;
         };
       }
 
@@ -278,7 +363,7 @@ async function selectAvatar(avatarName) {
       loadAvatars();
 
       showSuccess("Avatar đã được cập nhật");
-      
+
       // Cập nhật localStorage
       const userStr = localStorage.getItem("user");
       if (userStr) {
@@ -296,6 +381,9 @@ async function selectAvatar(avatarName) {
     showLoading(false);
   }
 }
+
+// Đảm bảo hàm selectAvatar có thể được gọi từ global scope
+window.selectAvatar = selectAvatar;
 
 /**
  * Hiển thị loading overlay
@@ -348,4 +436,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadSettings();
 });
-
