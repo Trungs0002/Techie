@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Techie</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <h1 class="logo">🎓 Techie</h1>
+                <span class="tagline">Luyện thi Trắc nghiệm CNTT</span>
+            </div>
+            <div class="user-section">
+                <div class="user-info">
+                    <img src="assets/avatars/default.png" alt="Avatar" class="user-avatar" id="user-avatar" />
+                    <div class="user-details">
+                        <span class="user-name" id="user-name">Loading...</span>
+                        <span class="user-email" id="user-email">Loading...</span>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="handleLogout()">Đăng xuất</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-content">
+                    <h3 class="stat-label">Tổng số bài thi</h3>
+                    <p class="stat-value" id="total-exams">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-content">
+                    <h3 class="stat-label">Câu trả lời đúng</h3>
+                    <p class="stat-value" id="total-correct">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📝</div>
+                <div class="stat-content">
+                    <h3 class="stat-label">Tổng câu hỏi</h3>
+                    <p class="stat-value" id="total-questions">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-content">
+                    <h3 class="stat-label">Điểm trung bình</h3>
+                    <p class="stat-value" id="average-score">0%</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-content">
+                    <h3 class="stat-label">Điểm cao nhất</h3>
+                    <p class="stat-value" id="best-score">0%</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <h2 class="section-title">Chức năng</h2>
+            <div class="features-grid">
+                <!-- Trả lời trắc nghiệm -->
+                <div class="feature-card" onclick="window.location.href='quiz.html'">
+                    <div class="feature-icon">📚</div>
+                    <h3 class="feature-title">Trả lời trắc nghiệm</h3>
+                    <p class="feature-description">
+                        Thực hiện bài test trắc nghiệm liên quan đến kiến thức CNTT
+                    </p>
+                    <button class="feature-btn">Bắt đầu</button>
+                </div>
+
+                <!-- Xây dựng câu hỏi -->
+                <div class="feature-card" onclick="window.location.href='create-question.html'">
+                    <div class="feature-icon">➕</div>
+                    <h3 class="feature-title">Xây dựng câu hỏi</h3>
+                    <p class="feature-description">
+                        Bổ sung thêm câu hỏi vào hệ thống (Đúng/Sai hoặc 4 lựa chọn)
+                    </p>
+                    <button class="feature-btn">Tạo câu hỏi</button>
+                </div>
+
+                <!-- Settings -->
+                <div class="feature-card" onclick="window.location.href='settings.html'">
+                    <div class="feature-icon">⚙️</div>
+                    <h3 class="feature-title">Cài đặt</h3>
+                    <p class="feature-description">
+                        Cấu hình background music, sound effects, timer, số câu hỏi và avatar
+                    </p>
+                    <button class="feature-btn">Cài đặt</button>
+                </div>
+
+                <!-- Lịch sử -->
+                <div class="feature-card" onclick="window.location.href='results.html'">
+                    <div class="feature-icon">📜</div>
+                    <h3 class="feature-title">Lịch sử</h3>
+                    <p class="feature-description">
+                        Xem lịch sử các bài thi đã làm và kết quả chi tiết
+                    </p>
+                    <button class="feature-btn">Xem lịch sử</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Error Message -->
+    <div id="error-message" class="error-toast" style="display: none;"></div>
+
+    <!-- Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>
