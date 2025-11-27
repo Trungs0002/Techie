@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đăng nhập - Techie</title>
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+
+<body>
+  <div class="auth-container">
+    <div class="auth-header">
+      <div class="auth-logo">Techie</div>
+      <h1>Đăng nhập</h1>
+      <p>Chào mừng bạn trở lại!</p>
+    </div>
+
+    <div class="auth-body">
+      <!-- Error message container -->
+      <div id="error-message" class="message error" style="display: none"></div>
+
+      <!-- Success message container -->
+      <div id="success-message" class="message success" style="display: none"></div>
+
+      <form id="login-form" class="auth-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="usernameOrEmail">Username hoặc Email</label>
+          <input type="text" id="usernameOrEmail" name="usernameOrEmail" placeholder="Nhập username hoặc email" required
+            autocomplete="username" />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="password-container">
+            <input type="password" id="password" name="password" placeholder="Nhập password" required
+              autocomplete="current-password" />
+            <button type="button" class="password-toggle" onclick="togglePassword('password')"
+              aria-label="Show password">
+              👁️
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn">Đăng nhập</button>
+      </form>
+    </div>
+
+    <div class="auth-footer">
+      <p>
+        Chưa có tài khoản?
+        <a href="register.html" class="auth-link">Đăng ký ngay</a>
+      </p>
+      <p style="margin-top: 12px; font-size: 12px;">
+        <a href="index.html" class="auth-link">← Về trang chủ</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Load scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+
+  <script>
+    /**
+     * Toggle password visibility
+     */
+    function togglePassword(inputId) {
+      const input = document.getElementById(inputId);
+      const toggle = input.nextElementSibling;
+
+      if (input.type === "password") {
+        input.type = "text";
+        toggle.textContent = "🙈";
+      } else {
+        input.type = "password";
+        toggle.textContent = "👁️";
+      }
+    }
+
+    // Handle form submission
+    async function handleLogin(event) {
+      event.preventDefault();
+
+      const form = event.target;
+      const usernameOrEmail = form.usernameOrEmail.value.trim();
+      const password = form.password.value;
+
+      const errorContainer = document.getElementById("error-message");
+      const successContainer = document.getElementById("success-message");
+
+      // Ẩn các thông báo cũ
+      if (errorContainer) {
+        errorContainer.style.display = "none";
+        errorContainer.classList.remove("error");
+      }
+      if (successContainer) {
+        successContainer.style.display = "none";
+        successContainer.classList.remove("success");
+      }
+
+      // Validation
+      if (!usernameOrEmail || !password) {
+        if (errorContainer) {
+          errorContainer.textContent = "Vui lòng điền đầy đủ thông tin";
+          errorContainer.classList.add("error");
+          errorContainer.style.display = "block";
+        }
+        return;
+      }
+
+      // Disable form
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalText = submitBtn?.textContent;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Đang đăng nhập...";
+      }
+
+      try {
+        // Xác định là username hay email
+        const isEmail = usernameOrEmail.includes("@");
+        const credentials = isEmail
+          ? { email: usernameOrEmail, password }
+          : { username: usernameOrEmail, password };
+
+        const response = await authAPI.login(credentials);
+
+        if (response.success) {
+          // Lưu token và user info
+          localStorage.setItem("token", response.data.token);
+          localStorage.setItem("user", JSON.stringify(response.data.user));
+
+          if (successContainer) {
+            successContainer.textContent = "Đăng nhập thành công! Đang chuyển hướng...";
+            successContainer.classList.add("success");
+            successContainer.style.display = "block";
+          }
+
+          // Redirect sau 1 giây
+          setTimeout(() => {
+            window.location.href = "dashboard.html";
+          }, 1000);
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+
+        let errorMessage = error.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.";
+
+        // Kiểm tra nếu là lỗi kết nối
+        if (errorMessage.includes("Không thể kết nối đến server")) {
+          errorMessage = "Không thể kết nối đến server. " +
+            "Vui lòng đảm bảo server đang chạy trên http://localhost:3000. " +
+            "Mở Console (F12) để xem chi tiết lỗi.";
+        }
+
+        if (errorContainer) {
+          errorContainer.textContent = errorMessage;
+          errorContainer.classList.add("error");
+          errorContainer.style.display = "block";
+        }
+
+        // Re-enable form
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+        }
+      }
+    }
+
+    // Check if user is already logged in (validate token) and test server connection
+    document.addEventListener("DOMContentLoaded", async () => {
+      const token = localStorage.getItem("token");
+
+      // Nếu có token, kiểm tra token có hợp lệ không
+      if (token) {
+        try {
+          // Kiểm tra token bằng cách gọi API /auth/me
+          const response = await authAPI.getMe();
+          if (response.success && response.data.user) {
+            // Token hợp lệ, user đã đăng nhập, redirect về dashboard
+            console.log("✅ User đã đăng nhập, redirect về dashboard");
+            window.location.href = "dashboard.html";
+            return;
+          }
+        } catch (error) {
+          // Token không hợp lệ hoặc đã hết hạn, xóa token và cho phép đăng nhập
+          console.log("⚠️ Token không hợp lệ, xóa token");
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+        }
+      }
+
+      // Test server connection
+      try {
+        const response = await fetch("http://localhost:3000/api/health");
+        if (response.ok) {
+          console.log("✅ Server connection: OK");
+        } else {
+          console.warn("⚠️ Server returned:", response.status);
+        }
+      } catch (error) {
+        console.error("❌ Cannot connect to server:", error);
+        console.log("💡 Hãy đảm bảo server đang chạy: npm start");
+      }
+    });
+  </script>
+</body>
+
+</html>
