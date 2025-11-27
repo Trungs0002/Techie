@@ -148,3 +148,5 @@ if (typeof window !== "undefined") {
   window.healthAPI = healthAPI;
   window.apiCall = apiCall;
 }
+
+// User API sẽ được định nghĩa trong settings.js và các file khác

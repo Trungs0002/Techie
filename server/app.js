@@ -8,6 +8,7 @@ dotenv.config();
 
 // Import routes
 const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 // Khởi tạo Express app
 const app = express();
@@ -53,6 +54,7 @@ if (process.env.NODE_ENV === "development") {
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
@@ -71,6 +73,7 @@ app.get("/", (req, res) => {
     version: "1.0.0",
     endpoints: {
       auth: "/api/auth",
+      users: "/api/users",
       health: "/api/health",
     },
   });
