@@ -1,9 +1,31 @@
 /**
  * Settings Page JavaScript
  */
-s;
-let currentSettings = null;
+
+const DEFAULT_SETTINGS = Object.freeze({
+  backgroundMusic: false,
+  soundEffects: false,
+  timer: false,
+  questionsPerExam: 5,
+  examTimer: 60,
+  selectedAvatar: "",
+});
+
+const NUMBER_LIMITS = Object.freeze({
+  questionsPerExam: { min: 1, max: 100 },
+  examTimer: { min: 1, max: 300 },
+});
+
+const AUDIO_SOURCES = Object.freeze({
+  // Placeholder background track – replace file once real soundtrack is ready.
+  background: "assets/audio/tick.mp3",
+  correct: "assets/audio/correct.mp3",
+  wrong: "assets/audio/wrong.mp3",
+});
+
+let currentSettings = { ...DEFAULT_SETTINGS };
 let currentProfile = null;
+let audioController = null;
 
 /**
  * API endpoints cho users
@@ -46,28 +68,76 @@ async function loadSettings() {
   try {
     showLoading(true);
 
-    // Load profile
+    // Load từ localStorage trước để có fallback
+    const cachedSettings = loadSettingsFromCache();
+    if (cachedSettings) {
+      currentSettings = normalizeSettings(cachedSettings);
+      displaySettings(currentSettings);
+    }
+
+    // Sau đó load từ server để có data mới nhất
+    await Promise.all([loadProfile(), loadUserSettings()]);
+  } catch (error) {
+    console.error("Load settings error:", error);
+
+    // Nếu không có cached settings, dùng default
+    if (!currentSettings || Object.keys(currentSettings).length === 0) {
+      currentSettings = { ...DEFAULT_SETTINGS };
+      displaySettings(currentSettings);
+    }
+
+    // Chỉ hiển thị lỗi nếu không có cached data
+    if (!loadSettingsFromCache()) {
+      showError("Không thể tải cài đặt. Vui lòng thử lại sau.");
+    }
+  } finally {
+    loadAvatars();
+    showLoading(false);
+  }
+}
+
+function loadSettingsFromCache() {
+  try {
+    const cached = localStorage.getItem("userSettings");
+    if (cached) {
+      return JSON.parse(cached);
+    }
+  } catch (error) {
+    console.warn("Unable to load cached settings", error);
+  }
+  return null;
+}
+
+async function loadProfile() {
+  try {
     const profileResponse = await userAPI.getProfile();
     if (profileResponse.success) {
       currentProfile = profileResponse.data.user;
       displayProfile(currentProfile);
     }
+  } catch (error) {
+    console.error("Load profile error:", error);
+  }
+}
 
-    // Load settings
+async function loadUserSettings() {
+  try {
     const settingsResponse = await userAPI.getSettings();
     if (settingsResponse.success) {
-      currentSettings = settingsResponse.data.settings;
+      currentSettings = normalizeSettings(settingsResponse.data.settings);
       displaySettings(currentSettings);
     }
-
-    // Load avatars
-    loadAvatars();
   } catch (error) {
-    console.error("Load settings error:", error);
-    showError("Không thể tải cài đặt. Vui lòng thử lại sau.");
-  } finally {
-    showLoading(false);
+    console.error("Load user settings error:", error);
+    // Giữ nguyên cached settings nếu load từ server fail
   }
+}
+
+function normalizeSettings(settings = {}) {
+  return {
+    ...DEFAULT_SETTINGS,
+    ...settings,
+  };
 }
 
 /**
@@ -89,100 +159,378 @@ function displayProfile(profile) {
  * Hiển thị settings
  */
 function displaySettings(settings) {
+  const normalized = normalizeSettings(settings);
+  currentSettings = normalized;
+  cacheSettingsLocally(normalized);
+
   // Background Music
   const bgMusicCheckbox = document.getElementById("backgroundMusic");
   if (bgMusicCheckbox) {
-    bgMusicCheckbox.checked = settings.backgroundMusic || false;
+    bgMusicCheckbox.checked = normalized.backgroundMusic;
   }
 
   // Sound Effects
   const soundEffectsCheckbox = document.getElementById("soundEffects");
   if (soundEffectsCheckbox) {
-    soundEffectsCheckbox.checked = settings.soundEffects || false;
+    soundEffectsCheckbox.checked = normalized.soundEffects;
   }
 
   // Timer
   const timerCheckbox = document.getElementById("timer");
   if (timerCheckbox) {
-    timerCheckbox.checked = settings.timer || false;
+    timerCheckbox.checked = normalized.timer;
   }
 
   // Questions Per Exam
   const questionsInput = document.getElementById("questionsPerExam");
   if (questionsInput) {
-    questionsInput.value = settings.questionsPerExam || 5;
+    questionsInput.value = normalized.questionsPerExam;
   }
 
   // Exam Timer
   const examTimerInput = document.getElementById("examTimer");
   if (examTimerInput) {
-    examTimerInput.value = settings.examTimer || 60;
+    examTimerInput.value = normalized.examTimer;
   }
 
   // Current Avatar
   const currentAvatar = document.getElementById("current-avatar");
   if (currentAvatar) {
-    if (settings.selectedAvatar) {
-      // Map avatar name to file name
-      const avatarFileMap = {
-        avt1: "avt1.png",
-        avt2: "avt2.png",
-        avt3: "avt3.avif",
-        avt4: "avt4.png",
-        avt5: "avt5.jpg",
-        avt6: "avt6.png",
-      };
-
-      const avatarName = settings.selectedAvatar.replace(
-        /\.(png|jpg|jpeg|avif)$/i,
-        ""
-      );
-      const avatarFile = avatarFileMap[avatarName] || settings.selectedAvatar;
-
-      currentAvatar.src = `assets/avatars/${avatarFile}`;
-      currentAvatar.onerror = function () {
-        // Fallback nếu không tìm thấy file
-        this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-          avatarName
-        )}&size=120&background=6366f1&color=fff`;
-      };
-    } else {
-      // Default avatar (avt1)
-      currentAvatar.src = "assets/avatars/avt1.png";
-      currentAvatar.onerror = function () {
-        this.src =
-          "https://ui-avatars.com/api/?name=User&size=120&background=6366f1&color=fff";
-      };
-    }
+    updateCurrentAvatarPreview(currentAvatar, normalized.selectedAvatar);
   }
+
+  // Apply audio settings ngay lập tức
+  // Delay một chút để đảm bảo DOM đã sẵn sàng
+  setTimeout(() => {
+    applyImmediateSetting("backgroundMusic", normalized.backgroundMusic);
+    applyImmediateSetting("soundEffects", normalized.soundEffects);
+  }, 100);
+}
+
+function cacheSettingsLocally(settings) {
+  try {
+    localStorage.setItem("userSettings", JSON.stringify(settings));
+  } catch (error) {
+    console.warn("Unable to cache settings", error);
+  }
+}
+
+function updateCurrentAvatarPreview(imgEl, selectedAvatar) {
+  if (selectedAvatar) {
+    // Map avatar name to file name
+    const avatarFileMap = {
+      avt1: "avt1.png",
+      avt2: "avt2.png",
+      avt3: "avt3.avif",
+      avt4: "avt4.png",
+      avt5: "avt5.jpg",
+      avt6: "avt6.png",
+    };
+
+    const avatarName = selectedAvatar.replace(/\.(png|jpg|jpeg|avif)$/i, "");
+    const avatarFile = avatarFileMap[avatarName] || selectedAvatar;
+
+    imgEl.src = `assets/avatars/${avatarFile}`;
+    imgEl.onerror = function () {
+      // Fallback nếu không tìm thấy file
+      this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        avatarName
+      )}&size=120&background=6366f1&color=fff`;
+    };
+    return;
+  }
+
+  // Default avatar (avt1)
+  imgEl.src = "assets/avatars/avt1.png";
+  imgEl.onerror = function () {
+    this.src =
+      "https://ui-avatars.com/api/?name=User&size=120&background=6366f1&color=fff";
+  };
 }
 
 /**
  * Cập nhật setting
  */
 async function updateSetting(settingName, value) {
+  // Lưu giá trị cũ để có thể revert nếu cần
+  const oldValue = currentSettings?.[settingName];
+
   try {
-    const data = { [settingName]: value };
+    const sanitizedValue = sanitizeSettingValue(settingName, value);
+
+    // Cập nhật local state ngay lập tức để UI responsive
+    if (currentSettings) {
+      currentSettings[settingName] = sanitizedValue;
+      cacheSettingsLocally(currentSettings);
+    }
+
+    const data = { [settingName]: sanitizedValue };
     const response = await userAPI.updateSettings(data);
 
     if (response.success) {
-      // Cập nhật currentSettings
-      if (currentSettings) {
-        currentSettings[settingName] = value;
-      }
+      const updatedSettings = normalizeSettings(response.data.settings);
+      displaySettings(updatedSettings);
       showSuccess("Cài đặt đã được cập nhật");
+    } else {
+      // Nếu server không thành công, revert
+      if (currentSettings) {
+        currentSettings[settingName] = oldValue;
+        cacheSettingsLocally(currentSettings);
+      }
+      revertSettingInput(settingName);
+      showError("Không thể cập nhật cài đặt trên server");
     }
   } catch (error) {
     console.error("Update setting error:", error);
     showError(error.message || "Không thể cập nhật cài đặt");
 
-    // Revert checkbox state
-    const checkbox = document.getElementById(settingName);
-    if (checkbox) {
-      checkbox.checked = !checkbox.checked;
+    // Revert về giá trị cũ
+    if (currentSettings) {
+      currentSettings[settingName] = oldValue;
+      cacheSettingsLocally(currentSettings);
     }
+    revertSettingInput(settingName);
   }
 }
+
+function sanitizeSettingValue(settingName, value) {
+  if (NUMBER_LIMITS[settingName]) {
+    const { min, max } = NUMBER_LIMITS[settingName];
+    let numericValue = Number(value);
+
+    if (Number.isNaN(numericValue)) {
+      numericValue = min;
+    }
+
+    numericValue = Math.min(Math.max(numericValue, min), max);
+
+    return numericValue;
+  }
+
+  return value;
+}
+
+function revertSettingInput(settingName) {
+  const previousValue = currentSettings?.[settingName];
+
+  switch (settingName) {
+    case "backgroundMusic":
+    case "soundEffects":
+    case "timer": {
+      const checkbox = document.getElementById(settingName);
+      if (checkbox) {
+        checkbox.checked = !!previousValue;
+      }
+      break;
+    }
+    case "questionsPerExam": {
+      const questionsInput = document.getElementById("questionsPerExam");
+      if (questionsInput && previousValue !== undefined) {
+        questionsInput.value = previousValue;
+      }
+      break;
+    }
+    case "examTimer": {
+      const examTimerInput = document.getElementById("examTimer");
+      if (examTimerInput && previousValue !== undefined) {
+        examTimerInput.value = previousValue;
+      }
+      break;
+    }
+    default:
+      break;
+  }
+}
+
+function applyImmediateSetting(settingName, value) {
+  switch (settingName) {
+    case "backgroundMusic":
+      toggleBackgroundMusic(value);
+      break;
+    case "soundEffects":
+      toggleSoundEffects(value);
+      break;
+    default:
+      break;
+  }
+}
+
+function toggleBackgroundMusic(enabled) {
+  if (!enabled) {
+    // Tắt nhạc ngay lập tức
+    if (audioController) {
+      audioController.setBackgroundEnabled(false);
+    }
+    return;
+  }
+
+  initAudioController();
+
+  // Thử phát nhạc
+  audioController.setBackgroundEnabled(enabled).catch((error) => {
+    console.warn("Unable to toggle background music", error);
+
+    // Nếu lỗi do autoplay policy, chỉ cảnh báo nhưng không revert
+    // Vì user có thể đã tương tác với trang rồi
+    if (
+      error.name === "NotAllowedError" ||
+      error.name === "NotSupportedError"
+    ) {
+      showError(
+        "Trình duyệt đang chặn nhạc nền. Hãy click vào trang để bật nhạc nền."
+      );
+      // Không revert checkbox, để user có thể thử lại
+    } else {
+      // Lỗi khác, revert
+      const checkbox = document.getElementById("backgroundMusic");
+      if (checkbox) {
+        checkbox.checked = false;
+      }
+      if (currentSettings) {
+        currentSettings.backgroundMusic = false;
+        cacheSettingsLocally(currentSettings);
+      }
+      userAPI
+        .updateSettings({ backgroundMusic: false })
+        .catch((apiError) =>
+          console.warn("Không thể revert background music setting", apiError)
+        );
+    }
+  });
+}
+
+function toggleSoundEffects(enabled) {
+  initAudioController();
+  audioController.setEffectsEnabled(enabled);
+}
+
+class SettingsAudioController {
+  constructor() {
+    this.backgroundAudio = this.createAudio(AUDIO_SOURCES.background, {
+      loop: true,
+      volume: 0.35,
+    });
+
+    this.effects = {
+      correct: this.createAudio(AUDIO_SOURCES.correct),
+      wrong: this.createAudio(AUDIO_SOURCES.wrong),
+    };
+
+    this.backgroundEnabled = false;
+    this.effectsEnabled = false;
+    this.playAttempted = false;
+  }
+
+  createAudio(src, options = {}) {
+    const audio = new Audio(src);
+    audio.preload = "auto";
+    if (options.loop) {
+      audio.loop = true;
+    }
+    if (typeof options.volume === "number") {
+      audio.volume = options.volume;
+    }
+
+    // Log lỗi chi tiết hơn
+    audio.addEventListener("error", (e) => {
+      console.warn(`Không thể tải file audio: ${src}`, e);
+    });
+
+    // Log khi audio sẵn sàng
+    audio.addEventListener("canplaythrough", () => {
+      console.log(`Audio ready: ${src}`);
+    });
+
+    return audio;
+  }
+
+  async setBackgroundEnabled(enabled) {
+    this.backgroundEnabled = enabled;
+    if (!enabled) {
+      this.backgroundAudio.pause();
+      this.backgroundAudio.currentTime = 0;
+      return;
+    }
+
+    // Đảm bảo audio đã load
+    if (this.backgroundAudio.readyState < 2) {
+      try {
+        await new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            reject(new Error("Audio load timeout"));
+          }, 5000);
+
+          this.backgroundAudio.addEventListener(
+            "canplaythrough",
+            () => {
+              clearTimeout(timeout);
+              resolve();
+            },
+            { once: true }
+          );
+
+          this.backgroundAudio.addEventListener(
+            "error",
+            (e) => {
+              clearTimeout(timeout);
+              reject(e);
+            },
+            { once: true }
+          );
+
+          this.backgroundAudio.load();
+        });
+      } catch (error) {
+        console.warn("Audio load failed:", error);
+        this.backgroundEnabled = false;
+        throw error;
+      }
+    }
+
+    try {
+      await this.backgroundAudio.play();
+      this.playAttempted = true;
+      console.log("Background music started");
+    } catch (error) {
+      this.backgroundEnabled = false;
+      console.warn("Play failed:", error);
+      throw error;
+    }
+  }
+
+  setEffectsEnabled(enabled) {
+    this.effectsEnabled = enabled;
+  }
+
+  playEffect(effectName) {
+    if (!this.effectsEnabled) {
+      return;
+    }
+    const audio = this.effects[effectName];
+    if (!audio) {
+      console.warn(`Effect not found: ${effectName}`);
+      return;
+    }
+
+    // Reset và phát
+    audio.currentTime = 0;
+    audio.play().catch((error) => {
+      console.warn(`Không thể phát hiệu ứng âm thanh: ${effectName}`, error);
+    });
+  }
+}
+
+function initAudioController() {
+  if (!audioController) {
+    audioController = new SettingsAudioController();
+  }
+}
+
+// Cho phép các trang khác trigger hiệu ứng âm thanh
+window.playSoundEffect = function (effectName) {
+  initAudioController();
+  audioController.playEffect(effectName);
+};
 
 /**
  * Cập nhật profile
@@ -334,29 +682,13 @@ async function selectAvatar(avatarName) {
       // Cập nhật currentSettings
       if (currentSettings) {
         currentSettings.selectedAvatar = avatarName;
+        cacheSettingsLocally(currentSettings);
       }
 
       // Cập nhật preview
       const currentAvatar = document.getElementById("current-avatar");
       if (currentAvatar) {
-        // Map avatar name to file name
-        const avatarFileMap = {
-          avt1: "avt1.png",
-          avt2: "avt2.png",
-          avt3: "avt3.avif",
-          avt4: "avt4.png",
-          avt5: "avt5.jpg",
-          avt6: "avt6.png",
-        };
-
-        const avatarFile = avatarFileMap[avatarName] || `${avatarName}.png`;
-        currentAvatar.src = `assets/avatars/${avatarFile}`;
-        currentAvatar.onerror = function () {
-          // Fallback nếu không tìm thấy file
-          this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-            avatarName
-          )}&size=120&background=6366f1&color=fff`;
-        };
+        updateCurrentAvatarPreview(currentAvatar, avatarName);
       }
 
       // Reload avatar grid để cập nhật selected state
@@ -435,4 +767,31 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   loadSettings();
+
+  // Cho phép user tương tác để unlock audio (browser autoplay policy)
+  // Khi user click vào trang, thử phát nhạc nền nếu đã bật
+  let userInteracted = false;
+  const enableAudioOnInteraction = () => {
+    if (!userInteracted) {
+      userInteracted = true;
+      // Nếu background music đã được bật nhưng chưa phát được
+      if (currentSettings?.backgroundMusic && audioController) {
+        if (
+          !audioController.playAttempted ||
+          !audioController.backgroundEnabled
+        ) {
+          toggleBackgroundMusic(true);
+        }
+      }
+    }
+  };
+
+  // Lắng nghe các sự kiện user interaction
+  document.addEventListener("click", enableAudioOnInteraction, { once: true });
+  document.addEventListener("keydown", enableAudioOnInteraction, {
+    once: true,
+  });
+  document.addEventListener("touchstart", enableAudioOnInteraction, {
+    once: true,
+  });
 });
