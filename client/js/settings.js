@@ -263,6 +263,7 @@ async function updateSetting(settingName, value) {
       currentSettings[settingName] = sanitizedValue;
       cacheSettingsLocally(currentSettings);
     }
+    applyImmediateSetting(settingName, sanitizedValue);
 
     const data = { [settingName]: sanitizedValue };
     const response = await userAPI.updateSettings(data);

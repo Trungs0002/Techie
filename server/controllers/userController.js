@@ -1,5 +1,21 @@
 const User = require("../models/User");
 
+const DEFAULT_SETTINGS = {
+  backgroundMusic: false,
+  soundEffects: false,
+  timer: false,
+  questionsPerExam: 5,
+  examTimer: 60,
+  selectedAvatar: "",
+};
+
+function mergeSettings(userSettings = {}) {
+  return {
+    ...DEFAULT_SETTINGS,
+    ...userSettings,
+  };
+}
+
 /**
  * Controller cho User Management
  */
@@ -127,18 +143,18 @@ const updateProfile = async (req, res) => {
 const getSettings = async (req, res) => {
   try {
     const user = req.user;
+    const merged = mergeSettings(user.settings);
+
+    // Persist defaulted settings if missing
+    if (!user.settings || Object.keys(user.settings).length !== Object.keys(merged).length) {
+      user.settings = merged;
+      await user.save();
+    }
 
     res.json({
       success: true,
       data: {
-        settings: user.settings || {
-          backgroundMusic: false,
-          soundEffects: false,
-          timer: false,
-          questionsPerExam: 5,
-          examTimer: 60,
-          selectedAvatar: "",
-        },
+        settings: merged,
       },
     });
   } catch (error) {
@@ -158,13 +174,7 @@ const getSettings = async (req, res) => {
  */
 const updateSettings = async (req, res) => {
   try {
-    const {
-      backgroundMusic,
-      soundEffects,
-      timer,
-      questionsPerExam,
-      examTimer,
-    } = req.body;
+    const { backgroundMusic, soundEffects, timer, questionsPerExam, examTimer } = req.body;
     const userId = req.userId;
 
     const user = await User.findById(userId);
@@ -177,14 +187,15 @@ const updateSettings = async (req, res) => {
     }
 
     // Cập nhật settings
+    user.settings = mergeSettings(user.settings);
     if (backgroundMusic !== undefined) {
-      user.settings.backgroundMusic = backgroundMusic;
+      user.settings.backgroundMusic = !!backgroundMusic;
     }
     if (soundEffects !== undefined) {
-      user.settings.soundEffects = soundEffects;
+      user.settings.soundEffects = !!soundEffects;
     }
     if (timer !== undefined) {
-      user.settings.timer = timer;
+      user.settings.timer = !!timer;
     }
     if (questionsPerExam !== undefined) {
       // Validate số câu hỏi (ít nhất 1, tối đa 100)
@@ -194,7 +205,7 @@ const updateSettings = async (req, res) => {
           message: "Số câu hỏi phải từ 1 đến 100",
         });
       }
-      user.settings.questionsPerExam = questionsPerExam;
+      user.settings.questionsPerExam = Number(questionsPerExam);
     }
     if (examTimer !== undefined) {
       // Validate timer (ít nhất 1 phút, tối đa 300 phút)
@@ -204,7 +215,7 @@ const updateSettings = async (req, res) => {
           message: "Timer phải từ 1 đến 300 phút",
         });
       }
-      user.settings.examTimer = examTimer;
+      user.settings.examTimer = Number(examTimer);
     }
 
     await user.save();
@@ -253,6 +264,7 @@ const updateAvatar = async (req, res) => {
     }
 
     // Cập nhật selectedAvatar trong settings
+    user.settings = mergeSettings(user.settings);
     user.settings.selectedAvatar = selectedAvatar;
     // Cũng cập nhật avatar field
     user.avatar = `assets/avatars/${selectedAvatar}`;
