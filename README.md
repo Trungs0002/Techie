@@ -24,6 +24,7 @@
 ## ✨ Tính năng
 
 ### 🔐 Authentication (Xác thực)
+
 - ✅ Đăng ký tài khoản mới với validation
 - ✅ Đăng nhập bằng username hoặc email
 - ✅ Đăng xuất
@@ -32,6 +33,7 @@
 - ✅ Token validation và auto-refresh
 
 ### 📊 Dashboard
+
 - ✅ Hiển thị thông tin user (avatar, tên, email)
 - ✅ Thống kê chi tiết:
   - Tổng số bài thi đã làm
@@ -41,6 +43,7 @@
   - Điểm cao nhất (%)
 
 ### 📚 Quiz (Làm bài trắc nghiệm)
+
 - ✅ Lấy câu hỏi ngẫu nhiên từ database
 - ✅ Hỗ trợ 2 loại câu hỏi:
   - **True/False** (Đúng/Sai)
@@ -56,12 +59,14 @@
 - ✅ Hiển thị kết quả chi tiết sau khi hoàn thành
 
 ### ➕ Create Question (Tạo câu hỏi)
+
 - ✅ Form tạo câu hỏi mới
 - ✅ Chọn loại: True/False hoặc Multiple Choice
 - ✅ Nhập nội dung, đáp án, giải thích
 - ✅ Validation và lưu vào database
 
 ### ⚙️ Settings (Cài đặt)
+
 - ✅ **Profile Settings**:
   - Cập nhật họ tên
   - Cập nhật email
@@ -78,6 +83,7 @@
 ## 🛠️ Công nghệ sử dụng
 
 ### Backend
+
 - **Node.js** - Runtime environment
 - **Express.js** - Web framework
 - **MongoDB** - NoSQL database
@@ -88,6 +94,7 @@
 - **CORS** - Cross-origin resource sharing
 
 ### Frontend
+
 - **HTML5** - Markup
 - **CSS3** - Styling (Custom CSS, no framework)
 - **Vanilla JavaScript** - Logic (No framework)
@@ -156,11 +163,13 @@ Server sẽ chạy trên `http://localhost:3000`
 Có 2 cách:
 
 **Cách 1: Dùng Live Server (Khuyến nghị)**
+
 - Mở VS Code
 - Cài extension "Live Server"
 - Right-click vào `client/index.html` → "Open with Live Server"
 
 **Cách 2: Dùng HTTP Server**
+
 ```bash
 # Cài đặt http-server global
 npm install -g http-server
@@ -230,6 +239,7 @@ Techie/
 ## 📡 API Documentation
 
 ### Base URL
+
 ```
 http://localhost:3000/api
 ```
@@ -237,9 +247,11 @@ http://localhost:3000/api
 ### Authentication Endpoints
 
 #### `POST /api/auth/register`
+
 Đăng ký user mới
 
 **Request Body:**
+
 ```json
 {
   "username": "string (3-30 chars, alphanumeric + _)",
@@ -250,6 +262,7 @@ http://localhost:3000/api
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -262,9 +275,11 @@ http://localhost:3000/api
 ```
 
 #### `POST /api/auth/login`
+
 Đăng nhập
 
 **Request Body:**
+
 ```json
 {
   "username": "string" // hoặc "email": "string",
@@ -273,6 +288,7 @@ http://localhost:3000/api
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -285,17 +301,21 @@ http://localhost:3000/api
 ```
 
 #### `POST /api/auth/logout`
+
 Đăng xuất (cần authentication)
 
 **Headers:**
+
 ```
 Authorization: Bearer <token>
 ```
 
 #### `GET /api/auth/me`
+
 Lấy thông tin user hiện tại (cần authentication)
 
 **Headers:**
+
 ```
 Authorization: Bearer <token>
 ```
@@ -303,21 +323,27 @@ Authorization: Bearer <token>
 ### Question Endpoints
 
 #### `GET /api/questions`
+
 Lấy danh sách câu hỏi (recent, cần authentication)
 
 **Query Parameters:**
+
 - `limit`: số lượng câu hỏi (default: 20, max: 100)
 
 #### `GET /api/questions/random`
+
 Lấy câu hỏi ngẫu nhiên cho quiz (cần authentication)
 
 **Query Parameters:**
+
 - `limit`: số lượng câu hỏi (default: 5, max: 50)
 
 #### `POST /api/questions`
+
 Tạo câu hỏi mới (cần authentication)
 
 **Request Body:**
+
 ```json
 {
   "content": "string",
@@ -333,12 +359,15 @@ Tạo câu hỏi mới (cần authentication)
 ### User Endpoints
 
 #### `GET /api/users/profile`
+
 Lấy profile (cần authentication)
 
 #### `PUT /api/users/profile`
+
 Cập nhật profile (cần authentication)
 
 **Request Body:**
+
 ```json
 {
   "fullName": "string (optional)",
@@ -347,12 +376,15 @@ Cập nhật profile (cần authentication)
 ```
 
 #### `GET /api/users/settings`
+
 Lấy settings (cần authentication)
 
 #### `PUT /api/users/settings`
+
 Cập nhật settings (cần authentication)
 
 **Request Body:**
+
 ```json
 {
   "backgroundMusic": boolean,
@@ -364,9 +396,11 @@ Cập nhật settings (cần authentication)
 ```
 
 #### `PUT /api/users/avatar`
+
 Cập nhật avatar (cần authentication)
 
 **Request Body:**
+
 ```json
 {
   "selectedAvatar": "avt1.png" | "avt2.png" | ...
@@ -374,14 +408,17 @@ Cập nhật avatar (cần authentication)
 ```
 
 #### `GET /api/users/stats`
+
 Lấy thống kê (cần authentication)
 
 ### Health Check
 
 #### `GET /api/health`
+
 Kiểm tra server status
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -393,30 +430,35 @@ Kiểm tra server status
 ## 💻 Sử dụng
 
 ### 1. Đăng ký tài khoản
+
 - Truy cập `http://localhost:5500/register.html`
 - Điền thông tin: username, email, password
 - Click "Đăng ký"
 - Sau khi đăng ký thành công, bạn sẽ được chuyển đến trang đăng nhập
 
 ### 2. Đăng nhập
+
 - Truy cập `http://localhost:5500/login.html`
 - Nhập username/email và password
 - Click "Đăng nhập"
 - Sau khi đăng nhập thành công, bạn sẽ được chuyển đến dashboard
 
 ### 3. Làm bài trắc nghiệm
+
 - Từ dashboard, click "Trả lời trắc nghiệm"
 - Hệ thống sẽ load câu hỏi ngẫu nhiên
 - Chọn đáp án và click "Next" hoặc "Skip"
 - Sau khi hoàn thành, xem kết quả
 
 ### 4. Tạo câu hỏi
+
 - Từ dashboard, click "Xây dựng câu hỏi"
 - Chọn loại câu hỏi (True/False hoặc Multiple Choice)
 - Điền nội dung, đáp án, giải thích
 - Click "Lưu câu hỏi"
 
 ### 5. Cài đặt
+
 - Từ dashboard, click "Cài đặt"
 - Cập nhật profile, quiz settings, hoặc chọn avatar
 - Settings sẽ được lưu tự động
@@ -433,10 +475,12 @@ Kiểm tra server status
 ## 🎵 Audio System
 
 Ứng dụng hỗ trợ:
+
 - **Background Music**: Nhạc nền khi làm bài (tùy chọn)
 - **Sound Effects**: Hiệu ứng âm thanh khi trả lời đúng/sai (tùy chọn)
 
 Audio files nằm trong `client/assets/audio/`:
+
 - `background-music-434612.mp3`
 - `correct.mp3`
 - `wrong.mp3`
@@ -445,21 +489,25 @@ Audio files nằm trong `client/assets/audio/`:
 ## 🐛 Troubleshooting
 
 ### Server không khởi động
+
 - Kiểm tra MongoDB đang chạy
 - Kiểm tra file `.env` có đúng format không
 - Kiểm tra port 3000 có bị chiếm không
 
 ### Không kết nối được MongoDB
+
 - Kiểm tra `MONGODB_URI` trong `.env`
 - Kiểm tra MongoDB service đang chạy
 - Kiểm tra firewall/network
 
 ### Frontend không gọi được API
+
 - Kiểm tra server đang chạy trên port 3000
 - Kiểm tra CORS configuration
 - Mở Console (F12) để xem lỗi chi tiết
 
 ### Avatar không hiển thị
+
 - Kiểm tra file avatar có trong `client/assets/avatars/`
 - Kiểm tra console có lỗi 404 không
 - Avatar sẽ tự động fallback sang placeholder nếu không load được
@@ -502,4 +550,3 @@ This project is licensed under the ISC License.
 ---
 
 **Made with ❤️ for CNTT students**
-
