@@ -41,7 +41,7 @@ async function loadUserInfo() {
       return;
     }
 
-    showError("Không thể tải thông tin. Vui lòng thử lại sau.");
+    showDashboardError("Không thể tải thông tin. Vui lòng thử lại sau.");
   } finally {
     showLoading(false);
   }
@@ -51,33 +51,83 @@ async function loadUserInfo() {
  * Hiển thị thông tin user
  */
 function displayUserInfo(user) {
+  console.log("Displaying user info:", user);
+
   // User name
   const userNameEl = document.getElementById("user-name");
   if (userNameEl) {
-    userNameEl.textContent = user.fullName || user.username;
+    const displayName = user.fullName || user.username || "User";
+    userNameEl.textContent = displayName;
+    console.log("User name set to:", displayName);
+  } else {
+    console.error("user-name element not found");
   }
 
   // User email
   const userEmailEl = document.getElementById("user-email");
   if (userEmailEl) {
-    userEmailEl.textContent = user.email;
+    userEmailEl.textContent = user.email || "";
+    console.log("User email set to:", user.email);
+  } else {
+    console.error("user-email element not found");
   }
 
   // User avatar
   const userAvatarEl = document.getElementById("user-avatar");
   if (userAvatarEl) {
-    if (user.avatar) {
-      userAvatarEl.src = user.avatar;
-    } else if (user.settings?.selectedAvatar) {
-      userAvatarEl.src = `assets/avatars/${user.settings.selectedAvatar}`;
-    } else {
-      // Default avatar
-      userAvatarEl.src = "assets/avatars/default.png";
-      userAvatarEl.onerror = function () {
-        // Nếu không tìm thấy avatar, sử dụng placeholder
-        this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username)}&background=6366f1&color=fff&size=48`;
-      };
+    // Map avatar name to file name (giống như trong settings.js)
+    const avatarFileMap = {
+      avt1: "avt1.png",
+      avt2: "avt2.png",
+      avt3: "avt3.avif",
+      avt4: "avt4.png",
+      avt5: "avt5.jpg",
+      avt6: "avt6.png",
+    };
+
+    let avatarSrc = null;
+
+    // Ưu tiên: user.avatar (nếu có full path)
+    if (user.avatar && user.avatar.trim() !== "") {
+      avatarSrc = user.avatar;
+      console.log("Using user.avatar:", avatarSrc);
     }
+    // Nếu không có user.avatar, kiểm tra selectedAvatar
+    else if (user.settings?.selectedAvatar) {
+      const selectedAvatar = user.settings.selectedAvatar;
+      // Remove extension nếu có
+      const avatarName = selectedAvatar.replace(/\.(png|jpg|jpeg|avif)$/i, "");
+      // Map to file name
+      const avatarFile = avatarFileMap[avatarName] || selectedAvatar;
+      avatarSrc = `assets/avatars/${avatarFile}`;
+      console.log("Using selectedAvatar:", selectedAvatar, "->", avatarSrc);
+    }
+    // Default: avt1.png
+    else {
+      avatarSrc = "assets/avatars/avt1.png";
+      console.log("Using default avatar:", avatarSrc);
+    }
+
+    // Set avatar source
+    userAvatarEl.src = avatarSrc;
+    console.log("Avatar src set to:", avatarSrc);
+
+    // Error handler: nếu không load được, dùng placeholder
+    userAvatarEl.onerror = function () {
+      console.warn(`Failed to load avatar: ${avatarSrc}, using placeholder`);
+      this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        user.username || "User"
+      )}&background=6366f1&color=fff&size=48`;
+      // Remove onerror để tránh loop nếu placeholder cũng fail
+      this.onerror = null;
+    };
+
+    // Success handler để confirm avatar loaded
+    userAvatarEl.onload = function () {
+      console.log("Avatar loaded successfully:", avatarSrc);
+    };
+  } else {
+    console.error("user-avatar element not found");
   }
 }
 
@@ -149,8 +199,9 @@ function showLoading(show) {
 
 /**
  * Hiển thị thông báo lỗi
+ * Sử dụng showError từ utils.js, nhưng với container cụ thể cho dashboard
  */
-function showError(message) {
+function showDashboardError(message) {
   const errorEl = document.getElementById("error-message");
   if (errorEl) {
     errorEl.textContent = message;

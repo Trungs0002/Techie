@@ -76,15 +76,19 @@ body {
   display: flex;
   align-items: center;
   gap: 20px;
+  flex-shrink: 0; /* Không cho phép shrink */
 }
 
 .user-info {
-  display: flex;
+  display: flex !important;
   align-items: center;
   gap: 12px;
   padding: 8px 12px;
   border-radius: 8px;
   transition: all 0.3s ease;
+  visibility: visible !important;
+  opacity: 1 !important;
+  min-width: 0; /* Cho phép flex shrink nếu cần */
 }
 
 .user-info:hover {
@@ -337,6 +341,23 @@ body {
   .user-section {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .user-info {
+    flex: 1;
+    min-width: 0; /* Cho phép text truncate */
+  }
+
+  .user-details {
+    min-width: 0; /* Cho phép text truncate */
+    overflow: hidden;
+  }
+
+  .user-name,
+  .user-email {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .dashboard-main {
