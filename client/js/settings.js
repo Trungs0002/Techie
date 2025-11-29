@@ -406,42 +406,118 @@ function toggleSoundEffects(enabled) {
 
 class SettingsAudioController {
   constructor() {
+    // Tăng volume lên để dễ nghe hơn
     this.backgroundAudio = this.createAudio(AUDIO_SOURCES.background, {
       loop: true,
-      volume: 0.35,
+      volume: 0.5,
     });
 
     this.effects = {
-      correct: this.createAudio(AUDIO_SOURCES.correct),
-      wrong: this.createAudio(AUDIO_SOURCES.wrong),
+      correct: this.createAudio(AUDIO_SOURCES.correct, { volume: 0.7 }),
+      wrong: this.createAudio(AUDIO_SOURCES.wrong, { volume: 0.7 }),
     };
 
     this.backgroundEnabled = false;
     this.effectsEnabled = false;
     this.playAttempted = false;
+
+    // Test audio files khi khởi tạo
+    this.testAudioFiles();
   }
 
   createAudio(src, options = {}) {
-    const audio = new Audio(src);
+    // Sử dụng đường dẫn tương đối (không thêm / ở đầu)
+    // Vì HTML files nằm trong client/, đường dẫn assets/audio/ là đúng
+    const audioSrc = src;
+    const audio = new Audio(audioSrc);
     audio.preload = "auto";
+
     if (options.loop) {
       audio.loop = true;
     }
+
+    // Đảm bảo volume không bị muted
     if (typeof options.volume === "number") {
-      audio.volume = options.volume;
+      audio.volume = Math.max(0, Math.min(1, options.volume));
+    } else {
+      audio.volume = 0.5; // Default volume
     }
+
+    audio.muted = false;
 
     // Log lỗi chi tiết hơn
     audio.addEventListener("error", (e) => {
-      console.warn(`Không thể tải file audio: ${src}`, e);
+      console.error(`❌ Không thể tải file audio: ${audioSrc}`, {
+        error: e,
+        code: audio.error?.code,
+        message: audio.error?.message,
+        readyState: audio.readyState,
+        networkState: audio.networkState,
+      });
     });
 
     // Log khi audio sẵn sàng
     audio.addEventListener("canplaythrough", () => {
-      console.log(`Audio ready: ${src}`);
+      console.log(`✅ Audio ready: ${audioSrc}`, {
+        duration: audio.duration,
+        volume: audio.volume,
+        muted: audio.muted,
+      });
+    });
+
+    // Log khi audio bắt đầu phát
+    audio.addEventListener("play", () => {
+      console.log(`▶️ Audio playing: ${audioSrc}`);
+    });
+
+    // Log khi audio bị pause
+    audio.addEventListener("pause", () => {
+      console.log(`⏸️ Audio paused: ${audioSrc}`);
     });
 
     return audio;
+  }
+
+  async testAudioFiles() {
+    // Test từng file audio để đảm bảo chúng có thể load
+    const testFiles = [
+      {
+        name: "background",
+        audio: this.backgroundAudio,
+        src: AUDIO_SOURCES.background,
+      },
+      {
+        name: "correct",
+        audio: this.effects.correct,
+        src: AUDIO_SOURCES.correct,
+      },
+      { name: "wrong", audio: this.effects.wrong, src: AUDIO_SOURCES.wrong },
+    ];
+
+    for (const { name, audio, src } of testFiles) {
+      try {
+        // Thử load audio
+        audio.load();
+
+        // Chờ một chút để kiểm tra
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        if (audio.error) {
+          console.error(`❌ Audio file "${name}" (${src}) có lỗi:`, {
+            code: audio.error.code,
+            message: audio.error.message,
+          });
+        } else if (audio.readyState >= 2) {
+          console.log(`✅ Audio file "${name}" (${src}) đã sẵn sàng`);
+        } else {
+          console.warn(
+            `⚠️ Audio file "${name}" (${src}) chưa sẵn sàng, readyState: ${audio.readyState}`
+          );
+        }
+      } catch (error) {
+        console.error(`❌ Lỗi khi test audio "${name}":`, error);
+      }
+    }
   }
 
   async setBackgroundEnabled(enabled) {
@@ -449,51 +525,84 @@ class SettingsAudioController {
     if (!enabled) {
       this.backgroundAudio.pause();
       this.backgroundAudio.currentTime = 0;
+      console.log("🔇 Background music stopped");
       return;
+    }
+
+    // Đảm bảo audio không bị muted
+    this.backgroundAudio.muted = false;
+
+    // Đảm bảo volume đúng
+    if (this.backgroundAudio.volume === 0) {
+      this.backgroundAudio.volume = 0.5;
     }
 
     // Đảm bảo audio đã load
     if (this.backgroundAudio.readyState < 2) {
+      console.log("⏳ Loading background audio...");
       try {
         await new Promise((resolve, reject) => {
           const timeout = setTimeout(() => {
-            reject(new Error("Audio load timeout"));
-          }, 5000);
+            reject(new Error("Audio load timeout after 10 seconds"));
+          }, 10000);
 
-          this.backgroundAudio.addEventListener(
-            "canplaythrough",
-            () => {
-              clearTimeout(timeout);
-              resolve();
-            },
-            { once: true }
-          );
+          const onCanPlay = () => {
+            clearTimeout(timeout);
+            console.log("✅ Background audio loaded successfully");
+            resolve();
+          };
 
-          this.backgroundAudio.addEventListener(
-            "error",
-            (e) => {
-              clearTimeout(timeout);
-              reject(e);
-            },
-            { once: true }
-          );
+          const onError = (e) => {
+            clearTimeout(timeout);
+            console.error("❌ Background audio load error:", e);
+            reject(
+              new Error(
+                `Audio load failed: ${
+                  this.backgroundAudio.error?.message || "Unknown error"
+                }`
+              )
+            );
+          };
+
+          this.backgroundAudio.addEventListener("canplaythrough", onCanPlay, {
+            once: true,
+          });
+          this.backgroundAudio.addEventListener("error", onError, {
+            once: true,
+          });
 
           this.backgroundAudio.load();
         });
       } catch (error) {
-        console.warn("Audio load failed:", error);
+        console.error("❌ Audio load failed:", error);
         this.backgroundEnabled = false;
         throw error;
       }
     }
 
     try {
-      await this.backgroundAudio.play();
-      this.playAttempted = true;
-      console.log("Background music started");
+      console.log("▶️ Attempting to play background music...", {
+        readyState: this.backgroundAudio.readyState,
+        volume: this.backgroundAudio.volume,
+        muted: this.backgroundAudio.muted,
+        paused: this.backgroundAudio.paused,
+      });
+
+      const playPromise = this.backgroundAudio.play();
+
+      if (playPromise !== undefined) {
+        await playPromise;
+        this.playAttempted = true;
+        console.log("✅ Background music started successfully");
+      }
     } catch (error) {
       this.backgroundEnabled = false;
-      console.warn("Play failed:", error);
+      console.error("❌ Play failed:", error, {
+        name: error.name,
+        message: error.message,
+        readyState: this.backgroundAudio.readyState,
+        error: this.backgroundAudio.error,
+      });
       throw error;
     }
   }
@@ -504,19 +613,51 @@ class SettingsAudioController {
 
   playEffect(effectName) {
     if (!this.effectsEnabled) {
+      console.log(`🔇 Sound effects disabled, skipping: ${effectName}`);
       return;
     }
+
     const audio = this.effects[effectName];
     if (!audio) {
-      console.warn(`Effect not found: ${effectName}`);
+      console.warn(`⚠️ Effect not found: ${effectName}`);
       return;
+    }
+
+    // Đảm bảo audio không bị muted và có volume
+    audio.muted = false;
+    if (audio.volume === 0) {
+      audio.volume = 0.7;
     }
 
     // Reset và phát
     audio.currentTime = 0;
-    audio.play().catch((error) => {
-      console.warn(`Không thể phát hiệu ứng âm thanh: ${effectName}`, error);
+
+    console.log(`▶️ Playing sound effect: ${effectName}`, {
+      readyState: audio.readyState,
+      volume: audio.volume,
+      muted: audio.muted,
     });
+
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          console.log(`✅ Sound effect "${effectName}" played successfully`);
+        })
+        .catch((error) => {
+          console.error(
+            `❌ Không thể phát hiệu ứng âm thanh: ${effectName}`,
+            error
+          );
+          // Thử load lại và phát
+          audio.load();
+          setTimeout(() => {
+            audio.play().catch((err) => {
+              console.error(`❌ Retry failed for ${effectName}:`, err);
+            });
+          }, 100);
+        });
+    }
   }
 }
 
@@ -529,7 +670,31 @@ function initAudioController() {
 // Cho phép các trang khác trigger hiệu ứng âm thanh
 window.playSoundEffect = function (effectName) {
   initAudioController();
-  audioController.playEffect(effectName);
+  if (audioController) {
+    audioController.playEffect(effectName);
+  } else {
+    console.warn("Audio controller not initialized");
+  }
+};
+
+// Thêm function để test audio (có thể gọi từ console)
+window.testAudio = function () {
+  initAudioController();
+  if (audioController) {
+    console.log("Testing audio files...");
+    console.log("Testing correct sound...");
+    audioController.playEffect("correct");
+    setTimeout(() => {
+      console.log("Testing wrong sound...");
+      audioController.playEffect("wrong");
+    }, 1000);
+    setTimeout(() => {
+      console.log("Testing background music...");
+      audioController.setBackgroundEnabled(true).catch((err) => {
+        console.error("Background music test failed:", err);
+      });
+    }, 2000);
+  }
 };
 
 /**
@@ -768,20 +933,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadSettings();
 
+  // Khởi tạo audio controller sớm để test audio files
+  initAudioController();
+
   // Cho phép user tương tác để unlock audio (browser autoplay policy)
   // Khi user click vào trang, thử phát nhạc nền nếu đã bật
   let userInteracted = false;
   const enableAudioOnInteraction = () => {
     if (!userInteracted) {
       userInteracted = true;
+      console.log("👆 User interaction detected, enabling audio...");
+
+      // Đảm bảo audio controller đã được khởi tạo
+      initAudioController();
+
       // Nếu background music đã được bật nhưng chưa phát được
-      if (currentSettings?.backgroundMusic && audioController) {
-        if (
-          !audioController.playAttempted ||
-          !audioController.backgroundEnabled
-        ) {
-          toggleBackgroundMusic(true);
-        }
+      if (currentSettings?.backgroundMusic) {
+        console.log(
+          "🎵 Attempting to start background music after user interaction..."
+        );
+        toggleBackgroundMusic(true).catch((err) => {
+          console.error("Failed to start background music:", err);
+        });
+      }
+
+      // Test sound effects nếu đã bật
+      if (currentSettings?.soundEffects && audioController) {
+        console.log("🔊 Sound effects enabled, testing...");
+        // Test với một sound nhỏ
+        setTimeout(() => {
+          audioController.playEffect("correct");
+        }, 500);
       }
     }
   };
@@ -793,5 +975,12 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   document.addEventListener("touchstart", enableAudioOnInteraction, {
     once: true,
+  });
+
+  // Thêm một listener để test audio khi user click vào bất kỳ đâu
+  document.addEventListener("click", () => {
+    if (audioController && currentSettings?.soundEffects) {
+      // Không làm gì, chỉ để đảm bảo audio đã sẵn sàng
+    }
   });
 });

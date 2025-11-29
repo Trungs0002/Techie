@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thêm câu hỏi - Techie</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/create-question.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <div class="header-content">
+        <button class="back-btn" onclick="window.location.href='dashboard.html'">
+          ← Quay lại
+        </button>
+        <h1>Thêm câu hỏi trắc nghiệm</h1>
+      </div>
+    </header>
+
+    <main class="page-main">
+      <div id="message" class="message hidden"></div>
+
+      <section class="card">
+        <form id="question-form">
+          <div class="form-row">
+            <label for="content">Nội dung câu hỏi</label>
+            <textarea
+              id="content"
+              name="content"
+              rows="3"
+              placeholder="Nhập nội dung câu hỏi"
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-row two-cols">
+            <div>
+              <label for="subject">Môn/Chủ đề (tuỳ chọn)</label>
+              <input
+                type="text"
+                id="subject"
+                name="subject"
+                placeholder="VD: Mang may tinh"
+              />
+            </div>
+            <div>
+              <label for="type">Loại câu hỏi</label>
+              <select id="type" name="type" required>
+                <option value="multiple_choice">4 lựa chọn (1 đáp án đúng)</option>
+                <option value="true_false">Đúng / Sai</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="options-mc">
+            <div class="options-grid">
+              <div class="option-item">
+                <label>Đáp án A</label>
+                <input type="text" data-option-index="0" placeholder="Nội dung đáp án A" />
+                <label class="radio">
+                  <input type="radio" name="correct" value="0" checked />
+                  Đáp án đúng
+                </label>
+              </div>
+              <div class="option-item">
+                <label>Đáp án B</label>
+                <input type="text" data-option-index="1" placeholder="Nội dung đáp án B" />
+                <label class="radio">
+                  <input type="radio" name="correct" value="1" />
+                  Đáp án đúng
+                </label>
+              </div>
+              <div class="option-item">
+                <label>Đáp án C</label>
+                <input type="text" data-option-index="2" placeholder="Nội dung đáp án C" />
+                <label class="radio">
+                  <input type="radio" name="correct" value="2" />
+                  Đáp án đúng
+                </label>
+              </div>
+              <div class="option-item">
+                <label>Đáp án D</label>
+                <input type="text" data-option-index="3" placeholder="Nội dung đáp án D" />
+                <label class="radio">
+                  <input type="radio" name="correct" value="3" />
+                  Đáp án đúng
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div id="options-tf" class="hidden">
+            <p class="hint">Chọn đúng hoặc sai cho câu hỏi này.</p>
+            <label class="radio inline">
+              <input type="radio" name="tf-correct" value="true" checked />
+              Đúng
+            </label>
+            <label class="radio inline">
+              <input type="radio" name="tf-correct" value="false" />
+              Sai
+            </label>
+          </div>
+
+          <div class="form-row">
+            <label for="explanation">Giải thích (tuỳ chọn)</label>
+            <textarea
+              id="explanation"
+              name="explanation"
+              rows="2"
+              placeholder="Giải thích ngắn gọn vì sao đáp án đúng"
+            ></textarea>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="secondary-btn" onclick="window.location.href='quiz.html'">
+              Làm bài
+            </button>
+            <button type="submit" class="primary-btn">Lưu câu hỏi</button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/create-question.js"></script>
+  </body>
+</html>

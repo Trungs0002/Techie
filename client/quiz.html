@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Làm bài trắc nghiệm - Techie</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/quiz.css" />
+  </head>
+  <body>
+    <header class="quiz-header">
+      <div class="header-left">
+        <button class="back-btn" onclick="window.location.href='dashboard.html'">
+          ← Quay lại
+        </button>
+        <h1>Làm bài trắc nghiệm CNTT</h1>
+      </div>
+      <div class="header-right">
+        <div class="badge" id="per-question-timer">--:--</div>
+        <div class="badge primary" id="total-timer">--:--</div>
+      </div>
+    </header>
+
+    <main class="quiz-container">
+      <div id="message-area" class="message hidden"></div>
+
+      <section class="quiz-status">
+        <div class="status-item">
+          <span class="label">Câu</span>
+          <span class="value" id="question-progress">0 / 0</span>
+        </div>
+        <div class="status-item">
+          <span class="label">Điểm</span>
+          <span class="value" id="score">0</span>
+        </div>
+        <div class="status-item">
+          <span class="label">Câu đúng</span>
+          <span class="value" id="correct-count">0</span>
+        </div>
+      </section>
+
+      <section class="quiz-card" id="quiz-card">
+        <div class="quiz-body">
+          <div class="question-meta">
+            <span class="pill" id="question-type">---</span>
+          </div>
+          <h2 class="question-text" id="question-text">Đang tải câu hỏi...</h2>
+          <div class="options" id="options-container"></div>
+        </div>
+        <div class="quiz-actions">
+          <button class="secondary-btn" id="skip-btn">Bỏ qua</button>
+          <button class="primary-btn" id="next-btn">Câu tiếp</button>
+        </div>
+      </section>
+
+      <section class="result-card hidden" id="result-card">
+        <h2>Kết quả</h2>
+        <div class="result-grid">
+          <div class="result-item">
+            <span class="label">Điểm</span>
+            <span class="value" id="result-score">0</span>
+          </div>
+          <div class="result-item">
+            <span class="label">Đúng</span>
+            <span class="value" id="result-correct">0</span>
+          </div>
+          <div class="result-item">
+            <span class="label">Sai</span>
+            <span class="value" id="result-wrong">0</span>
+          </div>
+          <div class="result-item">
+            <span class="label">Thời gian</span>
+            <span class="value" id="result-time">--:--</span>
+          </div>
+        </div>
+        <div class="result-actions">
+          <button class="secondary-btn" onclick="window.location.reload()">
+            Làm lại
+          </button>
+          <button
+            class="primary-btn"
+            onclick="window.location.href='create-question.html'"
+          >
+            Thêm câu hỏi
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <div id="loading-overlay" class="loading-overlay hidden">
+      <div class="spinner"></div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/quiz.js"></script>
+  </body>
+</html>
