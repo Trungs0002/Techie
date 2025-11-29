@@ -1,186 +1,147 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cài đặt - Techie</title>
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/settings.css" />
-  </head>
-  <body>
-    <!-- Header -->
-    <header class="settings-header">
-      <div class="header-content">
-        <button class="back-btn" onclick="window.location.href='dashboard.html'">
-          ← Quay lại
-        </button>
-        <h1 class="page-title">⚙️ Cài đặt</h1>
-        <div></div>
-      </div>
-    </header>
 
-    <!-- Main Content -->
-    <main class="settings-main">
-      <!-- Error/Success Messages -->
-      <div id="error-message" class="message error" style="display: none"></div>
-      <div id="success-message" class="message success" style="display: none"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cài đặt - Techie</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/settings.css" />
+</head>
 
-      <!-- Profile Section -->
-      <section class="settings-section">
-        <h2 class="section-title">Thông tin cá nhân</h2>
-        <div class="settings-card">
-          <div class="form-group">
-            <label for="fullName">Họ và tên</label>
-            <input
-              type="text"
-              id="fullName"
-              name="fullName"
-              placeholder="Nhập họ và tên"
-              class="form-input"
-            />
-          </div>
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Nhập email"
-              class="form-input"
-            />
-          </div>
-          <button class="save-btn" onclick="updateProfile()">
-            Lưu thông tin
-          </button>
-        </div>
-      </section>
-
-      <!-- Settings Section -->
-      <section class="settings-section">
-        <h2 class="section-title">Cài đặt ứng dụng</h2>
-        <div class="settings-card">
-          <!-- Background Music -->
-          <div class="setting-item">
-            <div class="setting-info">
-              <h3 class="setting-label">Background Music</h3>
-              <p class="setting-description">Bật/tắt nhạc nền</p>
-            </div>
-            <label class="toggle-switch">
-              <input
-                type="checkbox"
-                id="backgroundMusic"
-                onchange="updateSetting('backgroundMusic', this.checked)"
-              />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-
-          <!-- Sound Effects -->
-          <div class="setting-item">
-            <div class="setting-info">
-              <h3 class="setting-label">Sound Effects</h3>
-              <p class="setting-description">
-                Âm thanh cho trả lời đúng và trả lời sai
-              </p>
-            </div>
-            <label class="toggle-switch">
-              <input
-                type="checkbox"
-                id="soundEffects"
-                onchange="updateSetting('soundEffects', this.checked)"
-              />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-
-          <!-- Timer for each question -->
-          <div class="setting-item">
-            <div class="setting-info">
-              <h3 class="setting-label">Timer cho mỗi câu hỏi</h3>
-              <p class="setting-description">
-                Hiển thị timer cho từng câu hỏi
-              </p>
-            </div>
-            <label class="toggle-switch">
-              <input
-                type="checkbox"
-                id="timer"
-                onchange="updateSetting('timer', this.checked)"
-              />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-
-          <!-- Number of questions -->
-          <div class="setting-item">
-            <div class="setting-info">
-              <h3 class="setting-label">Số câu hỏi cho 1 lần chơi</h3>
-              <p class="setting-description">
-                Số lượng câu hỏi trong mỗi bài test (1-100)
-              </p>
-            </div>
-            <input
-              type="number"
-              id="questionsPerExam"
-              min="1"
-              max="100"
-              value="5"
-              class="number-input"
-              onchange="updateSetting('questionsPerExam', parseInt(this.value))"
-            />
-          </div>
-
-          <!-- Exam Timer -->
-          <div class="setting-item">
-            <div class="setting-info">
-              <h3 class="setting-label">Timer cho toàn bộ bài test</h3>
-              <p class="setting-description">
-                Thời gian giới hạn cho bài test (phút, 1-300)
-              </p>
-            </div>
-            <input
-              type="number"
-              id="examTimer"
-              min="1"
-              max="300"
-              value="60"
-              class="number-input"
-              onchange="updateSetting('examTimer', parseInt(this.value))"
-            />
-          </div>
-        </div>
-      </section>
-
-      <!-- Avatar Section -->
-      <section class="settings-section">
-        <h2 class="section-title">Chọn Avatar</h2>
-        <div class="settings-card">
-          <div class="avatar-preview">
-            <img
-              id="current-avatar"
-              src="assets/avatars/avt1.png"
-              alt="Current Avatar"
-              class="avatar-large"
-            />
-            <p class="avatar-preview-text">Avatar hiện tại</p>
-          </div>
-          <div class="avatar-grid" id="avatar-grid">
-            <!-- Avatars will be loaded dynamically -->
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- Loading Overlay -->
-    <div id="loading-overlay" class="loading-overlay" style="display: none">
-      <div class="spinner"></div>
+<body>
+  <!-- Header -->
+  <header class="settings-header">
+    <div class="header-content">
+      <button class="back-btn" onclick="window.location.href='dashboard.html'">
+        ← Quay lại
+      </button>
+      <h1 class="page-title">⚙️ Cài đặt</h1>
+      <div></div>
     </div>
+  </header>
 
-    <!-- Scripts -->
-    <script src="js/utils.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/settings.js"></script>
-  </body>
+  <!-- Main Content -->
+  <main class="settings-main">
+    <!-- Error/Success Messages -->
+    <div id="error-message" class="message error" style="display: none"></div>
+    <div id="success-message" class="message success" style="display: none"></div>
+
+    <!-- Profile Section -->
+    <section class="settings-section">
+      <h2 class="section-title">Thông tin cá nhân</h2>
+      <div class="settings-card">
+        <div class="form-group">
+          <label for="fullName">Họ và tên</label>
+          <input type="text" id="fullName" name="fullName" placeholder="Nhập họ và tên" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="Nhập email" class="form-input" />
+        </div>
+        <button class="save-btn" onclick="updateProfile()">
+          Lưu thông tin
+        </button>
+      </div>
+    </section>
+
+    <!-- Settings Section -->
+    <section class="settings-section">
+      <h2 class="section-title">Cài đặt ứng dụng</h2>
+      <div class="settings-card">
+        <!-- Background Music -->
+        <div class="setting-item">
+          <div class="setting-info">
+            <h3 class="setting-label">Background Music</h3>
+            <p class="setting-description">Bật/tắt nhạc nền</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="backgroundMusic" onchange="updateSetting('backgroundMusic', this.checked)" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <!-- Sound Effects -->
+        <div class="setting-item">
+          <div class="setting-info">
+            <h3 class="setting-label">Sound Effects</h3>
+            <p class="setting-description">
+              Âm thanh cho trả lời đúng và trả lời sai
+            </p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="soundEffects" onchange="updateSetting('soundEffects', this.checked)" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <!-- Timer for each question -->
+        <div class="setting-item">
+          <div class="setting-info">
+            <h3 class="setting-label">Timer cho mỗi câu hỏi</h3>
+            <p class="setting-description">
+              Hiển thị timer cho từng câu hỏi
+            </p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="timer" onchange="updateSetting('timer', this.checked)" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <!-- Number of questions -->
+        <div class="setting-item">
+          <div class="setting-info">
+            <h3 class="setting-label">Số câu hỏi cho 1 lần chơi</h3>
+            <p class="setting-description">
+              Số lượng câu hỏi trong mỗi bài test (1-100)
+            </p>
+          </div>
+          <input type="number" id="questionsPerExam" min="1" max="100" value="5" class="number-input"
+            onchange="updateSetting('questionsPerExam', parseInt(this.value))" />
+        </div>
+
+        <!-- Exam Timer -->
+        <div class="setting-item">
+          <div class="setting-info">
+            <h3 class="setting-label">Timer cho toàn bộ bài test</h3>
+            <p class="setting-description">
+              Thời gian giới hạn cho bài test (phút, 1-300)
+            </p>
+          </div>
+          <input type="number" id="examTimer" min="1" max="300" value="60" class="number-input"
+            onchange="updateSetting('examTimer', parseInt(this.value))" />
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- Avatar Section -->
+    <section class="settings-section">
+      <h2 class="section-title">Chọn Avatar</h2>
+      <div class="settings-card">
+        <div class="avatar-preview">
+          <img id="current-avatar" src="assets/avatars/avt1.png" alt="Current Avatar" class="avatar-large" />
+          <p class="avatar-preview-text">Avatar hiện tại</p>
+        </div>
+        <div class="avatar-grid" id="avatar-grid">
+          <!-- Avatars will be loaded dynamically -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="loading-overlay" style="display: none">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/settings.js"></script>
+</body>
+
 </html>
-

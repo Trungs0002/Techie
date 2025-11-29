@@ -17,8 +17,7 @@ const NUMBER_LIMITS = Object.freeze({
 });
 
 const AUDIO_SOURCES = Object.freeze({
-  // Placeholder background track – replace file once real soundtrack is ready.
-  background: "assets/audio/tick.mp3",
+  background: "assets/audio/background-music-434612.mp3",
   correct: "assets/audio/correct.mp3",
   wrong: "assets/audio/wrong.mp3",
 });
@@ -66,7 +65,7 @@ const userAPI = {
  */
 async function loadSettings() {
   try {
-    showLoading(true);
+    settingsShowLoading(true);
 
     // Load từ localStorage trước để có fallback
     const cachedSettings = loadSettingsFromCache();
@@ -92,7 +91,7 @@ async function loadSettings() {
     }
   } finally {
     loadAvatars();
-    showLoading(false);
+    settingsShowLoading(false);
   }
 }
 
@@ -271,7 +270,7 @@ async function updateSetting(settingName, value) {
     if (response.success) {
       const updatedSettings = normalizeSettings(response.data.settings);
       displaySettings(updatedSettings);
-      showSuccess("Cài đặt đã được cập nhật");
+      settingsShowSuccess("Cài đặt đã được cập nhật");
     } else {
       // Nếu server không thành công, revert
       if (currentSettings) {
@@ -356,9 +355,18 @@ function applyImmediateSetting(settingName, value) {
   }
 }
 
+// Test sound effects preview
+function testSoundEffects() {
+  initAudioController();
+  if (audioController) {
+    audioController.setEffectsEnabled(true);
+    audioController.playEffect("correct");
+    setTimeout(() => audioController.playEffect("wrong"), 700);
+  }
+}
+
 function toggleBackgroundMusic(enabled) {
   if (!enabled) {
-    // Tắt nhạc ngay lập tức
     if (audioController) {
       audioController.setBackgroundEnabled(false);
     }
@@ -367,22 +375,24 @@ function toggleBackgroundMusic(enabled) {
 
   initAudioController();
 
-  // Thử phát nhạc
-  audioController.setBackgroundEnabled(enabled).catch((error) => {
+  const startMusic = () =>
+    audioController
+      .setBackgroundEnabled(true)
+      .catch((err) => console.warn("Background music play failed:", err));
+
+  audioController.setBackgroundEnabled(true).catch((error) => {
     console.warn("Unable to toggle background music", error);
 
-    // Nếu lỗi do autoplay policy, chỉ cảnh báo nhưng không revert
-    // Vì user có thể đã tương tác với trang rồi
-    if (
-      error.name === "NotAllowedError" ||
-      error.name === "NotSupportedError"
-    ) {
-      showError(
-        "Trình duyệt đang chặn nhạc nền. Hãy click vào trang để bật nhạc nền."
-      );
-      // Không revert checkbox, để user có thể thử lại
+    if (error.name === "NotAllowedError" || error.name === "NotSupportedError") {
+      const retry = () => {
+        startMusic();
+        document.removeEventListener("click", retry);
+        document.removeEventListener("keydown", retry);
+      };
+      document.addEventListener("click", retry, { once: true });
+      document.addEventListener("keydown", retry, { once: true });
+      showError("Trình duyệt chặn nhạc nền. Click vào trang để bật nhạc.");
     } else {
-      // Lỗi khác, revert
       const checkbox = document.getElementById("backgroundMusic");
       if (checkbox) {
         checkbox.checked = false;
@@ -703,7 +713,7 @@ window.testAudio = function () {
  */
 async function updateProfile() {
   try {
-    showLoading(true);
+    settingsShowLoading(true);
 
     const fullName = document.getElementById("fullName").value.trim();
     const email = document.getElementById("email").value.trim();
@@ -720,7 +730,7 @@ async function updateProfile() {
 
     if (response.success) {
       currentProfile = response.data.user;
-      showSuccess("Thông tin đã được cập nhật");
+      settingsShowSuccess("Thông tin đã được cập nhật");
 
       // Cập nhật localStorage nếu có
       const userStr = localStorage.getItem("user");
@@ -735,7 +745,7 @@ async function updateProfile() {
     console.error("Update profile error:", error);
     showError(error.message || "Không thể cập nhật thông tin");
   } finally {
-    showLoading(false);
+    settingsShowLoading(false);
   }
 }
 
@@ -794,7 +804,7 @@ function loadAvatars() {
           e.preventDefault();
           e.stopPropagation();
           console.log("Avatar clicked:", name, file);
-          selectAvatar(name);
+          selectAvatar(file);
         };
       })(avatarName, avatarFile)
     );
@@ -820,6 +830,9 @@ function loadAvatars() {
     if (isSelected) {
       const check = document.createElement("div");
       check.className = "avatar-check";
+      /*
+      check.textContent = "✓";
+      */
       check.textContent = "✓";
       avatarItem.appendChild(check);
     }
@@ -840,7 +853,7 @@ async function selectAvatar(avatarName) {
   console.log("selectAvatar called with:", avatarName);
 
   try {
-    showLoading(true);
+    settingsShowLoading(true);
 
     const response = await userAPI.updateAvatar(avatarName);
 
@@ -860,7 +873,7 @@ async function selectAvatar(avatarName) {
       // Reload avatar grid để cập nhật selected state
       loadAvatars();
 
-      showSuccess("Avatar đã được cập nhật");
+      settingsShowSuccess("Avatar đã được cập nhật");
 
       // Cập nhật localStorage
       const userStr = localStorage.getItem("user");
@@ -876,17 +889,114 @@ async function selectAvatar(avatarName) {
     console.error("Select avatar error:", error);
     showError(error.message || "Không thể cập nhật avatar");
   } finally {
-    showLoading(false);
+    settingsShowLoading(false);
   }
 }
 
 // Đảm bảo hàm selectAvatar có thể được gọi từ global scope
 window.selectAvatar = selectAvatar;
 
+// Clean avatar override
+(function () {
+  const AVATAR_FILES = [
+    { name: "avt1", file: "avt1.png" },
+    { name: "avt2", file: "avt2.png" },
+    { name: "avt3", file: "avt3.avif" },
+    { name: "avt4", file: "avt4.png" },
+    { name: "avt5", file: "avt5.jpg" },
+    { name: "avt6", file: "avt6.png" },
+  ];
+
+  function renderAvatarsClean() {
+    const avatarGrid = document.getElementById("avatar-grid");
+    if (!avatarGrid) return;
+
+    avatarGrid.innerHTML = "";
+    const selectedAvatar = currentSettings?.selectedAvatar || "";
+    const selectedAvatarName = selectedAvatar.replace(/\.(png|jpg|jpeg|avif)$/i, "");
+
+    AVATAR_FILES.forEach(({ name, file }) => {
+      const avatarItem = document.createElement("div");
+      avatarItem.className = "avatar-item";
+      avatarItem.style.cursor = "pointer";
+
+      const isSelected =
+        selectedAvatarName === name ||
+        selectedAvatar === name ||
+        selectedAvatar === file;
+      if (isSelected) avatarItem.classList.add("selected");
+
+      avatarItem.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        overrideSelectAvatar(file);
+      });
+
+      const img = document.createElement("img");
+      img.src = `assets/avatars/${file}`;
+      img.alt = name;
+      img.style.cssText =
+        "width: 100%; height: 100%; object-fit: cover; border-radius: 12px; display: block;";
+      img.onerror = function () {
+        this.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+          name
+        )}&size=100&background=6366f1&color=fff`;
+      };
+      avatarItem.appendChild(img);
+
+      if (isSelected) {
+        const check = document.createElement("div");
+        check.className = "avatar-check";
+        check.textContent = "✓";
+        avatarItem.appendChild(check);
+      }
+
+      avatarGrid.appendChild(avatarItem);
+    });
+  }
+
+  async function overrideSelectAvatar(fileName) {
+    try {
+      settingsShowLoading(true);
+      const response = await userAPI.updateAvatar(fileName);
+      if (response.success) {
+        if (currentSettings) {
+          currentSettings.selectedAvatar = fileName;
+          cacheSettingsLocally(currentSettings);
+        }
+        const currentAvatar = document.getElementById("current-avatar");
+        if (currentAvatar) {
+          updateCurrentAvatarPreview(currentAvatar, fileName);
+        }
+        renderAvatarsClean();
+        settingsShowSuccess("Avatar đã được cập nhật");
+
+        const userStr = localStorage.getItem("user");
+        if (userStr) {
+          const user = JSON.parse(userStr);
+          user.avatar = response.data.avatar;
+          user.settings = user.settings || {};
+          user.settings.selectedAvatar = fileName;
+          localStorage.setItem("user", JSON.stringify(user));
+        }
+      }
+    } catch (error) {
+      console.error("Select avatar error:", error);
+      showError(error.message || "Không thể cập nhật avatar");
+    } finally {
+      settingsShowLoading(false);
+    }
+  }
+
+  loadAvatars = renderAvatarsClean;
+  selectAvatar = overrideSelectAvatar;
+  window.selectAvatar = overrideSelectAvatar;
+})();
+
 /**
  * Hiển thị loading overlay
  */
-function showLoading(show) {
+function settingsShowLoading(show) {
   const overlay = document.getElementById("loading-overlay");
   if (overlay) {
     overlay.style.display = show ? "flex" : "none";
@@ -896,7 +1006,7 @@ function showLoading(show) {
 /**
  * Hiển thị thông báo lỗi
  */
-function showError(message) {
+function settingsShowError(message) {
   const errorEl = document.getElementById("error-message");
   if (errorEl) {
     errorEl.textContent = message;
@@ -911,7 +1021,7 @@ function showError(message) {
 /**
  * Hiển thị thông báo thành công
  */
-function showSuccess(message) {
+function settingsShowSuccess(message) {
   const successEl = document.getElementById("success-message");
   if (successEl) {
     successEl.textContent = message;
@@ -936,6 +1046,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Khởi tạo audio controller sớm để test audio files
   initAudioController();
+
+  // Remove unused "Test âm thanh" section if present
+  const testSection = Array.from(document.querySelectorAll(".settings-section")).find((sec) => {
+    const heading =
+      sec.querySelector(".section-title") || sec.querySelector("h2");
+    return heading && heading.textContent.toLowerCase().includes("test") && heading.textContent.toLowerCase().includes("am");
+  });
+  if (testSection && testSection.parentNode) {
+    testSection.parentNode.removeChild(testSection);
+  }
 
   // Cho phép user tương tác để unlock audio (browser autoplay policy)
   // Khi user click vào trang, thử phát nhạc nền nếu đã bật

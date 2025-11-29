@@ -14,6 +14,7 @@ const QUIZ_STATE = {
   totalSecondsLeft: 0,
   questionSecondsLeft: 0,
   settings: null,
+  audioReady: false,
 };
 
 const QUIZ_DEFAULTS = {
@@ -35,6 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   showLoading(true);
   try {
     QUIZ_STATE.settings = await loadQuizSettings();
+    initAudioFromSettings();
     await loadQuestions();
     startTotalTimer();
     renderQuestion();
@@ -65,6 +67,32 @@ async function loadQuizSettings() {
     ...cached,
     ...serverSettings,
   };
+}
+
+function initAudioFromSettings() {
+  if (typeof initAudioController === "function") {
+    initAudioController();
+    if (audioController && typeof audioController.setEffectsEnabled === "function") {
+      audioController.setEffectsEnabled(!!QUIZ_STATE.settings?.soundEffects);
+    }
+
+    const tryStartBackground = () => {
+      if (QUIZ_STATE.settings?.backgroundMusic && typeof toggleBackgroundMusic === "function") {
+        toggleBackgroundMusic(true).catch((err) => {
+          console.warn("Cannot start background music in quiz:", err);
+        });
+      }
+      if (audioController && typeof audioController.setEffectsEnabled === "function") {
+        audioController.setEffectsEnabled(!!QUIZ_STATE.settings?.soundEffects);
+      }
+      document.removeEventListener("click", tryStartBackground);
+      document.removeEventListener("keydown", tryStartBackground);
+    };
+
+    // Attach user interaction listeners to satisfy autoplay policies
+    document.addEventListener("click", tryStartBackground);
+    document.addEventListener("keydown", tryStartBackground);
+  }
 }
 
 function loadSettingsFromLocal() {
