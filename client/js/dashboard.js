@@ -83,6 +83,22 @@ function displayUserInfo(user) {
       avt4: "avt4.png",
       avt5: "avt5.jpg",
       avt6: "avt6.png",
+      avatar_1: "avatar_1.png",
+      avatar_2: "avatar_2.png",
+      avatar_3: "avatar_3.png",
+      avatar_4: "avatar_4.png",
+      avatar_5: "avatar_5.png",
+      avatar_6: "avatar_6.png",
+      avatar_7: "avatar_7.png",
+      avatar_8: "avatar_8.png",
+      avatar_9: "avatar_9.png",
+      avatar_10: "avatar_10.png",
+      avatar_11: "avatar_11.png",
+      avatar_12: "avatar_12.png",
+      avatar_13: "avatar_13.png",
+      avatar_14: "avatar_14.png",
+      avatar_15: "avatar_15.png",
+      avatar_16: "avatar_16.png",
     };
 
     let avatarSrc = null;

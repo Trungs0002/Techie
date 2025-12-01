@@ -76,9 +76,15 @@ const listQuestions = async (req, res) => {
   try {
     // Lấy tham số limit từ query string (mặc định 20, tối đa 100)
     const limit = Math.min(parseInt(req.query.limit, 10) || 20, 100);
+    const subjectId = req.query.subjectId;
+
+    const query = { isActive: true };
+    if (subjectId) {
+      query.subjectId = subjectId;
+    }
 
     // Tìm các câu hỏi đang active, sắp xếp mới nhất
-    const questions = await Question.find({ isActive: true })
+    const questions = await Question.find(query)
       .populate("subjectId", "name")
       .sort({ createdAt: -1 })
       .limit(limit)
