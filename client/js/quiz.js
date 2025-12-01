@@ -119,6 +119,22 @@ async function loadQuestions() {
   QUIZ_STATE.startedAt = Date.now();
 }
 
+function updateStatsUI() {
+  const scoreEl = document.getElementById("score");
+  const correctEl = document.getElementById("correct-count");
+  
+  if (scoreEl) {
+    // Calculate percentage based on total questions
+    const totalQuestions = QUIZ_STATE.questions.length || 1;
+    const percentage = Math.round((QUIZ_STATE.correctCount / totalQuestions) * 100);
+    scoreEl.textContent = `${percentage}%`;
+  }
+  
+  if (correctEl) {
+    correctEl.textContent = `${QUIZ_STATE.correctCount}`;
+  }
+}
+
 function renderQuestion() {
   const question = QUIZ_STATE.questions[QUIZ_STATE.currentIndex];
   if (!question) {
@@ -127,8 +143,6 @@ function renderQuestion() {
   }
 
   const progressEl = document.getElementById("question-progress");
-  const scoreEl = document.getElementById("score");
-  const correctEl = document.getElementById("correct-count");
   const typeEl = document.getElementById("question-type");
   const subjectEl = document.getElementById("question-subject");
   const textEl = document.getElementById("question-text");
@@ -137,8 +151,7 @@ function renderQuestion() {
   const explanationText = document.getElementById("explanation-text");
 
   progressEl.textContent = `${QUIZ_STATE.currentIndex + 1} / ${QUIZ_STATE.questions.length}`;
-  scoreEl.textContent = `${QUIZ_STATE.score}`;
-  correctEl.textContent = `${QUIZ_STATE.correctCount}`;
+  updateStatsUI();
   
   // Reset explanation
   if (explanationArea) {
@@ -228,6 +241,7 @@ function selectAnswer(optionIndex) {
     }
   }
 
+  updateStatsUI();
   paintOptionResult(optionIndex, isCorrect, question.options);
 }
 
@@ -349,19 +363,11 @@ async function finishQuiz() {
   // Save result to backend
   try {
     const resultData = {
-      score: correct, // Using correct count as score for now
       totalQuestions,
       correctCount: correct,
-      timeSpent: elapsedSeconds,
-      subject: QUIZ_STATE.questions[0]?.subject || "Tổng hợp",
-      questions: QUIZ_STATE.questions.map((q, idx) => ({
-        questionId: q._id,
-        userAnswer: QUIZ_STATE.answers[idx]?.selected?.toString(),
-        isCorrect: QUIZ_STATE.answers[idx]?.isCorrect || false
-      }))
     };
     
-    await examAPI.saveResult(resultData);
+    await userAPI.updateStats(resultData);
   } catch (error) {
     console.error("Failed to save result:", error);
     showMessage("Không thể lưu kết quả bài thi", true);
@@ -370,10 +376,14 @@ async function finishQuiz() {
   document.getElementById("quiz-card").classList.add("hidden");
   document.getElementById("result-card").classList.remove("hidden");
 
+  const percentage = Math.round((correct / totalQuestions) * 100);
   document.getElementById("result-score").textContent = `${correct} / ${totalQuestions}`;
   document.getElementById("result-correct").textContent = correct;
   document.getElementById("result-wrong").textContent = wrong;
   document.getElementById("result-time").textContent = formatSeconds(elapsedSeconds);
+  
+  // Update header stats one last time to ensure consistency
+  updateStatsUI();
 }
 
 function showMessage(msg, isError = false) {

@@ -28,37 +28,9 @@ let audioController = null;
 
 /**
  * API endpoints cho users
+ * Đã được chuyển sang api.js
  */
-const userAPI = {
-  getProfile: async () => {
-    return await apiCall("/users/profile", { method: "GET" });
-  },
-
-  updateProfile: async (data) => {
-    return await apiCall("/users/profile", {
-      method: "PUT",
-      body: JSON.stringify(data),
-    });
-  },
-
-  getSettings: async () => {
-    return await apiCall("/users/settings", { method: "GET" });
-  },
-
-  updateSettings: async (data) => {
-    return await apiCall("/users/settings", {
-      method: "PUT",
-      body: JSON.stringify(data),
-    });
-  },
-
-  updateAvatar: async (selectedAvatar) => {
-    return await apiCall("/users/avatar", {
-      method: "PUT",
-      body: JSON.stringify({ selectedAvatar }),
-    });
-  },
-};
+// const userAPI = ... (moved to api.js)
 
 /**
  * Load settings và profile khi page load

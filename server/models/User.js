@@ -116,8 +116,8 @@ const userSchema = new mongoose.Schema(
 /**
  * Index cho username và email để tối ưu truy vấn
  */
-userSchema.index({ username: 1 });
-userSchema.index({ email: 1 });
+// userSchema.index({ username: 1 }); // Đã có unique: true
+// userSchema.index({ email: 1 }); // Đã có unique: true
 userSchema.index({ "stats.averageScore": -1 });
 
 /**

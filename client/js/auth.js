@@ -85,9 +85,9 @@ async function handleRegister(event) {
       // Redirect sau 1 giây
       setTimeout(() => {
         if (typeof redirect === "function") {
-          redirect("../dashboard.html");
+          redirect("dashboard.html");
         } else {
-          window.location.href = "../dashboard.html";
+          window.location.href = "dashboard.html";
         }
       }, 1000);
     }
@@ -160,9 +160,9 @@ async function handleLogin(event) {
       // Redirect sau 1 giây
       setTimeout(() => {
         if (typeof redirect === "function") {
-          redirect("../dashboard.html");
+          redirect("dashboard.html");
         } else {
-          window.location.href = "../dashboard.html";
+          window.location.href = "dashboard.html";
         }
       }, 1000);
     }

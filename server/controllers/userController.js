@@ -320,6 +320,77 @@ const getStats = async (req, res) => {
   }
 };
 
+/**
+ * @route   POST /api/users/stats
+ * @desc    Cập nhật thống kê user sau khi làm bài
+ * @access  Private
+ */
+const updateStats = async (req, res) => {
+  try {
+    const { totalQuestions, correctCount } = req.body;
+    const userId = req.userId;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User không tồn tại",
+      });
+    }
+
+    // Khởi tạo stats nếu chưa có
+    if (!user.stats) {
+      user.stats = {
+        totalExams: 0,
+        totalCorrect: 0,
+        totalQuestions: 0,
+        averageScore: 0,
+        bestScore: 0,
+      };
+    }
+
+    // Cập nhật số liệu tổng
+    user.stats.totalExams += 1;
+    user.stats.totalCorrect += correctCount;
+    user.stats.totalQuestions += totalQuestions;
+
+    // Tính phần trăm điểm của bài thi này
+    const percentage =
+      totalQuestions > 0 ? (correctCount / totalQuestions) * 100 : 0;
+
+    // Cập nhật điểm cao nhất (nếu cao hơn hiện tại)
+    if (percentage > user.stats.bestScore) {
+      user.stats.bestScore = parseFloat(percentage.toFixed(1));
+    }
+
+    // Tính lại điểm trung bình (Tỷ lệ đúng trên tổng số câu đã làm)
+    if (user.stats.totalQuestions > 0) {
+      user.stats.averageScore = parseFloat(
+        ((user.stats.totalCorrect / user.stats.totalQuestions) * 100).toFixed(1)
+      );
+    }
+
+    // Lưu user đã cập nhật
+    await user.save();
+
+    res.json({
+      success: true,
+      message: "Cập nhật thống kê thành công",
+      data: {
+        stats: user.stats,
+      },
+    });
+  } catch (error) {
+    console.error("Update stats error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Lỗi server khi cập nhật thống kê",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+};
+
 module.exports = {
   getProfile,
   updateProfile,
@@ -327,4 +398,5 @@ module.exports = {
   updateSettings,
   updateAvatar,
   getStats,
+  updateStats,
 };

@@ -128,18 +128,42 @@ const authAPI = {
 };
 
 /**
- * Exam API
+ * User API
  */
-const examAPI = {
-  saveResult: async (resultData) => {
-    return await apiCall("/exams", {
-      method: "POST",
-      body: JSON.stringify(resultData),
+const userAPI = {
+  getProfile: async () => {
+    return await apiCall("/users/profile", { method: "GET" });
+  },
+
+  updateProfile: async (data) => {
+    return await apiCall("/users/profile", {
+      method: "PUT",
+      body: JSON.stringify(data),
     });
   },
-  getHistory: async () => {
-    return await apiCall("/exams/history", {
-      method: "GET",
+
+  getSettings: async () => {
+    return await apiCall("/users/settings", { method: "GET" });
+  },
+
+  updateSettings: async (data) => {
+    return await apiCall("/users/settings", {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
+  },
+
+  updateAvatar: async (selectedAvatar) => {
+    return await apiCall("/users/avatar", {
+      method: "PUT",
+      body: JSON.stringify({ selectedAvatar }),
+    });
+  },
+
+  updateStats: async (data) => {
+    return await apiCall("/users/stats", {
+      method: "POST",
+      body: JSON.stringify(data),
     });
   },
 };
@@ -162,7 +186,7 @@ const healthAPI = {
 // Export để sử dụng ở các file khác
 if (typeof window !== "undefined") {
   window.authAPI = authAPI;
-  window.examAPI = examAPI;
+  window.userAPI = userAPI;
   window.healthAPI = healthAPI;
   window.apiCall = apiCall;
 }

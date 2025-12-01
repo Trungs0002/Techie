@@ -17,6 +17,8 @@ router.put("/settings", authenticate, userController.updateSettings);
 router.put("/avatar", authenticate, userController.updateAvatar);
 // GET /api/users/stats - Lấy thống kê
 router.get("/stats", authenticate, userController.getStats);
+// POST /api/users/stats - Cập nhật thống kê
+router.post("/stats", authenticate, userController.updateStats);
 
 module.exports = router;
 
