@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Thêm câu hỏi - Techie</title>
-    <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/create-question.css" />
   </head>
   <body>
     <header class="page-header">
       <div class="header-content">
         <button class="back-btn" onclick="window.location.href='dashboard.html'">
-          ← Quay lại
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Quay lại
         </button>
         <h1>Thêm câu hỏi trắc nghiệm</h1>
       </div>
@@ -28,22 +28,22 @@
               id="content"
               name="content"
               rows="3"
-              placeholder="Nhập nội dung câu hỏi"
+              placeholder="Nhập nội dung câu hỏi..."
               required
             ></textarea>
           </div>
 
-          <div class="form-row two-cols">
-            <div>
+          <div class="two-cols">
+            <div class="form-row">
               <label for="subject">Môn/Chủ đề (tuỳ chọn)</label>
               <input
                 type="text"
                 id="subject"
                 name="subject"
-                placeholder="VD: Mang may tinh"
+                placeholder="VD: Mạng máy tính"
               />
             </div>
-            <div>
+            <div class="form-row">
               <label for="type">Loại câu hỏi</label>
               <select id="type" name="type" required>
                 <option value="multiple_choice">4 lựa chọn (1 đáp án đúng)</option>
@@ -53,78 +53,88 @@
           </div>
 
           <div id="options-mc">
+            <label style="display: block; font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 12px;">Các lựa chọn đáp án</label>
             <div class="options-grid">
               <div class="option-item">
                 <label>Đáp án A</label>
                 <input type="text" data-option-index="0" placeholder="Nội dung đáp án A" />
-                <label class="radio">
+                <label class="radio-wrapper">
                   <input type="radio" name="correct" value="0" checked />
-                  Đáp án đúng
+                  <span class="radio-label">Đáp án đúng</span>
                 </label>
               </div>
               <div class="option-item">
                 <label>Đáp án B</label>
                 <input type="text" data-option-index="1" placeholder="Nội dung đáp án B" />
-                <label class="radio">
+                <label class="radio-wrapper">
                   <input type="radio" name="correct" value="1" />
-                  Đáp án đúng
+                  <span class="radio-label">Đáp án đúng</span>
                 </label>
               </div>
               <div class="option-item">
                 <label>Đáp án C</label>
                 <input type="text" data-option-index="2" placeholder="Nội dung đáp án C" />
-                <label class="radio">
+                <label class="radio-wrapper">
                   <input type="radio" name="correct" value="2" />
-                  Đáp án đúng
+                  <span class="radio-label">Đáp án đúng</span>
                 </label>
               </div>
               <div class="option-item">
                 <label>Đáp án D</label>
                 <input type="text" data-option-index="3" placeholder="Nội dung đáp án D" />
-                <label class="radio">
+                <label class="radio-wrapper">
                   <input type="radio" name="correct" value="3" />
-                  Đáp án đúng
+                  <span class="radio-label">Đáp án đúng</span>
                 </label>
               </div>
             </div>
           </div>
 
           <div id="options-tf" class="hidden">
-            <p class="hint">Chọn đúng hoặc sai cho câu hỏi này.</p>
-            <label class="radio inline">
-              <input type="radio" name="tf-correct" value="true" checked />
-              Đúng
-            </label>
-            <label class="radio inline">
-              <input type="radio" name="tf-correct" value="false" />
-              Sai
-            </label>
+            <p class="hint">Chọn đáp án đúng cho câu hỏi này:</p>
+            <div class="tf-options">
+              <label class="radio-wrapper">
+                <input type="radio" name="tf-correct" value="true" checked />
+                <span class="radio-label">Đúng</span>
+              </label>
+              <label class="radio-wrapper">
+                <input type="radio" name="tf-correct" value="false" />
+                <span class="radio-label">Sai</span>
+              </label>
+            </div>
           </div>
 
-          <div class="form-row">
+          <div class="form-row" style="margin-top: 24px;">
             <label for="explanation">Giải thích (tuỳ chọn)</label>
             <textarea
               id="explanation"
               name="explanation"
               rows="2"
-              placeholder="Giải thích ngắn gọn vì sao đáp án đúng"
+              placeholder="Giải thích ngắn gọn vì sao đáp án đúng..."
             ></textarea>
           </div>
 
-          <div class="actions">
-            <button type="button" class="secondary-btn" onclick="window.location.href='quiz.html'">
-              Làm bài
+          <div class="form-actions">
+            <button type="button" class="back-btn" onclick="window.location.href='quiz.html'" style="margin-right: auto; border: none; background: transparent; color: var(--text-muted);">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+              Vào thi ngay
             </button>
-            <button type="submit" class="primary-btn">Lưu câu hỏi</button>
+            <button type="submit" class="submit-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Lưu câu hỏi
+            </button>
           </div>
         </form>
       </section>
     </main>
 
+    <div id="loading-overlay" class="loading-overlay hidden">
+      <div class="spinner"></div>
+    </div>
+
     <script src="js/utils.js"></script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
-    <!-- Settings & Audio controller để giữ nhạc nền consistent giữa các trang (trừ login/register) -->
     <script src="js/settings.js"></script>
     <script src="js/create-question.js"></script>
   </body>
