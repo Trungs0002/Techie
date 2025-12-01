@@ -130,13 +130,43 @@ function renderQuestion() {
   const scoreEl = document.getElementById("score");
   const correctEl = document.getElementById("correct-count");
   const typeEl = document.getElementById("question-type");
+  const subjectEl = document.getElementById("question-subject");
   const textEl = document.getElementById("question-text");
   const optionsEl = document.getElementById("options-container");
 
   progressEl.textContent = `${QUIZ_STATE.currentIndex + 1} / ${QUIZ_STATE.questions.length}`;
   scoreEl.textContent = `${QUIZ_STATE.score}`;
   correctEl.textContent = `${QUIZ_STATE.correctCount}`;
+  
+  // Display Type
   typeEl.textContent = question.type === "true_false" ? "Đúng / Sai" : "4 lựa chọn";
+
+  // Display Subject
+  if (subjectEl) {
+    let subjectName = "";
+    // Check subjectId (populated object)
+    if (question.subjectId && question.subjectId.name) {
+      subjectName = question.subjectId.name;
+    } 
+    // Check subjectId (string)
+    else if (typeof question.subjectId === 'string' && question.subjectId) {
+       subjectName = question.subjectId;
+    }
+    // Fallback to old 'subject' field
+    else if (question.subject && question.subject.name) {
+      subjectName = question.subject.name;
+    } else if (typeof question.subject === 'string' && question.subject) {
+      subjectName = question.subject;
+    }
+
+    if (subjectName) {
+      subjectEl.textContent = subjectName;
+      subjectEl.classList.remove("hidden");
+    } else {
+      subjectEl.classList.add("hidden");
+    }
+  }
+
   textEl.textContent = question.content;
 
   optionsEl.innerHTML = "";
@@ -290,7 +320,7 @@ function formatSeconds(sec) {
   return `${m}:${s}`;
 }
 
-function finishQuiz() {
+async function finishQuiz() {
   clearInterval(QUIZ_STATE.totalTimerId);
   clearInterval(QUIZ_STATE.questionTimerId);
   const endTime = Date.now();
@@ -299,6 +329,27 @@ function finishQuiz() {
   const totalQuestions = QUIZ_STATE.questions.length;
   const correct = QUIZ_STATE.correctCount;
   const wrong = totalQuestions - correct;
+
+  // Save result to backend
+  try {
+    const resultData = {
+      score: correct, // Using correct count as score for now
+      totalQuestions,
+      correctCount: correct,
+      timeSpent: elapsedSeconds,
+      subject: QUIZ_STATE.questions[0]?.subject || "Tổng hợp",
+      questions: QUIZ_STATE.questions.map((q, idx) => ({
+        questionId: q._id,
+        userAnswer: QUIZ_STATE.answers[idx]?.selected?.toString(),
+        isCorrect: QUIZ_STATE.answers[idx]?.isCorrect || false
+      }))
+    };
+    
+    await examAPI.saveResult(resultData);
+  } catch (error) {
+    console.error("Failed to save result:", error);
+    showMessage("Không thể lưu kết quả bài thi", true);
+  }
 
   document.getElementById("quiz-card").classList.add("hidden");
   document.getElementById("result-card").classList.remove("hidden");

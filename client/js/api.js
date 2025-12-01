@@ -128,6 +128,23 @@ const authAPI = {
 };
 
 /**
+ * Exam API
+ */
+const examAPI = {
+  saveResult: async (resultData) => {
+    return await apiCall("/exams", {
+      method: "POST",
+      body: JSON.stringify(resultData),
+    });
+  },
+  getHistory: async () => {
+    return await apiCall("/exams/history", {
+      method: "GET",
+    });
+  },
+};
+
+/**
  * Health check API
  */
 const healthAPI = {
@@ -145,6 +162,7 @@ const healthAPI = {
 // Export để sử dụng ở các file khác
 if (typeof window !== "undefined") {
   window.authAPI = authAPI;
+  window.examAPI = examAPI;
   window.healthAPI = healthAPI;
   window.apiCall = apiCall;
 }

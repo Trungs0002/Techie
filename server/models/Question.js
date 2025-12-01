@@ -42,10 +42,9 @@ const questionSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
-    subject: {
-      type: String,
-      default: "",
-      trim: true,
+    subjectId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Subject",
     },
     isActive: {
       type: Boolean,

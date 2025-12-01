@@ -1,4 +1,5 @@
 const Question = require("../models/Question");
+const Subject = require("../models/Subject");
 
 /**
  * Controller cho Question
@@ -21,6 +22,17 @@ const createQuestion = async (req, res) => {
       });
     }
 
+    // Xử lý Subject: Nếu subject là string, tìm hoặc tạo mới
+    let subjectId = null;
+    if (subject && typeof subject === "string" && subject.trim() !== "") {
+      const subjectName = subject.trim();
+      let subjectDoc = await Subject.findOne({ name: subjectName });
+      if (!subjectDoc) {
+        subjectDoc = await Subject.create({ name: subjectName });
+      }
+      subjectId = subjectDoc._id;
+    }
+
     // Chuẩn hóa options: xóa khoảng trắng thừa
     const normalizedOptions = options.map((opt) => ({
       text: (opt.text || "").trim(),
@@ -33,7 +45,7 @@ const createQuestion = async (req, res) => {
       type,
       options: normalizedOptions,
       explanation: explanation ? explanation.trim() : "",
-      subject: subject ? subject.trim() : "",
+      subjectId: subjectId,
       createdBy: req.userId,
     });
 
@@ -64,9 +76,10 @@ const listQuestions = async (req, res) => {
   try {
     // Lấy tham số limit từ query string (mặc định 20, tối đa 100)
     const limit = Math.min(parseInt(req.query.limit, 10) || 20, 100);
-    
+
     // Tìm các câu hỏi đang active, sắp xếp mới nhất
     const questions = await Question.find({ isActive: true })
+      .populate("subjectId", "name")
       .sort({ createdAt: -1 })
       .limit(limit)
       .lean();
@@ -99,16 +112,10 @@ const getRandomQuestions = async (req, res) => {
     const questions = await Question.aggregate([
       { $match: { isActive: true } },
       { $sample: { size: limit } },
-      {
-        $project: {
-          content: 1,
-          type: 1,
-          options: 1,
-          explanation: 1,
-          subject: 1,
-        },
-      },
     ]);
+
+    // Populate subject cho kết quả từ aggregate
+    await Question.populate(questions, { path: "subjectId", select: "name" });
 
     // Trả về danh sách câu hỏi
     res.json({
@@ -116,10 +123,10 @@ const getRandomQuestions = async (req, res) => {
       data: { questions },
     });
   } catch (error) {
-    console.error("Random questions error:", error);
+    console.error("Get random questions error:", error);
     res.status(500).json({
       success: false,
-      message: "Lỗi server khi lấy câu hỏi",
+      message: "Lỗi server khi lấy câu hỏi ngẫu nhiên",
     });
   }
 };

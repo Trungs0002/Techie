@@ -10,6 +10,7 @@ dotenv.config();
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const questionRoutes = require("./routes/questionRoutes");
+const examRoutes = require("./routes/examRoutes");
 
 // Khởi tạo Express app
 const app = express();
@@ -57,6 +58,7 @@ if (process.env.NODE_ENV === "development") {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/questions", questionRoutes);
+app.use("/api/exams", examRoutes);
 
 // Endpoint kiểm tra trạng thái server (Health check)
 app.get("/api/health", (req, res) => {
