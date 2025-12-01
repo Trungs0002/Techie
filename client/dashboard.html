@@ -5,7 +5,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard - Techie</title>
-    <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/dashboard.css" />
 </head>
 
@@ -18,15 +17,16 @@
                 <span class="tagline">Luyện thi Trắc nghiệm CNTT</span>
             </div>
             <div class="user-section">
-                <div class="user-info" onclick="window.location.href='settings.html'" style="cursor: pointer;"
-                    title="Click để vào Settings">
-                    <img src="assets/avatars/avt1.png" alt="Avatar" class="user-avatar" id="user-avatar" />
+                <div class="user-info" onclick="window.location.href='settings.html'" title="Cài đặt tài khoản">
+                    <img src="assets/avatars/avt1.png" alt="Avatar" class="user-avatar" id="user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=User&background=random'" />
                     <div class="user-details">
                         <span class="user-name" id="user-name">Loading...</span>
                         <span class="user-email" id="user-email">Loading...</span>
                     </div>
                 </div>
-                <button class="logout-btn" onclick="handleLogout()">Đăng xuất</button>
+                <button class="logout-btn" onclick="handleLogout()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                </button>
             </div>
         </div>
     </header>
@@ -36,35 +36,45 @@
         <!-- Stats Section -->
         <section class="stats-section">
             <div class="stat-card">
-                <div class="stat-icon">📊</div>
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20v-6M6 20V10M18 20V4"></path></svg>
+                </div>
                 <div class="stat-content">
                     <h3 class="stat-label">Tổng số bài thi</h3>
                     <p class="stat-value" id="total-exams">0</p>
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">✅</div>
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
                 <div class="stat-content">
                     <h3 class="stat-label">Câu trả lời đúng</h3>
                     <p class="stat-value" id="total-correct">0</p>
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">📝</div>
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                </div>
                 <div class="stat-content">
                     <h3 class="stat-label">Tổng câu hỏi</h3>
                     <p class="stat-value" id="total-questions">0</p>
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">⭐</div>
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </div>
                 <div class="stat-content">
                     <h3 class="stat-label">Điểm trung bình</h3>
                     <p class="stat-value" id="average-score">0%</p>
                 </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon">🏆</div>
+                <div class="stat-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
+                </div>
                 <div class="stat-content">
                     <h3 class="stat-label">Điểm cao nhất</h3>
                     <p class="stat-value" id="best-score">0%</p>
@@ -74,36 +84,42 @@
 
         <!-- Features Section -->
         <section class="features-section">
-            <h2 class="section-title">Chức năng</h2>
+            <h2 class="section-title">Chức năng chính</h2>
             <div class="features-grid">
                 <!-- Trả lời trắc nghiệm -->
                 <div class="feature-card" onclick="window.location.href='quiz.html'">
-                    <div class="feature-icon">📚</div>
-                    <h3 class="feature-title">Trả lời trắc nghiệm</h3>
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                    </div>
+                    <h3 class="feature-title">Luyện thi Trắc nghiệm</h3>
                     <p class="feature-description">
-                        Thực hiện bài test trắc nghiệm liên quan đến kiến thức CNTT
+                        Thử sức với các bài test kiến thức CNTT đa dạng, có chấm điểm và giải thích chi tiết.
                     </p>
-                    <button class="feature-btn">Bắt đầu</button>
+                    <button class="feature-btn">Bắt đầu ngay</button>
                 </div>
 
                 <!-- Xây dựng câu hỏi -->
                 <div class="feature-card" onclick="window.location.href='create-question.html'">
-                    <div class="feature-icon">➕</div>
-                    <h3 class="feature-title">Xây dựng câu hỏi</h3>
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                    </div>
+                    <h3 class="feature-title">Đóng góp Câu hỏi</h3>
                     <p class="feature-description">
-                        Bổ sung thêm câu hỏi vào hệ thống (Đúng/Sai hoặc 4 lựa chọn)
+                        Cùng xây dựng ngân hàng câu hỏi phong phú hơn cho cộng đồng Techie.
                     </p>
-                    <button class="feature-btn">Tạo câu hỏi</button>
+                    <button class="feature-btn">Tạo câu hỏi mới</button>
                 </div>
 
                 <!-- Settings -->
                 <div class="feature-card" onclick="window.location.href='settings.html'">
-                    <div class="feature-icon">⚙️</div>
-                    <h3 class="feature-title">Cài đặt</h3>
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    </div>
+                    <h3 class="feature-title">Cài đặt Hệ thống</h3>
                     <p class="feature-description">
-                        Cấu hình background music, sound effects, timer, số câu hỏi và avatar
+                        Tùy chỉnh âm thanh, thời gian làm bài và thông tin cá nhân của bạn.
                     </p>
-                    <button class="feature-btn">Cài đặt</button>
+                    <button class="feature-btn">Mở cài đặt</button>
                 </div>
 
             </div>

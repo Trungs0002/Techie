@@ -5,68 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Techie - Luyện thi Trắc nghiệm CNTT</title>
     <link rel="stylesheet" href="css/auth.css" />
-    <style>
-      .home-container {
-        max-width: 800px;
-        text-align: center;
-        color: white;
-      }
-      .home-header h1 {
-        font-size: 48px;
-        margin-bottom: 16px;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-      }
-      .home-header p {
-        font-size: 20px;
-        margin-bottom: 40px;
-        opacity: 0.9;
-      }
-      .home-actions {
-        display: flex;
-        gap: 20px;
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-      .home-btn {
-        padding: 16px 32px;
-        font-size: 18px;
-        font-weight: 600;
-        color: white;
-        background: rgba(255, 255, 255, 0.2);
-        border: 2px solid white;
-        border-radius: 12px;
-        cursor: pointer;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        backdrop-filter: blur(10px);
-      }
-      .home-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      }
-      .home-btn.primary {
-        background: white;
-        color: #6366f1;
-      }
-      .home-btn.primary:hover {
-        background: rgba(255, 255, 255, 0.95);
-      }
-      @media (max-width: 480px) {
-        .home-header h1 {
-          font-size: 36px;
-        }
-        .home-header p {
-          font-size: 16px;
-        }
-        .home-actions {
-          flex-direction: column;
-        }
-        .home-btn {
-          width: 100%;
-        }
-      }
-    </style>
   </head>
   <body>
     <div class="home-container">
@@ -75,8 +13,13 @@
         <p>Hệ thống Luyện thi Trắc nghiệm CNTT</p>
       </div>
       <div class="home-actions">
-        <a href="login.html" class="home-btn">Đăng nhập</a>
-        <a href="register.html" class="home-btn primary">Đăng ký</a>
+        <a href="login.html" class="home-btn">
+          <span>Đăng nhập</span>
+        </a>
+        <a href="register.html" class="home-btn primary">
+          <span>Đăng ký ngay</span>
+          <span style="font-size: 1.2em">→</span>
+        </a>
       </div>
     </div>
 
