@@ -3,10 +3,10 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/database");
 
-// Load environment variables
+// Tải biến môi trường
 dotenv.config();
 
-// Import routes
+// Import các routes
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const questionRoutes = require("./routes/questionRoutes");
@@ -18,7 +18,7 @@ const app = express();
 connectDB();
 
 // Middleware
-// CORS configuration - Cho phép tất cả origin trong development
+// Cấu hình CORS - Cho phép tất cả origin trong development
 const corsOptions = {
   origin: function (origin, callback) {
     // Cho phép tất cả origin trong development
@@ -41,11 +41,11 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// Body parser middleware
-app.use(express.json()); // Parse JSON bodies
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
+// Middleware xử lý body
+app.use(express.json()); // Xử lý JSON
+app.use(express.urlencoded({ extended: true })); // Xử lý URL-encoded
 
-// Request logging middleware (development only)
+// Middleware ghi log request (chỉ trong development)
 if (process.env.NODE_ENV === "development") {
   app.use((req, res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
@@ -53,12 +53,12 @@ if (process.env.NODE_ENV === "development") {
   });
 }
 
-// Routes
+// Định nghĩa các routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/questions", questionRoutes);
 
-// Health check endpoint
+// Endpoint kiểm tra trạng thái server (Health check)
 app.get("/api/health", (req, res) => {
   res.json({
     success: true,
@@ -67,7 +67,7 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Root endpoint
+// Endpoint gốc
 app.get("/", (req, res) => {
   res.json({
     success: true,
@@ -81,7 +81,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// 404 handler
+// Xử lý lỗi 404
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -89,7 +89,7 @@ app.use((req, res) => {
   });
 });
 
-// Error handling middleware
+// Middleware xử lý lỗi
 app.use((err, req, res, next) => {
   console.error("Error:", err);
 

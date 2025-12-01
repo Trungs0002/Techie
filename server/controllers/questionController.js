@@ -1,15 +1,19 @@
 const Question = require("../models/Question");
 
 /**
- * Create a new question
- * Supports:
- * - type: "true_false" with 2 options (one correct)
- * - type: "multiple_choice" with 4 options (one correct)
+ * Controller cho Question
+ */
+
+/**
+ * @route   POST /api/questions
+ * @desc    Tạo câu hỏi mới
+ * @access  Private
  */
 const createQuestion = async (req, res) => {
   try {
     const { content, type, options, explanation, subject } = req.body;
 
+    // Validation dữ liệu đầu vào
     if (!content || !type || !Array.isArray(options)) {
       return res.status(400).json({
         success: false,
@@ -17,12 +21,13 @@ const createQuestion = async (req, res) => {
       });
     }
 
-    // Normalize options: trim text
+    // Chuẩn hóa options: xóa khoảng trắng thừa
     const normalizedOptions = options.map((opt) => ({
       text: (opt.text || "").trim(),
       isCorrect: !!opt.isCorrect,
     }));
 
+    // Tạo object question mới
     const question = new Question({
       content: content.trim(),
       type,
@@ -32,8 +37,10 @@ const createQuestion = async (req, res) => {
       createdBy: req.userId,
     });
 
+    // Lưu vào database
     await question.save();
 
+    // Trả về kết quả
     res.status(201).json({
       success: true,
       message: "Tạo câu hỏi thành công",
@@ -49,16 +56,22 @@ const createQuestion = async (req, res) => {
 };
 
 /**
- * Get recent questions (for listing/management)
+ * @route   GET /api/questions
+ * @desc    Lấy danh sách câu hỏi (gần đây)
+ * @access  Private
  */
 const listQuestions = async (req, res) => {
   try {
+    // Lấy tham số limit từ query string (mặc định 20, tối đa 100)
     const limit = Math.min(parseInt(req.query.limit, 10) || 20, 100);
+    
+    // Tìm các câu hỏi đang active, sắp xếp mới nhất
     const questions = await Question.find({ isActive: true })
       .sort({ createdAt: -1 })
       .limit(limit)
       .lean();
 
+    // Trả về danh sách câu hỏi
     res.json({
       success: true,
       data: { questions },
@@ -73,12 +86,16 @@ const listQuestions = async (req, res) => {
 };
 
 /**
- * Get random questions for quiz play
+ * @route   GET /api/questions/random
+ * @desc    Lấy câu hỏi ngẫu nhiên cho bài thi
+ * @access  Private
  */
 const getRandomQuestions = async (req, res) => {
   try {
+    // Lấy tham số limit (số lượng câu hỏi) từ query string
     const limit = Math.min(parseInt(req.query.limit, 10) || 5, 50);
 
+    // Sử dụng aggregation để lấy ngẫu nhiên câu hỏi
     const questions = await Question.aggregate([
       { $match: { isActive: true } },
       { $sample: { size: limit } },
@@ -93,6 +110,7 @@ const getRandomQuestions = async (req, res) => {
       },
     ]);
 
+    // Trả về danh sách câu hỏi
     res.json({
       success: true,
       data: { questions },
