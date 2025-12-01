@@ -133,11 +133,19 @@ function renderQuestion() {
   const subjectEl = document.getElementById("question-subject");
   const textEl = document.getElementById("question-text");
   const optionsEl = document.getElementById("options-container");
+  const explanationArea = document.getElementById("explanation-area");
+  const explanationText = document.getElementById("explanation-text");
 
   progressEl.textContent = `${QUIZ_STATE.currentIndex + 1} / ${QUIZ_STATE.questions.length}`;
   scoreEl.textContent = `${QUIZ_STATE.score}`;
   correctEl.textContent = `${QUIZ_STATE.correctCount}`;
   
+  // Reset explanation
+  if (explanationArea) {
+    explanationArea.classList.add("hidden");
+    explanationText.textContent = "";
+  }
+
   // Display Type
   typeEl.textContent = question.type === "true_false" ? "Đúng / Sai" : "4 lựa chọn";
 
@@ -209,6 +217,14 @@ function selectAnswer(optionIndex) {
   } else {
     if (QUIZ_STATE.settings.soundEffects && typeof window.playSoundEffect === "function") {
       window.playSoundEffect("wrong");
+    }
+    
+    // Show explanation if wrong
+    const explanationArea = document.getElementById("explanation-area");
+    const explanationText = document.getElementById("explanation-text");
+    if (explanationArea && explanationText && question.explanation) {
+      explanationText.textContent = question.explanation;
+      explanationArea.classList.remove("hidden");
     }
   }
 
